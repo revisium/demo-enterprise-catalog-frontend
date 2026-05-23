@@ -31,7 +31,7 @@ export const QuotePage = observer(function QuotePage() {
         gap="4"
         maxW="680px"
         mt="8"
-        onSubmit={(event) => void vm.submit(event)}
+        onSubmit={(event) => vm.submit(event)}
         p="4"
       >
         <Stack as="label" gap="1.5">

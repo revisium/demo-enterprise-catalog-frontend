@@ -73,11 +73,7 @@ export const HomePage = observer(function HomePage() {
               Mock branch
             </Text>
           </Flex>
-          {[
-            { label: 'priority product cards', value: vm.catalogCardCount },
-            { label: 'release states', value: vm.releaseCount },
-            { label: 'backend calls in this PR', value: vm.backendCallCount },
-          ].map((metric) => (
+          {vm.heroMetrics.map((metric) => (
             <Box
               bg="whiteAlpha.100"
               borderColor="whiteAlpha.200"
@@ -131,7 +127,7 @@ export const HomePage = observer(function HomePage() {
                 <Text color="ink.500">{product.summary}</Text>
               </Stack>
               <SimpleGrid columns={2} gap="3">
-                {product.metrics.slice(0, 2).map((metric) => (
+                {product.previewMetrics.map((metric) => (
                   <Box bg="surface.100" borderRadius="control" key={metric.label} p="3">
                     <Text color="ink.900" fontSize="lg" fontWeight="760">
                       {metric.value}
@@ -143,14 +139,14 @@ export const HomePage = observer(function HomePage() {
                 ))}
               </SimpleGrid>
               <Flex gap="2" wrap="wrap">
-                {product.protocols.slice(0, 3).map((protocol) => (
+                {product.previewProtocols.map((protocol) => (
                   <Badge bg="surface.200" color="brand.700" key={protocol}>
                     {protocol}
                   </Badge>
                 ))}
               </Flex>
               <ChakraLink asChild color="brand.500" fontWeight="700">
-                <Link to={`/catalog/${product.id}`}>Inspect product</Link>
+                <Link to={product.detailHref}>Inspect product</Link>
               </ChakraLink>
             </Stack>
           </Stack>

@@ -111,7 +111,7 @@ export const CatalogPage = observer(function CatalogPage() {
               <Text>{product.regionCount} source regions</Text>
               <Text>{product.documents.length} documents</Text>
               <Button asChild borderRadius="control" mt="2" variant="outline">
-                <Link to={`/catalog/${product.id}`}>Open</Link>
+                <Link to={product.detailHref}>Open</Link>
               </Button>
             </Stack>
           </Grid>
