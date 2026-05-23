@@ -92,6 +92,10 @@ export class PricingPageViewModel {
     return sortOptions;
   }
 
+  get hasNoMatches() {
+    return this.filteredRows.length === 0;
+  }
+
   get summaryMetrics() {
     const lowestPrice =
       this.filteredRows.length === 0
@@ -113,6 +117,15 @@ export class PricingPageViewModel {
 
   setBillingTerm(termId: BillingTermId) {
     this.billingTermId = termId;
+  }
+
+  resetFilters() {
+    this.billingTermId = 'monthly';
+    this.maxMonthlyPrice = 0;
+    this.selectedFamilyIds = [];
+    this.selectedRegionIds = [];
+    this.sortId = 'monthly';
+    this.stockOnly = true;
   }
 
   setMaxMonthlyPrice(value: string) {

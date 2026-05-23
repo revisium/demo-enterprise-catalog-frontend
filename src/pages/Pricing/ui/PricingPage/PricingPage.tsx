@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import {
   ChipGroup,
+  EmptyState,
+  FieldHint,
   FilterButton,
   FilterCard,
   PageIntroGrid,
@@ -22,13 +24,16 @@ export const PricingPage = observer(function PricingPage() {
           eyebrow="Pricing"
           metrics={vm.summaryMetrics}
           metricsLabel="Pricing summary"
-          summary="Filter price-book rows by server family, data-center region, stock, contract term, and effective monthly price."
-          title="Regional price rows by plan, term, and location."
+          summary="Review monthly and yearly server prices across regions before building a quote."
+          title="Compare regional price rows."
         />
 
         <Grid gap="3" my={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', xl: '1fr 1fr' }}>
           <FilterCard>
             <SectionEyebrow>Filters</SectionEyebrow>
+            <FieldHint>
+              Choose a billing term, keep only available stock, then narrow by family or region.
+            </FieldHint>
             <Flex gap="2" wrap="wrap">
               <FilterButton
                 onClick={() => vm.setBillingTerm('monthly')}
@@ -68,7 +73,10 @@ export const PricingPage = observer(function PricingPage() {
           </FilterCard>
 
           <FilterCard>
-            <SectionEyebrow>Price-book view</SectionEyebrow>
+            <SectionEyebrow>Price view</SectionEyebrow>
+            <FieldHint>
+              Sort the price rows by budget, regional stock, setup time, memory, or freshness.
+            </FieldHint>
             <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               <SelectField
                 label="Max price"
@@ -87,6 +95,14 @@ export const PricingPage = observer(function PricingPage() {
         </Grid>
 
         <Stack gap="2">
+          {vm.hasNoMatches ? (
+            <EmptyState
+              actionLabel="Reset filters"
+              onAction={() => vm.resetFilters()}
+              summary="There are no price rows for this combination. Reset filters to return to the full regional price list."
+              title="No price rows match these filters"
+            />
+          ) : null}
           {vm.filteredRows.map((row) => (
             <Grid
               alignItems="center"
@@ -118,6 +134,7 @@ export const PricingPage = observer(function PricingPage() {
                 bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
                 borderRadius="8px"
                 color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                justifySelf={{ base: 'start', lg: 'end' }}
               >
                 {row.region.stock} units
               </Badge>
