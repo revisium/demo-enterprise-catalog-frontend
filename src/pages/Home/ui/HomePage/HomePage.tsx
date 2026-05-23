@@ -34,15 +34,15 @@ export const HomePage = observer(function HomePage() {
             <strong>Mock branch</strong>
           </div>
           <div className="metric-tile">
-            <span className="metric-value">3</span>
+            <span className="metric-value">{vm.catalogCardCount}</span>
             <span className="metric-label">priority product cards</span>
           </div>
           <div className="metric-tile">
-            <span className="metric-value">2</span>
+            <span className="metric-value">{vm.releaseCount}</span>
             <span className="metric-label">release states</span>
           </div>
           <div className="metric-tile">
-            <span className="metric-value">0</span>
+            <span className="metric-value">{vm.backendCallCount}</span>
             <span className="metric-label">backend calls in this PR</span>
           </div>
         </div>

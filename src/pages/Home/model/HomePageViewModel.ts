@@ -5,6 +5,8 @@ import { HomePageDataSource } from '../api/HomePageDataSource';
 export class HomePageViewModel {
   private readonly dataSource = new HomePageDataSource();
 
+  readonly backendCallCount = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -15,6 +17,14 @@ export class HomePageViewModel {
 
   get releases() {
     return this.dataSource.getSnapshot().releases;
+  }
+
+  get catalogCardCount() {
+    return this.heroProducts.length;
+  }
+
+  get releaseCount() {
+    return this.releases.length;
   }
 
   get proofItems() {
