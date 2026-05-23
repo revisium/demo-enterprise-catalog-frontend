@@ -1,19 +1,14 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Container,
-  Flex,
-  Grid,
-  Heading,
-  SimpleGrid,
-  Stack,
-  Text,
-  chakra,
-} from '@chakra-ui/react';
+import { Badge, Box, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
+import {
+  FilterButton,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  SelectField,
+} from 'src/shared/ui';
 import { PricingPageViewModel } from '../../model/PricingPageViewModel';
 
 export const PricingPage = observer(function PricingPage() {
@@ -22,94 +17,37 @@ export const PricingPage = observer(function PricingPage() {
   return (
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Grid
-          alignItems="end"
-          gap={{ base: '4', md: '6' }}
-          templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 360px' }}
-        >
-          <Stack as="header" gap="3">
-            <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-              Pricing
-            </Text>
-            <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '5xl' }} lineHeight="1">
-              Regional price rows by plan, term, and location.
-            </Heading>
-            <Text color="ink.500" fontSize="md" maxW="720px">
-              Filter price-book rows by server family, data-center region, stock, contract term, and
-              effective monthly price.
-            </Text>
-          </Stack>
-
-          <SimpleGrid aria-label="Pricing summary" columns={{ base: 2, sm: 3 }} gap="2">
-            {vm.summaryMetrics.map((metric) => (
-              <Box
-                bg="panelGlassBg"
-                borderColor="surface.200"
-                borderRadius="8px"
-                borderWidth="1px"
-                key={metric.label}
-                p="3"
-              >
-                <Text color="ink.900" fontSize="2xl" fontWeight="780" lineHeight="1">
-                  {metric.value}
-                </Text>
-                <Text color="ink.500" fontSize="xs">
-                  {metric.label}
-                </Text>
-              </Box>
-            ))}
-          </SimpleGrid>
-        </Grid>
+        <PageIntroGrid
+          eyebrow="Pricing"
+          metrics={vm.summaryMetrics}
+          metricsLabel="Pricing summary"
+          summary="Filter price-book rows by server family, data-center region, stock, contract term, and effective monthly price."
+          title="Regional price rows by plan, term, and location."
+        />
 
         <Grid gap="3" my={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', xl: '1fr 1fr' }}>
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="4"
-            p="4"
-          >
-            <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-              Filters
-            </Text>
+          <FilterCard>
+            <SectionEyebrow>Filters</SectionEyebrow>
             <Flex gap="2" wrap="wrap">
-              <Button
-                bg={vm.billingTermId === 'monthly' ? 'brand.50' : 'white'}
-                borderColor={vm.billingTermId === 'monthly' ? 'activeBorder' : 'surface.200'}
-                borderRadius="8px"
-                borderWidth="1px"
-                color="ink.900"
+              <FilterButton
                 onClick={() => vm.setBillingTerm('monthly')}
-                size="sm"
-                variant="ghost"
+                selected={vm.billingTermId === 'monthly'}
               >
                 Monthly
-              </Button>
-              <Button
-                bg={vm.billingTermId === 'yearly' ? 'brand.50' : 'white'}
-                borderColor={vm.billingTermId === 'yearly' ? 'activeBorder' : 'surface.200'}
-                borderRadius="8px"
-                borderWidth="1px"
-                color="ink.900"
+              </FilterButton>
+              <FilterButton
                 onClick={() => vm.setBillingTerm('yearly')}
-                size="sm"
-                variant="ghost"
+                selected={vm.billingTermId === 'yearly'}
               >
                 Yearly
-              </Button>
-              <Button
-                bg={vm.stockOnly ? 'successBg' : 'white'}
-                borderColor={vm.stockOnly ? 'successBorder' : 'surface.200'}
-                borderRadius="8px"
-                borderWidth="1px"
-                color="ink.900"
+              </FilterButton>
+              <FilterButton
                 onClick={() => vm.setStockOnly(!vm.stockOnly)}
-                size="sm"
-                variant="ghost"
+                selected={vm.stockOnly}
+                tone="success"
               >
                 In stock
-              </Button>
+              </FilterButton>
             </Flex>
 
             <Stack gap="2">
@@ -121,19 +59,13 @@ export const PricingPage = observer(function PricingPage() {
                   const selected = vm.selectedFamilyIds.includes(family.id);
 
                   return (
-                    <Button
-                      bg={selected ? 'brand.50' : 'white'}
-                      borderColor={selected ? 'activeBorder' : 'surface.200'}
-                      borderRadius="8px"
-                      borderWidth="1px"
-                      color={selected ? 'brand.500' : 'ink.700'}
+                    <FilterButton
                       key={family.id}
                       onClick={() => vm.toggleFamily(family.id)}
-                      size="sm"
-                      variant="ghost"
+                      selected={selected}
                     >
                       {family.label}
-                    </Button>
+                    </FilterButton>
                   );
                 })}
               </Flex>
@@ -148,79 +80,36 @@ export const PricingPage = observer(function PricingPage() {
                   const selected = vm.selectedRegionIds.includes(region.id);
 
                   return (
-                    <Button
-                      bg={selected ? 'brand.50' : 'white'}
-                      borderColor={selected ? 'activeBorder' : 'surface.200'}
-                      borderRadius="8px"
-                      borderWidth="1px"
-                      color={selected ? 'brand.500' : 'ink.700'}
+                    <FilterButton
                       key={region.id}
                       onClick={() => vm.toggleRegion(region.id)}
-                      size="sm"
-                      variant="ghost"
+                      selected={selected}
                     >
                       {region.label}
-                    </Button>
+                    </FilterButton>
                   );
                 })}
               </Flex>
             </Stack>
-          </Stack>
+          </FilterCard>
 
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="4"
-            p="4"
-          >
-            <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-              Price-book view
-            </Text>
+          <FilterCard>
+            <SectionEyebrow>Price-book view</SectionEyebrow>
             <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
-              <Stack as="label" gap="1.5">
-                <Text color="ink.700" fontWeight="650">
-                  Max price
-                </Text>
-                <chakra.select
-                  bg="white"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  onChange={(event) => vm.setMaxMonthlyPrice(event.currentTarget.value)}
-                  p="2.5"
-                  value={String(vm.maxMonthlyPrice)}
-                >
-                  {vm.priceOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </chakra.select>
-              </Stack>
-              <Stack as="label" gap="1.5">
-                <Text color="ink.700" fontWeight="650">
-                  Sort
-                </Text>
-                <chakra.select
-                  bg="white"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  onChange={(event) => vm.setSort(event.currentTarget.value)}
-                  p="2.5"
-                  value={vm.sortId}
-                >
-                  {vm.sortOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </chakra.select>
-              </Stack>
+              <SelectField
+                label="Max price"
+                onChange={(value) => vm.setMaxMonthlyPrice(value)}
+                options={vm.priceOptions}
+                value={String(vm.maxMonthlyPrice)}
+              />
+              <SelectField
+                label="Sort"
+                onChange={(value) => vm.setSort(value)}
+                options={vm.sortOptions}
+                value={vm.sortId}
+              />
             </Grid>
-          </Stack>
+          </FilterCard>
         </Grid>
 
         <Stack gap="2">
