@@ -1,4 +1,5 @@
 export { PlaceholderPage } from './PlaceholderPage/PlaceholderPage';
+export { PrototypePage } from './PrototypePage/PrototypePage';
 export { ProductVisual } from './ProductVisual/ProductVisual';
 export {
   ChipGroup,

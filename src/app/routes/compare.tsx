@@ -1,10 +1,5 @@
-import { PlaceholderPage } from 'src/shared/ui';
+import { ComparePage } from 'src/pages/Compare';
 
 export default function CompareRoute() {
-  return (
-    <PlaceholderPage
-      title="Server comparison"
-      summary="Compare cloud and dedicated server plans by CPU, memory, storage, network, region, contract term, and effective price."
-    />
-  );
+  return <ComparePage />;
 }
