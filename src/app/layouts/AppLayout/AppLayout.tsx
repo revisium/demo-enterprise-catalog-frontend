@@ -27,7 +27,7 @@ const navItems = [
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <Box minH="100dvh" bg="#f5f7fb">
+    <Box minH="100dvh" bg="surface.50">
       <SkipNavLink>Skip to content</SkipNavLink>
       <Box
         as="header"
@@ -35,13 +35,13 @@ export function AppLayout({ children }: AppLayoutProps) {
         top="0"
         zIndex="5"
         borderBottomWidth="1px"
-        borderColor="#e3e8f0"
-        bg="color-mix(in srgb, #ffffff 84%, transparent)"
-        backdropFilter="blur(22px)"
+        borderColor="surface.200"
+        bg="headerBg"
+        backdropBlur="xl"
       >
         <Container maxW="1240px" px={{ base: '3', md: '5' }}>
           <Flex align="center" gap="3" justify="space-between" minH="14" py="2">
-            <ChakraLink asChild color="#101828" flexShrink="0" fontWeight="750">
+            <ChakraLink asChild color="ink.900" flexShrink="0" fontWeight="750">
               <NavLink to="/">
                 <HStack gap="3">
                   <Flex
@@ -50,7 +50,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     w="8"
                     h="8"
                     borderRadius="control"
-                    bg="linear-gradient(135deg, #1370f6 0%, #48d6c7 100%)"
+                    bg="logoBg"
                     color="white"
                     fontSize="xs"
                     fontWeight="800"
@@ -59,7 +59,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </Flex>
                   <Box>
                     <Text lineHeight="1">HelioStack</Text>
-                    <Text color="#667085" fontSize="xs" lineHeight="1.1">
+                    <Text color="ink.500" fontSize="xs" lineHeight="1.1">
                       Cloud servers
                     </Text>
                   </Box>
@@ -76,11 +76,11 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <NavLink to="/app">
                   {({ isActive }) => (
                     <Box
-                      bg={isActive ? '#eef6ff' : '#ffffff'}
-                      borderColor={isActive ? '#b8d7ff' : '#e3e8f0'}
+                      bg={isActive ? 'brand.50' : 'white'}
+                      borderColor={isActive ? 'brand.100' : 'surface.200'}
                       borderRadius="control"
                       borderWidth="1px"
-                      color={isActive ? '#0b5bd3' : '#475467'}
+                      color={isActive ? 'brand.500' : 'ink.700'}
                       fontSize="xs"
                       fontWeight="700"
                       px="2.5"
@@ -96,8 +96,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <NavLink to="/quote">
                   {({ isActive }) => (
                     <Box
-                      bg="linear-gradient(135deg, #101828 0%, #155eef 100%)"
-                      borderColor={isActive ? '#0b5bd3' : '#155eef'}
+                      bg="ctaBg"
+                      borderColor={isActive ? 'brand.500' : 'brand.600'}
                       borderRadius="control"
                       borderWidth="1px"
                       boxShadow="0 10px 24px rgba(21, 94, 239, 0.22)"
@@ -116,10 +116,10 @@ export function AppLayout({ children }: AppLayoutProps) {
               <NativeSelect.Root disabled flexShrink="0" w="82px" size="sm">
                 <NativeSelect.Field
                   aria-label="Language switching coming soon"
-                  bg="#ffffff"
-                  borderColor="#e3e8f0"
+                  bg="white"
+                  borderColor="surface.200"
                   borderRadius="control"
-                  color="#667085"
+                  color="ink.500"
                   defaultValue={defaultLocale}
                   h="8"
                   minH="8"
@@ -140,10 +140,10 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Box>
       <SkipNavContent />
       <Box id="app-content">{children}</Box>
-      <Box as="footer" borderColor="#e3e8f0" borderTopWidth="1px" bg="#ffffff">
+      <Box as="footer" borderColor="surface.200" borderTopWidth="1px" bg="white">
         <Container maxW="1240px" px={{ base: '3', md: '5' }} py="5">
           <Flex align="center" gap="3" justify="space-between" wrap="wrap">
-            <Text color="#667085" fontSize="sm">
+            <Text color="ink.500" fontSize="sm">
               HelioStack cloud server catalog
             </Text>
             <Flex gap="3" wrap="wrap">
@@ -166,15 +166,15 @@ function HeaderLink({ item }: { readonly item: (typeof navItems)[number] }) {
         {({ isActive }) => (
           <Box
             borderWidth="1px"
-            borderColor={isActive ? '#b8d7ff' : '#e3e8f0'}
+            borderColor={isActive ? 'brand.100' : 'surface.200'}
             borderRadius="control"
-            color={isActive ? '#0b5bd3' : '#475467'}
+            color={isActive ? 'brand.500' : 'ink.700'}
             fontSize="xs"
             fontWeight="700"
             px="2.5"
             py="1.5"
             whiteSpace="nowrap"
-            bg={isActive ? '#eef6ff' : '#ffffff'}
+            bg={isActive ? 'brand.50' : 'white'}
           >
             {item.label}
           </Box>
@@ -186,7 +186,7 @@ function HeaderLink({ item }: { readonly item: (typeof navItems)[number] }) {
 
 function FooterLink({ children, to }: { readonly children: React.ReactNode; readonly to: string }) {
   return (
-    <ChakraLink asChild color="#475467" fontSize="sm" fontWeight="650">
+    <ChakraLink asChild color="ink.700" fontSize="sm" fontWeight="650">
       <NavLink to={to}>{children}</NavLink>
     </ChakraLink>
   );

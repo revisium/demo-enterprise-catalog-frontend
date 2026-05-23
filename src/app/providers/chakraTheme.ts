@@ -21,23 +21,23 @@ const config = defineConfig({
     tokens: {
       colors: {
         brand: {
-          50: { value: '#e7efe9' },
-          100: { value: '#d5e5dc' },
-          500: { value: '#1f5f55' },
-          600: { value: '#1a5149' },
-          700: { value: '#173631' },
-          900: { value: '#102421' },
+          50: { value: '#eef6ff' },
+          100: { value: '#d9ecff' },
+          500: { value: '#0b5bd3' },
+          600: { value: '#155eef' },
+          700: { value: '#1849a9' },
+          900: { value: '#101828' },
         },
         ink: {
-          500: { value: '#53645f' },
-          700: { value: '#344642' },
-          900: { value: '#14201d' },
+          500: { value: '#667085' },
+          700: { value: '#475467' },
+          900: { value: '#101828' },
         },
         surface: {
-          50: { value: '#f5f7f4' },
-          100: { value: '#eef2ec' },
-          200: { value: '#e7efe9' },
-          900: { value: '#14201d' },
+          50: { value: '#f5f7fb' },
+          100: { value: '#eef3f8' },
+          200: { value: '#e1e8f0' },
+          900: { value: '#101828' },
         },
       },
       fonts: {
@@ -55,7 +55,7 @@ const config = defineConfig({
         control: { value: '0.45rem' },
       },
       shadows: {
-        panel: { value: '0 18px 50px rgba(33, 47, 43, 0.08)' },
+        panel: { value: '0 18px 50px rgba(16, 24, 40, 0.08)' },
       },
     },
     semanticTokens: {
@@ -65,11 +65,17 @@ const config = defineConfig({
             'linear-gradient(90deg, color-mix(in srgb, {colors.brand.500} 8%, transparent), transparent 34%), linear-gradient(180deg, white 0, {colors.surface.50} 390px, {colors.surface.100} 100%)',
         },
         headerBg: {
-          value: 'color-mix(in srgb, white 90%, transparent)',
+          value: 'color-mix(in srgb, white 84%, transparent)',
         },
         panelDarkBg: {
           value:
             'linear-gradient(145deg, color-mix(in srgb, {colors.surface.900} 96%, transparent), color-mix(in srgb, {colors.brand.500} 90%, transparent)), {colors.surface.900}',
+        },
+        logoBg: {
+          value: 'linear-gradient(135deg, {colors.brand.600} 0%, #48d6c7 100%)',
+        },
+        ctaBg: {
+          value: 'linear-gradient(135deg, {colors.surface.900} 0%, {colors.brand.600} 100%)',
         },
         brandBorderMuted: {
           value: 'color-mix(in srgb, {colors.brand.500} 18%, transparent)',

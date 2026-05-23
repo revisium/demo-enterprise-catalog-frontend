@@ -85,7 +85,7 @@ const productSeeds: readonly ProductSeed[] = [
     'Storage server dashboard with capacity and backup status',
     'cloud',
     'Available in Frankfurt, Amsterdam, and Singapore',
-    5,
+    3,
     'Active',
     ['S3 API', 'Backups', 'Lifecycle rules', 'Monitoring'],
     {

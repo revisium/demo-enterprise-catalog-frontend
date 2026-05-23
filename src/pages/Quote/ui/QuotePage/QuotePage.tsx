@@ -86,11 +86,11 @@ export const QuotePage = observer(function QuotePage() {
             value={vm.form.controls.region.value}
             w="100%"
           >
-            <option>New York</option>
-            <option>Europe</option>
-            <option>Frankfurt</option>
-            <option>Amsterdam</option>
-            <option>Singapore</option>
+            {vm.regionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </chakra.select>
         </Stack>
         <Stack as="label" gap="1.5">
@@ -107,10 +107,11 @@ export const QuotePage = observer(function QuotePage() {
             value={vm.form.controls.interest.value}
             w="100%"
           >
-            <option>Business VM 8</option>
-            <option>Dedicated R2</option>
-            <option>Database D4</option>
-            <option>Storage S3</option>
+            {vm.interestOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </chakra.select>
         </Stack>
         <Button alignSelf="start" bg="brand.500" borderRadius="control" color="white" type="submit">

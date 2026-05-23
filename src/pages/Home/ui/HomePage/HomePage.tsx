@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { NavLink } from 'react-router';
 
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 
@@ -187,11 +188,19 @@ export const HomePage = observer(function HomePage() {
                   bg="linear-gradient(135deg, #ffffff 0%, #c7f9ef 100%)"
                   borderRadius="8px"
                   color="#101828"
+                  disabled={!vm.canReserveServer}
+                  title="Reservation will be connected with the backend flow"
                 >
                   Reserve server
                 </Button>
-                <Button borderColor="#344054" borderRadius="8px" color="white" variant="outline">
-                  Send quote
+                <Button
+                  asChild
+                  borderColor="#344054"
+                  borderRadius="8px"
+                  color="white"
+                  variant="outline"
+                >
+                  <NavLink to="/quote">Send quote</NavLink>
                 </Button>
               </Stack>
             </Grid>
@@ -224,40 +233,43 @@ export const HomePage = observer(function HomePage() {
                 </Flex>
 
                 <Stack gap="2">
-                  {vm.plans.map((plan) => {
-                    const selectable = vm.selectablePlans.some((item) => item.id === plan.id);
-                    const selected = plan.id === selectedPlan.id;
-
-                    return (
-                      <Grid
-                        alignItems="center"
-                        bg={selected ? '#eef6ff' : '#ffffff'}
-                        borderColor={selected ? '#8dc2ff' : '#e1e8f0'}
-                        borderRadius="8px"
-                        borderWidth="1px"
-                        gap="3"
-                        key={plan.id}
-                        opacity={selectable ? 1 : 0.45}
-                        onClick={() => selectable && vm.selectPlan(plan.id)}
-                        p="3"
-                        templateColumns={{ base: '1fr', md: '1fr auto' }}
-                      >
-                        <Stack gap="0" minW="0">
-                          <Text color="#101828" fontWeight="760">
-                            {plan.name}
-                          </Text>
-                          <Text color="#667085" fontSize="sm">
-                            {plan.cpu} · {plan.ram} · {plan.storage}
-                          </Text>
-                        </Stack>
-                        <Text color={selected ? '#0b5bd3' : '#344054'} fontWeight="760">
-                          {vm.selectedBillingTermId === 'yearly'
-                            ? plan.yearlyPrice
-                            : plan.monthlyPrice}
+                  {vm.planRows.map((plan) => (
+                    <Button
+                      alignItems="center"
+                      aria-pressed={plan.selected}
+                      bg={plan.selected ? '#eef6ff' : '#ffffff'}
+                      borderColor={plan.selected ? '#8dc2ff' : '#e1e8f0'}
+                      borderRadius="8px"
+                      borderWidth="1px"
+                      color="#101828"
+                      disabled={!plan.selectable}
+                      display="grid"
+                      gap="3"
+                      h="auto"
+                      justifyContent="stretch"
+                      key={plan.id}
+                      opacity={plan.selectable ? 1 : 0.45}
+                      onClick={() => vm.selectPlan(plan.id)}
+                      p="3"
+                      textAlign="left"
+                      gridTemplateColumns={{ base: '1fr', md: '1fr auto' }}
+                      variant="ghost"
+                      whiteSpace="normal"
+                      w="100%"
+                    >
+                      <Stack gap="0" minW="0">
+                        <Text color="#101828" fontWeight="760">
+                          {plan.name}
                         </Text>
-                      </Grid>
-                    );
-                  })}
+                        <Text color="#667085" fontSize="sm">
+                          {plan.cpu} · {plan.ram} · {plan.storage}
+                        </Text>
+                      </Stack>
+                      <Text color={plan.selected ? '#0b5bd3' : '#344054'} fontWeight="760">
+                        {plan.displayPrice}
+                      </Text>
+                    </Button>
+                  ))}
                 </Stack>
               </Stack>
 
