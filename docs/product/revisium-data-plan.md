@@ -74,3 +74,25 @@ These do not live in Revisium because they are user-specific or transactional:
 - `helio-price` proves Revisium as versioned catalog and price-book source.
 - Backend proves authorized workflows, mutations, and business lifecycle around
   the stable Revisium source data.
+
+## Query Coverage
+
+The frontend prototype should prove these query shapes through natural customer
+controls. Do not show Revisium project names, table names, row IDs, or source
+widgets inside the public layout.
+
+| UI area   | Customer control                         | Future query capability                         |
+| --------- | ---------------------------------------- | ----------------------------------------------- |
+| Catalog   | Match all filters                        | `AND` over family, stock, price, docs, hardware |
+| Catalog   | Match any selected family/region/add-on  | `OR` groups over selected values                |
+| Catalog   | Memory and price filters                 | Nested schema fields: `hardware`, `pricing`     |
+| Catalog   | Region and stock filters                 | Array/nested availability fields                |
+| Catalog   | Catalog order and recently updated sorts | System fields: display order and updated time   |
+| Catalog   | Price, RAM, and stock sorts              | Schema-field sorting and computed totals        |
+| Pricing   | Term, family, region, stock, max price   | Price-item filtering with joined plan metadata  |
+| Pricing   | Price, stock, setup, RAM, updated sorts  | Mixed schema, nested, computed, and system sort |
+| Locations | Family, support window, stock filters    | Nested availability rows grouped by region      |
+| Locations | Setup, plan count, stock, updated sorts  | Aggregated fields plus related system metadata  |
+
+These controls are mock-backed now. The page ViewModels should remain the
+contract sketch for later Revisium GraphQL variables and backend API adapters.
