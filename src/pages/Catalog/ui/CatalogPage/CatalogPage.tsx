@@ -41,7 +41,7 @@ export const CatalogPage = observer(function CatalogPage() {
             </Text>
           </Stack>
 
-          <SimpleGrid aria-label="Catalog summary" columns={3} gap="2">
+          <SimpleGrid aria-label="Catalog summary" columns={{ base: 2, sm: 3 }} gap="2">
             {vm.summaryMetrics.map((metric) => (
               <Box
                 bg="panelGlassBg"
