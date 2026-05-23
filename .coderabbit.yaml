@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# REVIEW.md is the canonical review contract. If an enforceable rule changes,
+# update REVIEW.md, this file, cubic.yaml, and repo-local .agents rules together.
+
+language: 'en-US'
+tone_instructions: 'Be direct, concrete, and architecture-focused. Avoid decorative comments.'
+early_access: false
+
+reviews:
+  profile: 'assertive'
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  review_details: true
+  poem: false
+  collapse_walkthrough: true
+  changed_files_summary: true
+  sequence_diagrams: false
+  estimate_code_review_effort: true
+  enable_prompt_for_ai_agents: true
+  path_filters:
+    - '!build/**'
+    - '!node_modules/**'
+    - '!src/__generated__/**'
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+  path_instructions:
+    - path: 'src/**/*.ts'
+      instructions: |
+        Review against REVIEW.md and docs/architecture/frontend.md.
+        Block architecture drift: React components must not fetch, build query variables,
+        own business state, perform business decisions, or access persisted/browser state
+        directly. Page state, actions, derived values, and ExplainerDescriptor construction
+        belong in ViewModels. Non-trivial data access belongs in DataSources, except
+        small bootstrap pages may use local mock data until the page spec is marked
+        Done. Repeated row/card/detail surfaces should use Item ViewModels when rows have
+        formatting, links, badges, actions, permissions, files, or computed labels.
+        Prefer MobX computed getters for values read by views. Methods should stay at
+        one abstraction level and separate orchestration, variable building, response
+        mapping, and display formatting.
+    - path: 'src/**/*.tsx'
+      instructions: |
+        Review React components as thin observer views. They should render observable
+        model state and forward events to ViewModel actions only. Flag JSX that contains
+        request orchestration, filter/sort/query payload construction, link-building
+        decisions, business rules, direct storage/browser access, or raw GraphQL response
+        transformations. Enforce one non-trivial React component per file. Enforce
+        same-named folders for non-test component files under src/**/ui/ and reject
+        component-folder index.ts barrels.
+    - path: 'docs/**/*.md'
+      instructions: |
+        Review docs as the implementation source of truth. Page specs must be concrete
+        enough for an agent to implement without inventing UX, data contracts, states,
+        transitions, responsive behavior, or acceptance criteria. Shared architecture,
+        design, and review-rule changes must update the matching canonical docs.
+        Flag code changes that affect behavior, UX, navigation, data contracts,
+        architecture, design, or review policy when the matching docs are not updated.
+    - path: 'AGENTS.md'
+      instructions: |
+        AGENTS.md is the coding-agent boot file. It should point to canonical docs and
+        avoid duplicating long contracts that belong in REVIEW.md or docs/.
+    - path: 'REVIEW.md'
+      instructions: |
+        REVIEW.md is the human/review-bot entry point. Keep it short, enforceable, and
+        linked to detailed docs.
+    - path: '.agents/**'
+      instructions: |
+        Repo-local agent skills and rules must enforce the same source-of-truth contract
+        as REVIEW.md, .coderabbit.yaml, cubic.yaml, and docs/. They must not introduce
+        separate committed review artifacts or competing canonical guidance. PR-review
+        iteration skills should cover both unresolved review threads and failed required
+        checks, including Sonar quality-gate failures.
+
+  pre_merge_checks:
+    custom_checks:
+      - name: 'Frontend architecture contract'
+        mode: 'warning'
+        instructions: |
+          Pass only when the PR preserves the frontend architecture contract:
+          docs-first workflow, thin React views, ViewModel-owned state/actions/derived
+          values, DataSource-owned API access for non-bootstrap pages and pages marked
+          Done, Item ViewModels for non-trivial repeated rows/cards, DI for
+          services/shared state, one non-trivial React component per file, same-named
+          folders for non-test component files under src/**/ui/ with no component-folder
+          index.ts barrels, no hand-edited generated files, and docs updated whenever
+          behavior or architecture changes.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - 'REVIEW.md'
+      - 'docs/architecture/frontend.md'
+      - 'docs/design-system/README.md'
+      - 'docs/product/page-inventory.md'
+      - 'docs/product/page-patterns.md'
+      - 'docs/product/explainer-widget.md'
+      - 'docs/product/pages/**/*.md'
+      - 'docs/review/frontend-checklist.md'
+      - 'docs/playbooks/add-page.md'
+      - 'docs/handoff/README.md'
+      - 'docs/handoff/bootstrap-new-frontend-project.md'
+      - '.agents/skills/frontend-general-checks/SKILL.md'
+      - '.agents/skills/frontend-self-review/SKILL.md'
+      - '.agents/skills/frontend-pr-review-iteration/SKILL.md'
+      - '.agents/skills/frontend-pr-publish/SKILL.md'
+      - '.agents/rules/*.mdc'

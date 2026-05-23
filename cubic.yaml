@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=https://cubic.dev/schema/cubic-repository-config.schema.json
+#
+# REVIEW.md is the canonical review contract. If an enforceable rule changes,
+# update REVIEW.md, this file, .coderabbit.yaml, and repo-local .agents rules together.
+
+version: 1
+
+reviews:
+  enabled: true
+  sensitivity: high
+  incremental_commits: true
+  check_drafts: false
+  architecture_diagrams: false
+  external_contributors_require_manual_review: false
+  resolve_threads_when_addressed: true
+  auto_approve_behavior: disabled
+  auto_approve: disabled
+  custom_instructions: |
+    Use REVIEW.md as the review entry point, then enforce docs/architecture/frontend.md
+    and docs/review/frontend-checklist.md.
+
+    Review priorities:
+    - Docs are the implementation source of truth.
+    - Code changes that affect behavior, UX, navigation, data contracts, architecture,
+      design, or review policy must update the matching docs in the same PR unless
+      the current docs already describe the new behavior exactly.
+    - React components render model state and forward events only.
+    - ViewModels own state, actions, derived values, transitions, and descriptors.
+    - DataSources own mock access now and future SDK calls, response extraction,
+      pagination, cancellation, and transport-level error mapping.
+    - Small bootstrap pages may use local mock data until the page spec is marked
+      Done; pages marked Done must use a DataSource for non-trivial data access.
+    - Lists/details use Item ViewModels when rows have formatting, links, badges,
+      actions, permissions, files, computed labels, or non-trivial state.
+    - Shared or persisted state belongs in services or dedicated state ViewModels.
+    - Keep methods at one abstraction level; split orchestration, variable building,
+      response mapping, link building, and display formatting.
+    - Use MobX computed getters for derived read models instead of duplicated mutable state.
+    - Enforce one non-trivial React component per file.
+    - Enforce same-named folders for non-test component files under src/**/ui/,
+      and reject component-folder index.ts barrels.
+    - Never hand-edit src/__generated__.
+    - Do not treat review-thread cleanup as complete while required GitHub Actions,
+      Sonar, or quality-gate checks are failed or pending.
+    - Flag any PR that weakens page specs, review rules, architecture rules, or
+      design-system contracts without updating the canonical docs.
+    - Repo-local .agents skills/rules must enforce the same contract and must not
+      create a competing source of truth.
+  ignore:
+    files:
+      - build/**
+      - node_modules/**
+      - src/__generated__/**
+  custom_rules:
+    - name: Thin React views
+      description: |
+        Flag React components that fetch data, build GraphQL variables, own business
+        state, make business decisions, access persisted/browser state directly, or
+        transform raw GraphQL responses. Components should render ViewModel state and
+        forward events to ViewModel actions.
+      include:
+        - src/**/*.tsx
+    - name: MVVM and DataSource ownership
+      description: |
+        Flag non-trivial API access that bypasses a DataSource after the page is beyond
+        bootstrap or marked Done. ViewModels should own page state/actions/derived values,
+        while DataSources own SDK calls, requests, cancellation, response extraction,
+        pagination, and transport errors.
+      include:
+        - src/**
+      exclude:
+        - src/__generated__/**
+    - name: List and Item ViewModel boundaries
+      description: |
+        Flag repeated row/card/detail surfaces that use ad hoc JSX objects instead of
+        Item ViewModels when items have formatting, links, badges, actions, permissions,
+        files, computed labels, or item-level state.
+      include:
+        - src/pages/**
+        - src/widgets/**
+    - name: UI component folder structure
+      description: |
+        Flag non-test component files under src/**/ui/ that are not placed inside
+        a same-named folder. ui/ProductCard/ProductCard.tsx is valid;
+        ui/ProductCard.tsx and ui/ProductCard/index.ts are invalid.
+      include:
+        - src/**/ui/**
+    - name: Docs-first contract
+      description: |
+        Flag route, UX, architecture, design-system, or review-rule behavior changes
+        that do not update the matching docs first. Page specs must remain concrete
+        enough for an implementation agent to follow.
+      include:
+        - docs/**
+        - src/**
+        - .agents/**
+    - name: Repo-local agent contract
+      description: |
+        Flag .agents skills/rules that drift from REVIEW.md, docs/architecture/frontend.md,
+        docs/review/frontend-checklist.md, .coderabbit.yaml, or cubic.yaml. Skills should
+        output self-review in responses or PR comments, not create committed review
+        artifacts that compete with docs/.
+      include:
+        - .agents/**
+
+pr_descriptions:
+  generate: true
+  instructions: |
+    Include a concise summary, docs/spec changes, architecture/self-review notes,
+    and the `npm run verify` result.
+
+issues:
+  fix_with_cubic_buttons: false
+  pr_comment_fixes: false
+  fix_commits_to_pr: false

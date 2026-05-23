@@ -1,0 +1,6 @@
+build
+dist
+.react-router
+node_modules
+src/__generated__
+coverage

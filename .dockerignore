@@ -1,0 +1,12 @@
+node_modules
+build
+.react-router
+.git
+.github
+coverage
+*.log
+.idea
+.vscode
+.DS_Store
+.env/.env.local
+.env/.env.*.local
