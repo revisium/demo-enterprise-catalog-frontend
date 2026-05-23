@@ -14,6 +14,7 @@ interface FilterOption {
 interface PricingRow {
   readonly billingTermPrice: number;
   readonly family: string;
+  readonly id: string;
   readonly plan: CatalogProduct;
   readonly region: CatalogRegionAvailability;
 }
@@ -41,6 +42,7 @@ export class PricingPageViewModel {
   maxMonthlyPrice = 0;
   selectedFamilyIds: readonly string[] = [];
   selectedRegionIds: readonly string[] = [];
+  selectedRowIds: readonly string[] = [];
   sortId: PricingSortId = 'monthly';
   stockOnly = true;
 
@@ -58,6 +60,7 @@ export class PricingPageViewModel {
         billingTermPrice:
           this.billingTermId === 'yearly' ? plan.pricing.yearlyMonthlyUsd : plan.pricing.monthlyUsd,
         family: plan.family,
+        id: `${plan.id}:${region.regionId}`,
         plan,
         region,
       })),
@@ -96,6 +99,24 @@ export class PricingPageViewModel {
     return this.filteredRows.length === 0;
   }
 
+  get selectedRows(): readonly PricingRow[] {
+    return this.rows.filter((row) => this.selectedRowIdSet.has(row.id));
+  }
+
+  get quoteSummary() {
+    const selectedRows = this.selectedRows;
+    const monthlyTotal = selectedRows.reduce((total, row) => total + row.billingTermPrice, 0);
+    const setupTotal = selectedRows.reduce((total, row) => total + row.plan.pricing.setupUsd, 0);
+    const regions = new Set(selectedRows.map((row) => row.region.regionId)).size;
+
+    return [
+      { label: 'Selected rows', value: String(selectedRows.length) },
+      { label: 'Monthly total', value: `$${monthlyTotal}` },
+      { label: 'Setup total', value: `$${setupTotal}` },
+      { label: 'Regions', value: String(regions) },
+    ];
+  }
+
   get summaryMetrics() {
     const lowestPrice =
       this.filteredRows.length === 0
@@ -124,6 +145,7 @@ export class PricingPageViewModel {
     this.maxMonthlyPrice = 0;
     this.selectedFamilyIds = [];
     this.selectedRegionIds = [];
+    this.selectedRowIds = [];
     this.sortId = 'monthly';
     this.stockOnly = true;
   }
@@ -138,6 +160,18 @@ export class PricingPageViewModel {
 
   setStockOnly(value: boolean) {
     this.stockOnly = value;
+  }
+
+  isRowSelected(rowId: string) {
+    return this.selectedRowIdSet.has(rowId);
+  }
+
+  removeSelectedRow(rowId: string) {
+    this.selectedRowIds = this.selectedRowIds.filter((id) => id !== rowId);
+  }
+
+  toggleRow(rowId: string) {
+    this.selectedRowIds = this.toggleValue(this.selectedRowIds, rowId);
   }
 
   toggleFamily(familyId: string) {
@@ -170,6 +204,10 @@ export class PricingPageViewModel {
 
   private isSortId(value: string): value is PricingSortId {
     return sortOptions.some((option) => option.id === value);
+  }
+
+  private get selectedRowIdSet(): ReadonlySet<string> {
+    return new Set(this.selectedRowIds);
   }
 
   private matchesRow(row: PricingRow) {
