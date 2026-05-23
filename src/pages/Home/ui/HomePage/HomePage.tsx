@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { ExplainerPanel } from 'src/widgets/ExplainerPanel';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 
-const vm = new HomePageViewModel();
-
 export const HomePage = observer(function HomePage() {
+  const [vm] = useState(() => new HomePageViewModel());
+
   return (
     <main className="page-shell">
       <section className="hero-grid">

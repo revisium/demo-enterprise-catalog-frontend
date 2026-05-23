@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { CatalogPageViewModel } from '../../model/CatalogPageViewModel';
 
-const vm = new CatalogPageViewModel();
-
 export const CatalogPage = observer(function CatalogPage() {
+  const [vm] = useState(() => new CatalogPageViewModel());
+
   return (
     <main className="page-shell">
       <header className="page-header">

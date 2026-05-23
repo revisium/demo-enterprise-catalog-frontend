@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite';
+import { useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { ExplainerPanel } from 'src/widgets/ExplainerPanel';
@@ -6,7 +7,10 @@ import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewMod
 
 export const ProductDetailPage = observer(function ProductDetailPage() {
   const params = useParams();
-  const vm = new ProductDetailPageViewModel(params.productId);
+  const vm = useMemo(
+    () => new ProductDetailPageViewModel(params.productId),
+    [params.productId],
+  );
   const { product } = vm;
 
   return (

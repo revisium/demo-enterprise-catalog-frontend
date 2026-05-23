@@ -10,7 +10,9 @@ export class QuotePageViewModel {
     makeAutoObservable(this, { form: false });
   }
 
-  async submit() {
+  async submit(event?: { preventDefault(): void }) {
+    event?.preventDefault();
+
     const errors = await this.form.validate();
     if (errors.length > 0) {
       return;

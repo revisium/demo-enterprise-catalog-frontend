@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 
 import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 
-const vm = new QuotePageViewModel();
-
 export const QuotePage = observer(function QuotePage() {
+  const [vm] = useState(() => new QuotePageViewModel());
+
   return (
     <main className="page-shell">
       <header className="page-header">
@@ -16,7 +17,7 @@ export const QuotePage = observer(function QuotePage() {
         </p>
       </header>
 
-      <form className="quote-form" onSubmit={(event) => void handleSubmit(event)}>
+      <form className="quote-form" onSubmit={(event) => void vm.submit(event)}>
         <label>
           <span className="field-label">Company</span>
           <input
@@ -69,8 +70,3 @@ export const QuotePage = observer(function QuotePage() {
     </main>
   );
 });
-
-async function handleSubmit(event: { preventDefault(): void }) {
-  event.preventDefault();
-  await vm.submit();
-}
