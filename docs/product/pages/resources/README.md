@@ -2,13 +2,18 @@
 
 ## Purpose
 
-List datasheets, manuals, certificates, and legal documents.
+List customer docs, planning guides, API notes, tags, categories, and helpful
+feedback affordances.
 
 ## Current Data Mode
 
-Planned typed mock data.
+Typed mock CMS article data plus local helpful state.
 
 ## Future Contract
 
-Files and document metadata belong to `enterprise-catalog-data`; download events
-belong to the backend runtime layer.
+- Revisium project: `helio-cms`.
+- CMS tables: `docs_articles`, `docs_categories`, `tags`, `authors`,
+  `glossary_terms`.
+- Backend owns per-user helpful votes, favorites, and read history.
+- Public layout must show customer-facing docs and labels only, not source-layer
+  proof.
