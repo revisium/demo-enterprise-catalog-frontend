@@ -27,11 +27,11 @@ export const CatalogPage = observer(function CatalogPage() {
           Catalog
         </Text>
         <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '6xl' }} lineHeight="1">
-          Browse product families with contract-shaped mock data.
+          Browse industrial product families for plant-floor telemetry programs.
         </Heading>
         <Text color="ink.500" fontSize="lg" maxW="720px">
-          Dense rows show the fields that need to survive into Revisium schemas: availability,
-          lifecycle, documents, protocols, and pricing signals.
+          Compare gateways, sensors, and SaaS plans by availability, lifecycle, documentation,
+          protocols, and commercial readiness.
         </Text>
       </Stack>
 
@@ -108,7 +108,7 @@ export const CatalogPage = observer(function CatalogPage() {
             </Stack>
             <Stack align="start" color="ink.500" fontSize="sm" gap="2">
               <Text>{product.availability}</Text>
-              <Text>{product.regionCount} source regions</Text>
+              <Text>{product.regionCount} regions</Text>
               <Text>{product.documents.length} documents</Text>
               <Button asChild borderRadius="control" mt="2" variant="outline">
                 <Link to={product.detailHref}>Open</Link>

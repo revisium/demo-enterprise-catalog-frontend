@@ -16,7 +16,6 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { ProductVisual } from 'src/shared/ui';
-import { ExplainerPanel } from 'src/widgets/ExplainerPanel';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 
 export const HomePage = observer(function HomePage() {
@@ -32,7 +31,7 @@ export const HomePage = observer(function HomePage() {
       >
         <Stack gap="5">
           <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-            Nexora Systems catalog
+            Nexora Systems industrial catalog
           </Text>
           <Heading
             as="h1"
@@ -40,11 +39,12 @@ export const HomePage = observer(function HomePage() {
             fontSize={{ base: '4xl', md: '6xl', xl: '7xl' }}
             lineHeight="0.98"
           >
-            Industrial devices, SaaS plans, and release evidence in one catalog.
+            Industrial telemetry products for asset-heavy operations.
           </Heading>
           <Text color="ink.500" fontSize="lg" maxW="720px">
-            Browse the customer-facing catalog first. Then inspect the source layer to see how
-            products, documents, price-book drafts, and revision proof will map to Revisium.
+            Nexora Systems sells edge devices, condition-monitoring sensors, SaaS plans, and partner
+            APIs for asset-heavy teams. Browse products, compare availability, and plan regional
+            rollouts from one industrial catalog.
           </Text>
           <Flex gap="3" wrap="wrap">
             <Button asChild bg="brand.500" borderRadius="control" color="white">
@@ -70,7 +70,7 @@ export const HomePage = observer(function HomePage() {
           <Flex color="whiteAlpha.700" fontSize="sm" justify="space-between">
             <Text>Catalog snapshot</Text>
             <Text as="strong" color="white">
-              Mock branch
+              2026 planning
             </Text>
           </Flex>
           {vm.heroMetrics.map((metric) => (
@@ -90,6 +90,15 @@ export const HomePage = observer(function HomePage() {
               </Text>
             </Box>
           ))}
+          <Stack bg="whiteAlpha.100" borderRadius="control" gap="2" p="3">
+            <Text color="whiteAlpha.700" fontSize="xs" fontWeight="700" textTransform="uppercase">
+              Company model
+            </Text>
+            <Text color="white">{vm.companySnapshot.market}</Text>
+            <Text color="whiteAlpha.700" fontSize="sm">
+              {vm.companySnapshot.customers}
+            </Text>
+          </Stack>
         </Stack>
       </Grid>
 
@@ -125,6 +134,9 @@ export const HomePage = observer(function HomePage() {
                   {product.name}
                 </Heading>
                 <Text color="ink.500">{product.summary}</Text>
+                <Text color="ink.700" fontSize="sm" fontWeight="650">
+                  {product.buyerFit}
+                </Text>
               </Stack>
               <SimpleGrid columns={2} gap="3">
                 {product.previewMetrics.map((metric) => (
@@ -145,6 +157,9 @@ export const HomePage = observer(function HomePage() {
                   </Badge>
                 ))}
               </Flex>
+              <Text color="ink.500" fontSize="sm">
+                {product.customerNote}
+              </Text>
               <ChakraLink asChild color="brand.500" fontWeight="700">
                 <Link to={product.detailHref}>Inspect product</Link>
               </ChakraLink>
@@ -156,10 +171,10 @@ export const HomePage = observer(function HomePage() {
       <Grid gap={{ base: '6', lg: '10' }} mt="10" templateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
         <Stack gap="4">
           <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-            Release proof
+            Product updates
           </Text>
           <Heading as="h2" color="ink.900" fontSize={{ base: '2xl', md: '4xl' }}>
-            Catalog and price-book changes stay visible before backend wiring.
+            Catalog and price-book changes stay clear for buyers and partners.
           </Heading>
           <Stack gap="3">
             {vm.releases.map((release) => (
@@ -167,12 +182,29 @@ export const HomePage = observer(function HomePage() {
                 <Text as="strong" color="ink.900">
                   {release.label}
                 </Text>
+                <Badge alignSelf="start" bg="surface.200" color="brand.700">
+                  {release.scope}
+                </Badge>
                 <Text color="ink.500">{release.summary}</Text>
               </Stack>
             ))}
           </Stack>
         </Stack>
-        <ExplainerPanel title="Mock-first proof layer" items={vm.proofItems} />
+        <Stack bg="white" borderRadius="panel" borderWidth="1px" gap="4" p="5">
+          <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+            Enablement
+          </Text>
+          <Heading as="h2" color="ink.900" fontSize={{ base: '2xl', md: '3xl' }}>
+            Built for product, service, procurement, and partner teams.
+          </Heading>
+          <Stack gap="3">
+            {vm.enablementItems.map((item) => (
+              <Box bg="surface.100" borderRadius="control" key={item} p="3">
+                <Text color="ink.700">{item}</Text>
+              </Box>
+            ))}
+          </Stack>
+        </Stack>
       </Grid>
     </Container>
   );

@@ -82,3 +82,9 @@ npm run ci:local:sonar
 
 If the token is stored in another local repo, set `SONAR_ENV_FILE` instead of
 copying the secret into this repo.
+
+Do not replace this with `npm run sonar:issues:local` before PR updates.
+`sonar:issues:local` only checks unresolved issues; it does not validate Quality
+Gate conditions such as duplicated lines density. Duplication failures must be
+found locally with `npm run ci:local:sonar` or `npm run sonar:local` before
+waiting for remote SonarCloud.

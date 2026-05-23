@@ -4,7 +4,7 @@ export default function PricingRoute() {
   return (
     <PlaceholderPage
       title="Pricing and price books"
-      summary="Regional price-book tables, tiers, formulas, and release-ready mock states will land after the first UI direction is selected."
+      summary="Review regional price-book planning, tiers, currencies, and bundle options for Nexora product programs."
     />
   );
 }

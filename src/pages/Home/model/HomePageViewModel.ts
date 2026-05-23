@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
 import type { CatalogProduct, CatalogRelease } from 'src/entities/catalog';
+import { supportedLocales } from 'src/shared/i18n';
 import { HomePageDataSource } from '../api/HomePageDataSource';
 
 interface HeroMetricDescriptor {
@@ -17,7 +18,11 @@ type HomeCatalogCard = CatalogProduct & {
 export class HomePageViewModel {
   private readonly dataSource = new HomePageDataSource();
 
-  readonly backendCallCount = 0;
+  readonly companySnapshot = {
+    market: 'Industrial telemetry and asset operations',
+    customers: 'Manufacturers, utilities, logistics hubs, and equipment service networks',
+    operatingModel: 'Global catalog, regional pricing, localized content, and partner enablement',
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -25,9 +30,9 @@ export class HomePageViewModel {
 
   get heroMetrics(): readonly HeroMetricDescriptor[] {
     return [
-      { label: 'priority product cards', value: this.catalogCardCount },
-      { label: 'release states', value: this.releaseCount },
-      { label: 'backend calls in this PR', value: this.backendCallCount },
+      { label: 'featured products', value: this.catalogCardCount },
+      { label: 'active update streams', value: this.releaseCount },
+      { label: 'official languages planned', value: supportedLocales.length },
     ];
   }
 
@@ -55,11 +60,12 @@ export class HomePageViewModel {
     return this.releases.length;
   }
 
-  get proofItems() {
+  get enablementItems() {
     return [
-      'Future project: enterprise-catalog-data.',
-      'Candidate tables: products, documents, catalogReleases.',
-      'Nested specs, protocol arrays, document arrays, and release states are already represented.',
+      'Product news and field notes for service teams.',
+      'Localized documentation for regional rollout planning.',
+      'Partner API coverage and integration readiness.',
+      'Price-book updates for procurement and channel teams.',
     ];
   }
 }

@@ -13,6 +13,7 @@ projects.
   controls.
 - MobX ViewModels with typed mock DataSources.
 - `@revisium/forms-core` for the quote interaction contract.
+- Language selector scaffolded for the six United Nations official languages.
 
 ## Delivery Stack
 
@@ -37,8 +38,9 @@ projects.
 1. Review the Chakra-based home/catalog/product-detail UI direction.
 2. Stabilize responsive behavior and any visual changes from review.
 3. Build pricing and release-diff pages on mock data using the Chakra theme.
-4. Expand resources/documents and compare flows.
-5. Freeze contracts for Revisium tables, generated clients, and backend runtime
+4. Add CMS-backed news/blog and localized content mocks.
+5. Expand resources/documents and compare flows.
+6. Freeze contracts for Revisium tables, generated clients, and backend runtime
    interactions.
 
 ## Required Handoff Output
