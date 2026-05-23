@@ -1,6 +1,6 @@
 {
   "name": "demo-enterprise-catalog-frontend",
-  "description": "Nexora Systems enterprise catalog demo - React Router v7 SSR, MobX MVVM, mock-first frontend contracts",
+  "description": "HelioStack cloud server catalog demo - React Router v7 SSR, MobX MVVM, mock-first frontend contracts",
   "private": true,
   "version": "0.1.0",
   "type": "module",

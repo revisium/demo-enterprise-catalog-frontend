@@ -14,7 +14,7 @@ export function Layout({ children }: LayoutProps) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Nexora Systems - Enterprise Catalog</title>
+        <title>HelioStack - Cloud Server Catalog</title>
         <Meta />
         <Links />
       </head>

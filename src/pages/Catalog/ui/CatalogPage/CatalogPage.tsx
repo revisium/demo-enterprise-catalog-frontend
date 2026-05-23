@@ -27,11 +27,11 @@ export const CatalogPage = observer(function CatalogPage() {
           Catalog
         </Text>
         <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '6xl' }} lineHeight="1">
-          Browse industrial product families for plant-floor telemetry programs.
+          Browse cloud and dedicated server plans.
         </Heading>
         <Text color="ink.500" fontSize="lg" maxW="720px">
-          Compare gateways, sensors, and SaaS plans by availability, lifecycle, documentation,
-          protocols, and commercial readiness.
+          Compare server plans by availability, region, contract term, documentation, support, and
+          commercial readiness.
         </Text>
       </Stack>
 

@@ -1,11 +1,12 @@
 # demo-enterprise-catalog-frontend
 
-Public frontend for the Nexora Systems enterprise catalog demo.
+Public frontend for the HelioStack cloud server catalog demo.
 
 The site should feel like a real B2B product catalog before it feels like a
-Revisium demo. Visitors browse products, SaaS plans, pricing, resources,
-solutions, and catalog releases. Revisium proof appears through source links,
-release diffs, and explainer UI.
+Revisium demo. Visitors choose cloud and dedicated server plans, compare
+regional prices, read docs, review updates, and request quotes. Revisium proof
+appears through source links, release diffs, and explainer UI outside the
+customer-facing layout.
 
 ## Related Repos
 
@@ -48,9 +49,9 @@ SONAR_ENV_FILE=../../forms-core/.env.sonar npm run ci:local:sonar
 
 ## UX Direction
 
-- Enterprise catalog portal, not a generic marketing landing page.
-- Dense but scannable product and pricing pages.
-- Rich product imagery: devices, diagrams, datasheets, certificates, logos.
+- Premium cloud server catalog, not a generic marketing landing page.
+- Scannable server, price-book, location, and customer portal pages.
+- Rich product imagery: servers, data centers, docs, diagrams, and logos.
 - Public user flows first; Revisium source layer second.
 - No user-generated content surfaces such as comments, reviews, or community
   posts.
@@ -58,14 +59,15 @@ SONAR_ENV_FILE=../../forms-core/.env.sonar npm run ci:local:sonar
 ## Primary Route Flow
 
 1. Home
-2. Catalog list
-3. Product detail
+2. Server catalog
+3. Server detail
 4. Pricing / price book
-5. Compare products or plans
-6. Resources / documents
-7. Catalog releases and diff
-8. Developers / partners
+5. Locations
+6. Compare server plans
+7. Docs / resources
+8. Updates
 9. Request quote
+10. Customer portal
 
 Exact route contracts live in [docs/product/README.md](docs/product/README.md).
 
