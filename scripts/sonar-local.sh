@@ -4,6 +4,16 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+require_cmd() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Missing required command: $1" >&2
+    exit 1
+  fi
+}
+
+require_cmd docker
+require_cmd git
+
 SONAR_ENV_FILE="${SONAR_ENV_FILE:-.env.sonar}"
 
 if [[ -f "${SONAR_ENV_FILE}" ]]; then
@@ -33,7 +43,8 @@ if [[ -n "${SONAR_PR_KEY:-}" ]]; then
     "-Dsonar.pullrequest.branch=${SONAR_PR_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
     "-Dsonar.pullrequest.base=${SONAR_PR_BASE:-master}"
   )
-elif pr_json="$(gh pr view --json number,headRefName,baseRefName 2>/dev/null)"; then
+elif command -v gh >/dev/null 2>&1 && pr_json="$(gh pr view --json number,headRefName,baseRefName 2>/dev/null)"; then
+  require_cmd node
   pr_number="$(node -e "console.log(JSON.parse(process.argv[1]).number)" "$pr_json")"
   pr_branch="$(node -e "console.log(JSON.parse(process.argv[1]).headRefName)" "$pr_json")"
   pr_base="$(node -e "console.log(JSON.parse(process.argv[1]).baseRefName)" "$pr_json")"

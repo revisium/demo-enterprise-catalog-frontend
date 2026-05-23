@@ -4,6 +4,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+require_cmd() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Missing required command: $1" >&2
+    exit 1
+  fi
+}
+
+require_cmd curl
+require_cmd git
+require_cmd node
+
 SONAR_ENV_FILE="${SONAR_ENV_FILE:-.env.sonar}"
 
 if [[ -f "${SONAR_ENV_FILE}" ]]; then
@@ -38,7 +49,7 @@ if [[ -n "${SONAR_PR_KEY:-}" ]]; then
 elif [[ "${GITHUB_EVENT_NAME:-}" == pull_request* && -f "${GITHUB_EVENT_PATH:-}" ]]; then
   pr_number="$(node -e "const fs = require('node:fs'); console.log(JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')).pull_request.number)")"
   query_args+=(--data-urlencode "pullRequest=${pr_number}")
-elif pr_json="$(gh pr view --json number 2>/dev/null)"; then
+elif command -v gh >/dev/null 2>&1 && pr_json="$(gh pr view --json number 2>/dev/null)"; then
   pr_number="$(node -e "console.log(JSON.parse(process.argv[1]).number)" "$pr_json")"
   query_args+=(--data-urlencode "pullRequest=${pr_number}")
 else
