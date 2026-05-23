@@ -14,11 +14,11 @@ export const QuotePage = observer(function QuotePage() {
           Sales inquiry
         </Text>
         <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '6xl' }} lineHeight="1">
-          Request a regional quote from Nexora Systems.
+          Request a HelioStack server quote.
         </Heading>
         <Text color="ink.500" fontSize="lg" maxW="720px">
-          Tell us where you operate and which product line you are evaluating. A regional specialist
-          can follow up with availability, pricing, and rollout guidance.
+          Tell us where you want to run and which server plan you are evaluating. A specialist can
+          follow up with availability, pricing, and setup guidance.
         </Text>
       </Stack>
 
@@ -86,9 +86,11 @@ export const QuotePage = observer(function QuotePage() {
             value={vm.form.controls.region.value}
             w="100%"
           >
-            <option>North America</option>
-            <option>Europe</option>
-            <option>APAC</option>
+            {vm.regionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </chakra.select>
         </Stack>
         <Stack as="label" gap="1.5">
@@ -105,9 +107,11 @@ export const QuotePage = observer(function QuotePage() {
             value={vm.form.controls.interest.value}
             w="100%"
           >
-            <option>Edge Gateway X4</option>
-            <option>Sentinel Vibration Node</option>
-            <option>Nexora Observe Pro</option>
+            {vm.interestOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </chakra.select>
         </Stack>
         <Button alignSelf="start" bg="brand.500" borderRadius="control" color="white" type="submit">
@@ -115,7 +119,7 @@ export const QuotePage = observer(function QuotePage() {
         </Button>
         {vm.submitted ? (
           <Text color="brand.500" fontWeight="700">
-            Request captured. A Nexora specialist will follow up with regional guidance.
+            Request captured. A HelioStack specialist will follow up with regional guidance.
           </Text>
         ) : null}
         {vm.submitError ? (

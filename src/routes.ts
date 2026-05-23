@@ -5,8 +5,10 @@ export default [
   route('catalog', 'app/routes/catalog.tsx'),
   route('catalog/:productId', 'app/routes/catalog.$productId.tsx'),
   route('pricing', 'app/routes/pricing.tsx'),
+  route('locations', 'app/routes/locations.tsx'),
   route('compare', 'app/routes/compare.tsx'),
   route('resources', 'app/routes/resources.tsx'),
   route('releases', 'app/routes/releases.tsx'),
   route('quote', 'app/routes/quote.tsx'),
+  route('app', 'app/routes/app.tsx'),
 ] satisfies RouteConfig;

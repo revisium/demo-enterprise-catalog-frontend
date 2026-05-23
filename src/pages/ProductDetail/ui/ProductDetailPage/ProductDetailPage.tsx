@@ -88,25 +88,25 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
           </Heading>
           <Grid as="dl" gap="2" templateColumns={{ base: '1fr', md: '150px minmax(0, 1fr)' }}>
             <Text as="dt" color="ink.500">
-              Enclosure
+              Platform
             </Text>
             <Text as="dd" color="ink.900" m="0">
               {product.specs.enclosure}
             </Text>
             <Text as="dt" color="ink.500">
-              Ingress
+              Security
             </Text>
             <Text as="dd" color="ink.900" m="0">
               {product.specs.ingress}
             </Text>
             <Text as="dt" color="ink.500">
-              Operating range
+              SLA
             </Text>
             <Text as="dd" color="ink.900" m="0">
               {product.specs.operatingRange}
             </Text>
             <Text as="dt" color="ink.500">
-              Connectivity
+              Network
             </Text>
             <Text as="dd" color="ink.900" m="0">
               {product.specs.connectivity}

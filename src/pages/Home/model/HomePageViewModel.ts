@@ -1,71 +1,183 @@
 import { makeAutoObservable } from 'mobx';
 
-import type { CatalogProduct, CatalogRelease } from 'src/entities/catalog';
-import { supportedLocales } from 'src/shared/i18n';
-import { HomePageDataSource } from '../api/HomePageDataSource';
+import {
+  HomePageDataSource,
+  type BillingTermId,
+  type RegionId,
+  type ServerPlan,
+  type ServerPlanId,
+  type UseCaseId,
+} from '../api/HomePageDataSource';
 
-interface HeroMetricDescriptor {
-  readonly label: string;
-  readonly value: number;
+interface PlanRowViewModel extends ServerPlan {
+  readonly displayPrice: string;
+  readonly selected: boolean;
+  readonly selectable: boolean;
 }
 
-type HomeCatalogCard = CatalogProduct & {
-  readonly detailHref: string;
-  readonly previewMetrics: CatalogProduct['metrics'];
-  readonly previewProtocols: CatalogProduct['protocols'];
-};
-
 export class HomePageViewModel {
-  private readonly dataSource = new HomePageDataSource();
+  readonly dataSource: HomePageDataSource;
+  readonly canReserveServer = false;
 
-  readonly companySnapshot = {
-    market: 'Industrial telemetry and asset operations',
-    customers: 'Manufacturers, utilities, logistics hubs, and equipment service networks',
-    operatingModel: 'Global catalog, regional pricing, localized content, and partner enablement',
-  };
+  selectedBillingTermId: BillingTermId = 'monthly';
+  selectedRegionId: RegionId = 'de-fra';
+  selectedUseCaseId: UseCaseId = 'web-app';
+  selectedPlanId: ServerPlanId = 'business-vm';
 
-  constructor() {
-    makeAutoObservable(this);
+  constructor(dataSource = new HomePageDataSource()) {
+    this.dataSource = dataSource;
+    makeAutoObservable(this, { dataSource: false });
   }
 
-  get heroMetrics(): readonly HeroMetricDescriptor[] {
-    return [
-      { label: 'featured products', value: this.catalogCardCount },
-      { label: 'active update streams', value: this.releaseCount },
-      { label: 'official languages planned', value: supportedLocales.length },
-    ];
+  get useCases() {
+    return this.dataSource.getUseCaseOptions();
   }
 
-  get heroProducts(): readonly HomeCatalogCard[] {
-    return this.dataSource
-      .getSnapshot()
-      .products.slice(0, 3)
-      .map((product) => ({
-        ...product,
-        detailHref: `/catalog/${product.id}`,
-        previewMetrics: product.metrics.slice(0, 2),
-        previewProtocols: product.protocols.slice(0, 3),
-      }));
+  get regions() {
+    return this.dataSource.getRegionOptions();
   }
 
-  get releases(): readonly CatalogRelease[] {
-    return this.dataSource.getSnapshot().releases;
+  get billingTerms() {
+    return this.dataSource.getBillingTermOptions();
   }
 
-  get catalogCardCount() {
-    return this.heroProducts.length;
+  get plans() {
+    return this.dataSource.getServerPlans();
   }
 
-  get releaseCount() {
-    return this.releases.length;
+  get updates() {
+    return this.dataSource.getUpdateItems();
   }
 
-  get enablementItems() {
-    return [
-      'Product news and field notes for service teams.',
-      'Localized documentation for regional rollout planning.',
-      'Partner API coverage and integration readiness.',
-      'Price-book updates for procurement and channel teams.',
-    ];
+  get selectedUseCase() {
+    const useCase = this.useCases.find((item) => item.id === this.selectedUseCaseId);
+
+    if (!useCase) {
+      throw new Error('HelioStack catalog requires at least one use case option');
+    }
+
+    return useCase;
+  }
+
+  get selectedRegion() {
+    const region = this.regions.find((item) => item.id === this.selectedRegionId);
+
+    if (!region) {
+      throw new Error('HelioStack catalog requires at least one region option');
+    }
+
+    return region;
+  }
+
+  get selectedBillingTerm() {
+    const term = this.billingTerms.find((item) => item.id === this.selectedBillingTermId);
+
+    if (!term) {
+      throw new Error('HelioStack catalog requires at least one billing term option');
+    }
+
+    return term;
+  }
+
+  get selectedPlan() {
+    const plan = this.plans.find((item) => item.id === this.selectedPlanId);
+
+    if (!plan) {
+      throw new Error('HelioStack catalog requires at least one server plan');
+    }
+
+    return plan;
+  }
+
+  get matchingPlans() {
+    return this.plans.filter(
+      (plan) =>
+        plan.regionIds.includes(this.selectedRegionId) &&
+        plan.useCaseIds.includes(this.selectedUseCaseId),
+    );
+  }
+
+  get regionPlans() {
+    return this.plans.filter((plan) => plan.regionIds.includes(this.selectedRegionId));
+  }
+
+  get selectablePlans() {
+    if (this.matchingPlans.length > 0) {
+      return this.matchingPlans;
+    }
+
+    if (this.regionPlans.length > 0) {
+      return this.regionPlans;
+    }
+
+    return this.plans;
+  }
+
+  get planRows(): readonly PlanRowViewModel[] {
+    const selectableIds = new Set(this.selectablePlans.map((plan) => plan.id));
+
+    return this.plans.map((plan) => ({
+      ...plan,
+      displayPrice: this.getPlanPrice(plan),
+      selected: plan.id === this.selectedPlan.id,
+      selectable: selectableIds.has(plan.id),
+    }));
+  }
+
+  get hasExactPlanMatches() {
+    return this.matchingPlans.length > 0;
+  }
+
+  get selectedPrice() {
+    return this.getPlanPrice(this.selectedPlan);
+  }
+
+  get includedItems() {
+    return this.dataSource.getIncludedItems();
+  }
+
+  selectUseCase(useCaseId: UseCaseId) {
+    this.selectedUseCaseId = useCaseId;
+    this.selectRecommendedPlan();
+  }
+
+  selectRegion(regionId: RegionId) {
+    this.selectedRegionId = regionId;
+    this.selectRecommendedPlan();
+  }
+
+  selectBillingTerm(termId: BillingTermId) {
+    this.selectedBillingTermId = termId;
+  }
+
+  selectPlan(planId: ServerPlanId) {
+    if (!this.selectablePlans.some((plan) => plan.id === planId)) {
+      return;
+    }
+
+    this.selectedPlanId = planId;
+  }
+
+  private getPlanPrice(plan: ServerPlan) {
+    if (this.selectedBillingTermId === 'yearly') {
+      return plan.yearlyPrice;
+    }
+
+    return plan.monthlyPrice;
+  }
+
+  private selectRecommendedPlan() {
+    if (
+      this.selectedPlan.regionIds.includes(this.selectedRegionId) &&
+      this.selectedPlan.useCaseIds.includes(this.selectedUseCaseId)
+    ) {
+      return;
+    }
+
+    const nextPlan = this.selectablePlans[0];
+
+    if (nextPlan) {
+      this.selectedPlanId = nextPlan.id;
+    }
   }
 }

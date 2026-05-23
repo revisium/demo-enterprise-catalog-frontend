@@ -2,16 +2,17 @@
 
 ## Purpose
 
-Show Nexora Systems as a real enterprise catalog portal and lead visitors into
-catalog, releases, and enablement content.
+Show HelioStack as a real cloud server catalog and let visitors complete one
+clear task: pick a use case, data center, and contract term, then see a
+recommended server plan with price and availability.
 
-The home page should introduce Nexora as an industrial telemetry and asset
-operations vendor, not as a generic SaaS company. The first viewport should make
-the business believable before explaining Revisium.
+The home page is not a landing page. It is a working selector for cloud and
+dedicated server plans. Marketing copy should stay secondary to the selection
+workflow and price result.
 
 ## Current Data Mode
 
-Typed mock products and releases.
+Typed mock server plans, regions, billing terms, and updates.
 
 ## Proof Layer
 
@@ -21,7 +22,8 @@ developer-facing pages.
 
 ## Next UI Decisions
 
-- Product-card density.
-- How much release/update content appears on the first viewport.
-- Whether the hero should include generated product imagery or stay operational.
-- Whether the temporary `NX` mark is enough until the logo asset PR.
+- Whether the light premium theme is accepted as the base design system.
+- How much plan density belongs on the first viewport.
+- Whether location details should stay on the home page or move fully to
+  `/locations`.
+- Whether the temporary `HS` mark is enough until the logo asset PR.

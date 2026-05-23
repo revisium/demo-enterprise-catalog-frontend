@@ -1,6 +1,6 @@
 # Frontend Docs
 
-This directory is the implementation source of truth for the Nexora Systems
+This directory is the implementation source of truth for the HelioStack
 frontend.
 
 ## Reading Order

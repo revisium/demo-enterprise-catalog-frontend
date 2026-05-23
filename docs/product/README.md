@@ -1,9 +1,11 @@
 # Product Routes
 
-This folder owns the frontend route and UX contract for the Nexora Systems demo.
+This folder owns the frontend route and UX contract for the HelioStack demo.
 
-The docs repo owns the public product passport. This folder should grow into the
-implementation-facing page specs as the frontend is built.
+HelioStack is a cloud and dedicated server catalog with regional price books and
+an authorized customer portal. The public site helps visitors choose servers,
+compare prices, read docs, and request quotes. The private portal handles saved
+plans, quote lifecycle, favorites, API keys, and organization settings.
 
 Read [`company.md`](./company.md) before adding major pages. It defines the
 company legend, buyer context, and source-data boundaries that keep the demo
@@ -11,76 +13,72 @@ realistic.
 
 ## Route Map
 
-| Route                     | Purpose                                          | Main source                         |
-| ------------------------- | ------------------------------------------------ | ----------------------------------- |
-| `/`                       | Enterprise catalog home and featured release     | CMS + catalog data                  |
-| `/about`                  | Demo/product explanation                         | CMS                                 |
-| `/news`                   | Product news, release commentary, field notes    | CMS                                 |
-| `/news/[slug]`            | News/blog article detail                         | CMS                                 |
-| `/catalog`                | Product listing with filters                     | catalog data                        |
-| `/catalog/[productId]`    | Product detail, specs, docs, related bundles     | catalog data                        |
-| `/families`               | Product families                                 | catalog data                        |
-| `/categories`             | Product categories                               | catalog data                        |
-| `/plans`                  | SaaS plans and feature limits                    | catalog data                        |
-| `/pricing`                | Price-book overview and region/currency switcher | enterprise-catalog-price            |
-| `/pricing/[priceBookId]`  | Price list with tiered price items               | enterprise-catalog-price            |
-| `/compare`                | Product/plan comparison                          | catalog data + backend if shareable |
-| `/solutions`              | Industry/use-case landing                        | CMS + catalog data                  |
-| `/solutions/[slug]`       | Solution detail page                             | CMS                                 |
-| `/resources`              | Datasheets, manuals, certificates, legal docs    | catalog data                        |
-| `/resources/[documentId]` | Document detail and download                     | catalog data + backend event        |
-| `/certifications`         | Certification index                              | catalog data                        |
-| `/developers`             | API, dictionary, and export overview             | CMS + source links                  |
-| `/partners`               | Partner enablement entry                         | CMS                                 |
-| `/api`                    | Generated API overview                           | CMS + source links                  |
-| `/releases`               | Catalog and price-book releases                  | catalog data                        |
-| `/releases/[releaseId]`   | Release detail                                   | catalog data                        |
-| `/release-diff`           | Revision/diff proof flow                         | catalog data                        |
-| `/quote`                  | Request quote flow                               | backend runtime                     |
+| Route                     | Purpose                                                     | Main source                                       |
+| ------------------------- | ----------------------------------------------------------- | ------------------------------------------------- |
+| `/`                       | Server-plan picker and first price recommendation           | price catalog + CMS labels                        |
+| `/catalog`                | Server listing with filters                                 | `helio-price`                                     |
+| `/catalog/[productId]`    | Server detail, specs, regions, add-ons, SLA                 | `helio-price` + CMS                               |
+| `/pricing`                | Price books, currencies, contract terms, setup fees         | `helio-price`                                     |
+| `/pricing/[priceBookId]`  | Price-book detail and revision-aware rows                   | `helio-price`                                     |
+| `/locations`              | Data-center list, region availability, support windows      | `helio-price` + CMS                               |
+| `/locations/[slug]`       | Data-center detail page                                     | `helio-price` + CMS                               |
+| `/compare`                | Server-plan comparison                                      | `helio-price` + backend for saved/shareable state |
+| `/resources`              | Docs, SLA notes, billing rules, networking guides, API docs | `helio-cms`                                       |
+| `/resources/[slug]`       | Documentation article detail                                | `helio-cms`                                       |
+| `/updates` or `/releases` | Stock, docs, and price-book updates                         | `helio-cms` + `helio-price`                       |
+| `/quote`                  | Public quote request flow                                   | backend runtime                                   |
+| `/app`                    | Authorized customer dashboard                               | backend runtime                                   |
+| `/app/plans`              | Saved server plans                                          | backend runtime                                   |
+| `/app/quotes`             | Quote requests and statuses                                 | backend runtime                                   |
+| `/app/quotes/[quoteId]`   | Quote details, comments, status history                     | backend runtime                                   |
+| `/app/favorites`          | Favorite servers, locations, docs                           | backend runtime                                   |
+| `/app/organization`       | Organization profile, users, billing profile                | backend runtime                                   |
+| `/app/api-keys`           | Customer/partner API keys                                   | backend runtime                                   |
 
 ## First Slice
 
-Build this before expanding:
+Prototype and stabilize this before expanding:
 
 1. `/`
 2. `/catalog`
 3. `/catalog/[productId]`
 4. `/pricing`
-5. `/releases`
-6. `/release-diff`
+5. `/locations`
+6. `/quote`
+7. `/app`
 
 Detailed source-layer proof should stay out of the public first slice.
 
 ## Content Source Plan
 
-- CMS pages, news/blog, solution pages, authors, tags, SEO, and localized media
-  fields belong in `enterprise-catalog-cms`.
-- Price books, price items, currencies, regions, tiers, and commercial labels
-  belong in `enterprise-catalog-price`.
-- Product dictionaries, categories, families, protocols, documents, and
-  certifications belong in `enterprise-catalog-data`.
-- Backend-owned user features such as likes, saved products, quote requests,
-  and availability lookup consume those dictionaries but do not own catalog
-  truth.
+- `helio-cms`: docs, updates, page copy, FAQ, navigation, localized strings,
+  authors, tags, SEO metadata, and glossary/dictionary labels.
+- `helio-price`: server plans, hardware profiles, data centers, regions,
+  currencies, price books, price items, availability, add-ons, discounts, and
+  SLA tiers.
+- Backend DB: users, organizations, saved plans, quote requests, comments,
+  favorites, likes/helpful votes, API keys, and audit trail.
 
 ## Page Expectations
 
-- Public pages should read as a real Nexora Systems catalog. Do not expose
+- Public pages should read as a real cloud server catalog. Do not expose
   detailed Revisium mechanics, mock-state labels, backend wiring notes,
   source-layer widgets, project names, table names, row IDs, or implementation
   proof panels in customer-facing layout.
-- Product detail should show nested technical specs, files, related bundles,
-  certifications, and pricing availability.
-- Pricing pages should show price lists, tiered price items, currencies,
-  regions, and computed min/max prices.
-- Developer/partner pages should frame Revisium as a dictionary/data API without
-  becoming the first screen of the demo.
-- Quote and saved-product flows are runtime interactions; they must not become
-  the source of catalog truth.
+- Home should stay a working selector, not a marketing landing page.
+- Product detail should show nested technical specs, regions, add-ons, SLA, and
+  pricing availability.
+- Pricing pages should show price books, contract terms, currencies, regions,
+  setup fees, and computed effective prices.
+- Docs and updates should show the CMS value without becoming the first screen of
+  the demo.
+- Quote, favorites, and saved-plan flows are runtime interactions; they must not
+  become the source of catalog truth.
 
 ## Explainer Evidence
 
-For each data-backed page, expose only evidence that is real:
+For each data-backed page, expose only evidence that is real and belongs outside
+the customer-facing layout:
 
 - GraphQL request and variables;
 - sample response;
