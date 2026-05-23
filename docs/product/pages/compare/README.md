@@ -14,8 +14,7 @@ Prototype typed mock data from the shared catalog snapshot.
 - filter compared plans by region and in-stock availability;
 - show price, hardware, setup, and stock metrics in one scan-friendly table;
 - surface the best available quote fit for the selected region;
-- keep the flow connected to quote creation without exposing internal source
-  layer details.
+- keep the flow connected to quote creation with plan and region prefill.
 
 ## Query Shape
 

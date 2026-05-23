@@ -1,14 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Container,
-  Flex,
-  Grid,
-  Heading,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router';
@@ -57,7 +47,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             </Flex>
             <Flex gap="2" wrap="wrap">
               <Button asChild bg="ctaBg" borderRadius="8px" color="white">
-                <Link to="/quote">Request quote</Link>
+                <Link to={`/quote?plan=${product.id}`}>Request quote</Link>
               </Button>
               <Button asChild borderRadius="8px" variant="outline">
                 <Link to="/compare">Compare plans</Link>
