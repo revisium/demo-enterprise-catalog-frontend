@@ -3,10 +3,10 @@
 | Route                 | Status     | Purpose                                     | Data mode    | Next decision                    |
 | --------------------- | ---------- | ------------------------------------------- | ------------ | -------------------------------- |
 | `/`                   | Prototype  | Server-plan picker and recommended price    | typed mock   | approve premium layout direction |
-| `/catalog`            | Scaffolded | Full cloud/dedicated server catalog         | typed mock   | validate filter density          |
+| `/catalog`            | Prototype  | Full cloud/dedicated server catalog         | typed mock   | validate filter density          |
 | `/catalog/:productId` | Scaffolded | Server plan detail, specs, regions, add-ons | typed mock   | validate detail hierarchy        |
-| `/pricing`            | Planned    | Price books, currencies, contracts, add-ons | typed mock   | dense price table pattern        |
-| `/locations`          | Planned    | Data-center list and region detail entry    | typed mock   | location card/table pattern      |
+| `/pricing`            | Prototype  | Price rows by plan, region, and term        | typed mock   | dense price table pattern        |
+| `/locations`          | Prototype  | Data-center stock and support windows       | typed mock   | location card/table pattern      |
 | `/compare`            | Planned    | Server plan comparison                      | typed mock   | comparison row model             |
 | `/resources`          | Planned    | Docs, SLA, networking, billing, API docs    | typed mock   | docs index pattern               |
 | `/releases`           | Planned    | Stock, docs, and price-book updates         | typed mock   | update timeline pattern          |
