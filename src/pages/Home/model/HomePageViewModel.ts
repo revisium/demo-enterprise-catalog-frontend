@@ -255,7 +255,11 @@ export class HomePageViewModel {
       return this.matchingPlans;
     }
 
-    return this.regionPlans;
+    if (this.regionPlans.length > 0) {
+      return this.regionPlans;
+    }
+
+    return this.plans;
   }
 
   get hasExactPlanMatches() {
@@ -307,7 +311,7 @@ export class HomePageViewModel {
       return;
     }
 
-    const regionalFallback = this.regionPlans[0];
+    const regionalFallback = this.regionPlans[0] ?? this.plans[0];
 
     if (regionalFallback) {
       this.selectedPlanId = regionalFallback.id;
