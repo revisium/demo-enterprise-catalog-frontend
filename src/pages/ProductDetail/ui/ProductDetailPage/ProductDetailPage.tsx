@@ -1,82 +1,142 @@
+import {
+  Badge,
+  Box,
+  Container,
+  Flex,
+  Grid,
+  Heading,
+  SimpleGrid,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
 import { useParams } from 'react-router';
 
+import { ProductVisual } from 'src/shared/ui';
 import { ExplainerPanel } from 'src/widgets/ExplainerPanel';
 import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewModel';
 
 export const ProductDetailPage = observer(function ProductDetailPage() {
   const params = useParams();
-  const vm = useMemo(
-    () => new ProductDetailPageViewModel(params.productId),
-    [params.productId],
-  );
+  const vm = useMemo(() => new ProductDetailPageViewModel(params.productId), [params.productId]);
   const { product } = vm;
 
   return (
-    <main className="page-shell">
-      <section className="detail-layout detail-hero">
-        <div>
-          <div className="card-kicker">
-            <span>{product.family}</span>
-            <strong>{product.lifecycle}</strong>
-          </div>
-          <h1>{product.name}</h1>
-          <p className="hero-summary">{product.summary}</p>
-          <div className="tag-row">
+    <Container maxW="1240px" px="4" py={{ base: '8', md: '16' }}>
+      <Grid
+        alignItems="stretch"
+        gap={{ base: '6', lg: '10' }}
+        templateColumns={{ base: '1fr', lg: 'minmax(0, 1.3fr) minmax(300px, 0.7fr)' }}
+      >
+        <Stack gap="5">
+          <Flex
+            align="center"
+            color="ink.500"
+            fontSize="sm"
+            fontWeight="700"
+            justify="space-between"
+          >
+            <Text>{product.family}</Text>
+            <Badge bg="surface.200" borderRadius="full" color="brand.700">
+              {product.lifecycle}
+            </Badge>
+          </Flex>
+          <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '6xl' }} lineHeight="1">
+            {product.name}
+          </Heading>
+          <Text color="ink.500" fontSize="lg" maxW="720px">
+            {product.summary}
+          </Text>
+          <Flex gap="2" wrap="wrap">
             {product.protocols.map((protocol) => (
-              <span className="tag" key={protocol}>
+              <Badge bg="surface.200" color="brand.700" key={protocol}>
                 {protocol}
-              </span>
+              </Badge>
             ))}
-          </div>
-        </div>
-        <div className={`detail-visual product-visual-${product.visualTone}`}>
-          <span className="visually-hidden">{product.imageAlt}</span>
-          <span className="device-line device-line-primary" />
-          <span className="device-line device-line-secondary" />
-          <span className="device-dot device-dot-left" />
-          <span className="device-dot device-dot-right" />
-        </div>
-      </section>
+          </Flex>
+        </Stack>
+        <ProductVisual alt={product.imageAlt} minH="320px" tone={product.visualTone} />
+      </Grid>
 
-      <section className="detail-metrics" aria-label="Product metrics">
-        <div className="hero-panel metric-grid">
-          {product.metrics.map((metric) => (
-            <div className="metric-tile" key={metric.label}>
-              <span className="metric-value">{metric.value}</span>
-              <span className="metric-label">{metric.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      <SimpleGrid
+        aria-label="Product metrics"
+        bg="white"
+        borderRadius="panel"
+        borderWidth="1px"
+        boxShadow="panel"
+        columns={{ base: 1, md: 3 }}
+        gap="3"
+        mt="5"
+        p="4"
+      >
+        {product.metrics.map((metric) => (
+          <Box bg="surface.100" borderRadius="control" key={metric.label} p="4">
+            <Text color="ink.900" fontSize="2xl" fontWeight="780">
+              {metric.value}
+            </Text>
+            <Text color="ink.500" fontSize="sm">
+              {metric.label}
+            </Text>
+          </Box>
+        ))}
+      </SimpleGrid>
 
-      <section className="two-column-section">
-        <article className="spec-panel">
-          <h2>Technical specs</h2>
-          <dl>
-            <dt>Enclosure</dt>
-            <dd>{product.specs.enclosure}</dd>
-            <dt>Ingress</dt>
-            <dd>{product.specs.ingress}</dd>
-            <dt>Operating range</dt>
-            <dd>{product.specs.operatingRange}</dd>
-            <dt>Connectivity</dt>
-            <dd>{product.specs.connectivity}</dd>
-          </dl>
-        </article>
-        <article className="spec-panel">
-          <h2>Documents</h2>
-          <div className="document-list">
+      <Grid gap={{ base: '6', lg: '10' }} mt="10" templateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
+        <Stack bg="white" borderRadius="panel" borderWidth="1px" boxShadow="panel" gap="4" p="4">
+          <Heading as="h2" color="ink.900" fontSize="2xl">
+            Technical specs
+          </Heading>
+          <Grid as="dl" gap="2" templateColumns={{ base: '1fr', md: '150px minmax(0, 1fr)' }}>
+            <Text as="dt" color="ink.500">
+              Enclosure
+            </Text>
+            <Text as="dd" color="ink.900" m="0">
+              {product.specs.enclosure}
+            </Text>
+            <Text as="dt" color="ink.500">
+              Ingress
+            </Text>
+            <Text as="dd" color="ink.900" m="0">
+              {product.specs.ingress}
+            </Text>
+            <Text as="dt" color="ink.500">
+              Operating range
+            </Text>
+            <Text as="dd" color="ink.900" m="0">
+              {product.specs.operatingRange}
+            </Text>
+            <Text as="dt" color="ink.500">
+              Connectivity
+            </Text>
+            <Text as="dd" color="ink.900" m="0">
+              {product.specs.connectivity}
+            </Text>
+          </Grid>
+        </Stack>
+        <Stack bg="white" borderRadius="panel" borderWidth="1px" boxShadow="panel" gap="4" p="4">
+          <Heading as="h2" color="ink.900" fontSize="2xl">
+            Documents
+          </Heading>
+          <Flex gap="3" wrap="wrap">
             {product.documents.map((document) => (
-              <span className="document-chip" key={document}>
+              <Badge
+                bg="surface.50"
+                borderColor="rgba(31, 95, 85, 0.18)"
+                borderRadius="control"
+                borderWidth="1px"
+                color="brand.700"
+                key={document}
+                px="3"
+                py="2"
+              >
                 {document}
-              </span>
+              </Badge>
             ))}
-          </div>
-        </article>
+          </Flex>
+        </Stack>
         <ExplainerPanel title="Source layer contract" items={vm.sourceEvidence} />
-      </section>
-    </main>
+      </Grid>
+    </Container>
   );
 });

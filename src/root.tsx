@@ -1,6 +1,7 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import { AppLayout } from './app/layouts/AppLayout/AppLayout';
+import { AppProvider } from './app/providers/AppProvider';
 import './shared/ui/global.css';
 
 interface LayoutProps {
@@ -28,8 +29,10 @@ export function Layout({ children }: LayoutProps) {
 
 export default function Root() {
   return (
-    <AppLayout>
-      <Outlet />
-    </AppLayout>
+    <AppProvider>
+      <AppLayout>
+        <Outlet />
+      </AppLayout>
+    </AppProvider>
   );
 }
