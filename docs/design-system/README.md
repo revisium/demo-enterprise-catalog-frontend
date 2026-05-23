@@ -11,6 +11,9 @@ iteration, not to freeze a brand too early.
 - Cards use `0.5rem` radius or less.
 - Buttons are direct commands, not decorative pills.
 - Proof UI is secondary and should not dominate the catalog content.
+- Product visuals use CSS-rendered industrial panels for the first UI pass.
+  Replace with real/generated product imagery only after the layout direction is
+  accepted.
 
 ## Responsive Rules
 

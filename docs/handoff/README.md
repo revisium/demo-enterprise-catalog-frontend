@@ -18,8 +18,8 @@ projects.
 
 ## Next PRs
 
-1. Create two or three visual directions for home/catalog/product detail.
-2. Choose the first design-system direction and stabilize responsive behavior.
+1. Review the first home/catalog/product-detail UI direction.
+2. Stabilize responsive behavior and any visual changes from review.
 3. Build pricing and release-diff pages on mock data.
 4. Expand resources/documents and compare flows.
 5. Freeze contracts for Revisium tables, generated clients, and backend runtime

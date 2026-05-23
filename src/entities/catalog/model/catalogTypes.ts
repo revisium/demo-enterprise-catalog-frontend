@@ -10,7 +10,10 @@ export interface CatalogProduct {
   readonly category: string;
   readonly summary: string;
   readonly imageAlt: string;
+  readonly visualTone: 'gateway' | 'sensor' | 'cloud';
   readonly availability: string;
+  readonly regionCount: number;
+  readonly lifecycle: string;
   readonly protocols: readonly string[];
   readonly specs: {
     readonly enclosure: string;

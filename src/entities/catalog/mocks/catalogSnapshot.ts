@@ -10,7 +10,10 @@ export const catalogSnapshot: CatalogSnapshot = {
       summary:
         'Rugged gateway for plant-floor telemetry, protocol translation, and secure cloud forwarding.',
       imageAlt: 'Rugged industrial edge gateway with four protected ports',
+      visualTone: 'gateway',
       availability: 'Available in NA, EU, and APAC',
+      regionCount: 3,
+      lifecycle: 'Active',
       protocols: ['OPC UA', 'Modbus TCP', 'MQTT', 'REST'],
       specs: {
         enclosure: 'DIN rail aluminum enclosure',
@@ -33,7 +36,10 @@ export const catalogSnapshot: CatalogSnapshot = {
       summary:
         'Wireless vibration and temperature sensor for rotating equipment monitoring programs.',
       imageAlt: 'Compact wireless vibration sensor mounted on industrial equipment',
+      visualTone: 'sensor',
       availability: 'Available in NA and EU',
+      regionCount: 2,
+      lifecycle: 'Active',
       protocols: ['BLE', 'MQTT', 'LoRaWAN'],
       specs: {
         enclosure: 'Sealed polymer puck',
@@ -56,7 +62,10 @@ export const catalogSnapshot: CatalogSnapshot = {
       summary:
         'Managed observability plan with fleet dashboards, alert routing, retention, and partner APIs.',
       imageAlt: 'Operational monitoring dashboard with device health charts',
+      visualTone: 'cloud',
       availability: 'Global SaaS plan',
+      regionCount: 5,
+      lifecycle: 'Q3 draft update',
       protocols: ['GraphQL', 'REST', 'Webhook', 'SAML'],
       specs: {
         enclosure: 'Cloud service',
