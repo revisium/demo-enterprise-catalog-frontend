@@ -12,8 +12,8 @@ export function createQuoteForm() {
     defaultValues: {
       company: '',
       email: '',
-      region: 'North America',
-      interest: 'Edge Gateway X4',
+      region: 'Frankfurt',
+      interest: 'Business VM 8',
     } satisfies QuoteFormValues,
     fields: {
       company: field<string>({
