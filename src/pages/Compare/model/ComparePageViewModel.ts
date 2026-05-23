@@ -29,7 +29,7 @@ export class ComparePageViewModel {
 
   get comparedProducts(): readonly CatalogProduct[] {
     return this.products
-      .filter((product) => this.selectedProductIds.includes(product.id))
+      .filter((product) => this.selectedProductIdSet.has(product.id))
       .filter((product) => this.matchesRegion(product));
   }
 
@@ -184,6 +184,10 @@ export class ComparePageViewModel {
     const setupHours = this.getMatchingRegions(product).map((region) => region.setupHours);
 
     return setupHours.length > 0 ? Math.min(...setupHours) : 0;
+  }
+
+  private get selectedProductIdSet(): ReadonlySet<string> {
+    return new Set(this.selectedProductIds);
   }
 
   private getTotalStock(product: CatalogProduct) {

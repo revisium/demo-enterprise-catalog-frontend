@@ -110,53 +110,57 @@ export const PricingPage = observer(function PricingPage() {
                 title="No price rows match these filters"
               />
             ) : null}
-            {vm.filteredRows.map((row) => (
-              <Grid
-                alignItems="center"
-                bg={vm.isRowSelected(row.id) ? 'brand.50' : 'white'}
-                borderColor={vm.isRowSelected(row.id) ? 'activeBorder' : 'surface.200'}
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="3"
-                key={`${row.id}-${vm.billingTermId}`}
-                p="3"
-                templateColumns={{ base: '1fr', lg: '1fr 130px 150px 120px 110px' }}
-              >
-                <Stack gap="0">
+            {vm.filteredRows.map((row) => {
+              const selected = vm.isRowSelected(row.id);
+
+              return (
+                <Grid
+                  alignItems="center"
+                  bg={selected ? 'brand.50' : 'white'}
+                  borderColor={selected ? 'activeBorder' : 'surface.200'}
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  gap="3"
+                  key={`${row.id}-${vm.billingTermId}`}
+                  p="3"
+                  templateColumns={{ base: '1fr', lg: '1fr 130px 150px 120px 110px' }}
+                >
+                  <Stack gap="0">
+                    <Text color="ink.900" fontWeight="760">
+                      {row.plan.name}
+                    </Text>
+                    <Text color="ink.500" fontSize="sm">
+                      {row.region.regionLabel} · {row.family} · {row.plan.hardware.ramGb} GB RAM
+                    </Text>
+                  </Stack>
                   <Text color="ink.900" fontWeight="760">
-                    {row.plan.name}
+                    ${row.billingTermPrice}/mo
                   </Text>
                   <Text color="ink.500" fontSize="sm">
-                    {row.region.regionLabel} · {row.family} · {row.plan.hardware.ramGb} GB RAM
+                    Setup ${row.plan.pricing.setupUsd} · {row.region.setupHours}h
                   </Text>
-                </Stack>
-                <Text color="ink.900" fontWeight="760">
-                  ${row.billingTermPrice}/mo
-                </Text>
-                <Text color="ink.500" fontSize="sm">
-                  Setup ${row.plan.pricing.setupUsd} · {row.region.setupHours}h
-                </Text>
-                <Badge
-                  alignSelf="center"
-                  bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
-                  borderRadius="8px"
-                  color={row.region.stock > 0 ? 'successText' : 'amberText'}
-                  justifySelf={{ base: 'start', lg: 'end' }}
-                >
-                  {row.region.stock} units
-                </Badge>
-                <Button
-                  aria-pressed={vm.isRowSelected(row.id)}
-                  borderRadius="8px"
-                  justifySelf={{ base: 'start', lg: 'end' }}
-                  onClick={() => vm.toggleRow(row.id)}
-                  size="sm"
-                  variant={vm.isRowSelected(row.id) ? 'solid' : 'outline'}
-                >
-                  {vm.isRowSelected(row.id) ? 'Selected' : 'Select'}
-                </Button>
-              </Grid>
-            ))}
+                  <Badge
+                    alignSelf="center"
+                    bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                    borderRadius="8px"
+                    color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                    justifySelf={{ base: 'start', lg: 'end' }}
+                  >
+                    {row.region.stock} units
+                  </Badge>
+                  <Button
+                    aria-pressed={selected}
+                    borderRadius="8px"
+                    justifySelf={{ base: 'start', lg: 'end' }}
+                    onClick={() => vm.toggleRow(row.id)}
+                    size="sm"
+                    variant={selected ? 'solid' : 'outline'}
+                  >
+                    {selected ? 'Selected' : 'Select'}
+                  </Button>
+                </Grid>
+              );
+            })}
           </Stack>
 
           <FilterCard position={{ xl: 'sticky' }} top="76px">

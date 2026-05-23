@@ -100,7 +100,7 @@ export class PricingPageViewModel {
   }
 
   get selectedRows(): readonly PricingRow[] {
-    return this.rows.filter((row) => this.selectedRowIds.includes(row.id));
+    return this.rows.filter((row) => this.selectedRowIdSet.has(row.id));
   }
 
   get quoteSummary() {
@@ -163,7 +163,7 @@ export class PricingPageViewModel {
   }
 
   isRowSelected(rowId: string) {
-    return this.selectedRowIds.includes(rowId);
+    return this.selectedRowIdSet.has(rowId);
   }
 
   removeSelectedRow(rowId: string) {
@@ -204,6 +204,10 @@ export class PricingPageViewModel {
 
   private isSortId(value: string): value is PricingSortId {
     return sortOptions.some((option) => option.id === value);
+  }
+
+  private get selectedRowIdSet(): ReadonlySet<string> {
+    return new Set(this.selectedRowIds);
   }
 
   private matchesRow(row: PricingRow) {
