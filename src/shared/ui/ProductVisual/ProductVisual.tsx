@@ -10,12 +10,9 @@ interface ProductVisualProps {
 }
 
 const toneBackground: Record<ProductVisualTone, string> = {
-  gateway:
-    'linear-gradient(135deg, rgba(31, 95, 85, 0.92), rgba(54, 72, 88, 0.82)), repeating-linear-gradient(90deg, transparent 0 30px, rgba(255, 255, 255, 0.18) 30px 32px)',
-  sensor:
-    'radial-gradient(circle at 32% 35%, rgba(247, 250, 247, 0.28), transparent 0 18%, transparent 20%), linear-gradient(135deg, rgba(82, 99, 72, 0.9), rgba(45, 79, 95, 0.8))',
-  cloud:
-    'linear-gradient(135deg, rgba(45, 79, 95, 0.9), rgba(96, 79, 130, 0.78)), repeating-linear-gradient(0deg, transparent 0 20px, rgba(255, 255, 255, 0.16) 20px 21px)',
+  gateway: 'gatewayVisualBg',
+  sensor: 'sensorVisualBg',
+  cloud: 'cloudVisualBg',
 };
 
 export function ProductVisual({ alt, minH = '40', radius = 'panel', tone }: ProductVisualProps) {

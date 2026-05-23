@@ -122,7 +122,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             {product.documents.map((document) => (
               <Badge
                 bg="surface.50"
-                borderColor="rgba(31, 95, 85, 0.18)"
+                borderColor="brandBorderMuted"
                 borderRadius="control"
                 borderWidth="1px"
                 color="brand.700"

@@ -24,10 +24,7 @@ const navItems = [
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <Box
-      minH="100dvh"
-      bg="linear-gradient(90deg, rgba(28, 86, 76, 0.08), transparent 34%), linear-gradient(180deg, #ffffff 0, #f5f7f4 390px, #eef2ec 100%)"
-    >
+    <Box minH="100dvh" bg="appFrameBg">
       <SkipNavLink>Skip to content</SkipNavLink>
       <Flex
         as="header"
@@ -41,7 +38,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         py="3"
         borderBottomWidth="1px"
         borderColor="blackAlpha.200"
-        bg="rgba(255, 255, 255, 0.9)"
+        bg="headerBg"
         backdropFilter="blur(18px)"
       >
         <ChakraLink asChild fontWeight="750">
@@ -70,12 +67,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                 {({ isActive }) => (
                   <Box
                     borderWidth="1px"
-                    borderColor={isActive ? 'rgba(31, 95, 85, 0.45)' : 'rgba(31, 95, 85, 0.18)'}
+                    borderColor={isActive ? 'brandBorderActive' : 'brandBorderMuted'}
                     borderRadius="control"
                     px="3"
                     py="2"
                     color={isActive ? 'brand.700' : 'ink.700'}
-                    bg={isActive ? 'brand.50' : 'rgba(255, 255, 255, 0.68)'}
+                    bg={isActive ? 'brand.50' : 'navIdleBg'}
                     fontSize="sm"
                   >
                     {item.label}

@@ -58,7 +58,7 @@ export const HomePage = observer(function HomePage() {
 
         <Stack
           aria-label="Catalog status summary"
-          bg="linear-gradient(145deg, rgba(20, 32, 29, 0.96), rgba(31, 95, 85, 0.9)), #14201d"
+          bg="panelDarkBg"
           borderColor="blackAlpha.200"
           borderRadius="panel"
           borderWidth="1px"
