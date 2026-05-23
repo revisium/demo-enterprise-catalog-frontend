@@ -11,8 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
-import { Link } from 'react-router';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 
 import { MetricGrid, ProductVisual, SectionEyebrow } from 'src/shared/ui';
 import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewModel';
