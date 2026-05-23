@@ -38,7 +38,8 @@ projects.
 1. Review the Chakra-based home/catalog/product-detail UI direction.
 2. Stabilize responsive behavior and any visual changes from review.
 3. Build pricing and release-diff pages on mock data using the Chakra theme.
-4. Add CMS-backed news/blog and localized content mocks.
+4. Add contract-shaped typed mocks for news/blog and localized content,
+   prepared for later CMS transport mapping.
 5. Expand resources/documents and compare flows.
 6. Freeze contracts for Revisium tables, generated clients, and backend runtime
    interactions.

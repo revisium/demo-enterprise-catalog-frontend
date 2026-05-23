@@ -22,8 +22,8 @@ realistic.
 | `/families`               | Product families                                 | catalog data                        |
 | `/categories`             | Product categories                               | catalog data                        |
 | `/plans`                  | SaaS plans and feature limits                    | catalog data                        |
-| `/pricing`                | Price-book overview and region/currency switcher | catalog data                        |
-| `/pricing/[priceBookId]`  | Price list with tiered price items               | catalog data                        |
+| `/pricing`                | Price-book overview and region/currency switcher | enterprise-catalog-price            |
+| `/pricing/[priceBookId]`  | Price list with tiered price items               | enterprise-catalog-price            |
 | `/compare`                | Product/plan comparison                          | catalog data + backend if shareable |
 | `/solutions`              | Industry/use-case landing                        | CMS + catalog data                  |
 | `/solutions/[slug]`       | Solution detail page                             | CMS                                 |
