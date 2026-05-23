@@ -2,13 +2,19 @@
 
 ## Purpose
 
-Show catalog releases, price-book drafts, and the path into release diff proof.
+Show catalog, price-book, docs, and region updates with customer impact and
+runtime reaction affordances.
 
 ## Current Data Mode
 
-Planned typed mock data.
+Typed mock CMS update data plus local like state.
 
 ## Future Contract
 
-Candidate tables: `catalogReleases`, `releaseNotes`, and `changeLogEntries`.
-Revision/diff evidence must link to real Revisium revisions after connection.
+- Revisium project: `helio-cms`.
+- CMS tables: `updates`, `authors`, `tags`.
+- Related price/catalog references later point to `helio-price` rows.
+- Backend owns per-user likes, follows, notification preferences, and read
+  history.
+- Revision/diff evidence must link to real Revisium revisions from the separate
+  explainer surface after connection.
