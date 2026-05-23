@@ -23,6 +23,8 @@ local verification command.
 - `@revisium/forms-core` is the default for non-trivial forms. Use the alpha
   package until the GitHub source package includes built `dist` artifacts.
 - Generated files under `src/__generated__/` are never hand-edited.
+- Localization metadata lives under `src/shared/i18n`; page-level translations
+  should come from CMS/price data later, not ad hoc React maps.
 
 ## UI System
 

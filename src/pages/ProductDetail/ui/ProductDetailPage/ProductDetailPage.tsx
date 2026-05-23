@@ -14,7 +14,6 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { ProductVisual } from 'src/shared/ui';
-import { ExplainerPanel } from 'src/widgets/ExplainerPanel';
 import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewModel';
 
 export const ProductDetailPage = observer(function ProductDetailPage() {
@@ -135,7 +134,6 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             ))}
           </Flex>
         </Stack>
-        <ExplainerPanel title="Source layer contract" items={vm.sourceEvidence} />
       </Grid>
     </Container>
   );

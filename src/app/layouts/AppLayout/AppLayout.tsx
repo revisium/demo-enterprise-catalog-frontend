@@ -3,11 +3,14 @@ import {
   Flex,
   HStack,
   Link as ChakraLink,
+  NativeSelect,
   SkipNavContent,
   SkipNavLink,
   Text,
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router';
+
+import { defaultLocale, supportedLocales } from 'src/shared/i18n';
 
 interface AppLayoutProps {
   readonly children: React.ReactNode;
@@ -60,27 +63,46 @@ export function AppLayout({ children }: AppLayoutProps) {
             </HStack>
           </NavLink>
         </ChakraLink>
-        <Flex as="nav" aria-label="Primary navigation" justify="flex-end" gap="1.5" wrap="wrap">
-          {navItems.map((item) => (
-            <ChakraLink asChild key={item.to}>
-              <NavLink to={item.to}>
-                {({ isActive }) => (
-                  <Box
-                    borderWidth="1px"
-                    borderColor={isActive ? 'brandBorderActive' : 'brandBorderMuted'}
-                    borderRadius="control"
-                    px="3"
-                    py="2"
-                    color={isActive ? 'brand.700' : 'ink.700'}
-                    bg={isActive ? 'brand.50' : 'navIdleBg'}
-                    fontSize="sm"
-                  >
-                    {item.label}
-                  </Box>
-                )}
-              </NavLink>
-            </ChakraLink>
-          ))}
+        <Flex align="center" justify="flex-end" gap="3" wrap="wrap">
+          <Flex as="nav" aria-label="Primary navigation" justify="flex-end" gap="1.5" wrap="wrap">
+            {navItems.map((item) => (
+              <ChakraLink asChild key={item.to}>
+                <NavLink to={item.to}>
+                  {({ isActive }) => (
+                    <Box
+                      borderWidth="1px"
+                      borderColor={isActive ? 'brandBorderActive' : 'brandBorderMuted'}
+                      borderRadius="control"
+                      px="3"
+                      py="2"
+                      color={isActive ? 'brand.700' : 'ink.700'}
+                      bg={isActive ? 'brand.50' : 'navIdleBg'}
+                      fontSize="sm"
+                    >
+                      {item.label}
+                    </Box>
+                  )}
+                </NavLink>
+              </ChakraLink>
+            ))}
+          </Flex>
+          <NativeSelect.Root disabled maxW="140px" size="sm">
+            <NativeSelect.Field
+              aria-label="Language switching coming soon"
+              bg="navIdleBg"
+              borderColor="brandBorderMuted"
+              borderRadius="control"
+              defaultValue={defaultLocale}
+              title="Language switching coming soon"
+            >
+              {supportedLocales.map((locale) => (
+                <option key={locale.code} value={locale.code}>
+                  {locale.nativeLabel}
+                </option>
+              ))}
+            </NativeSelect.Field>
+            <NativeSelect.Indicator />
+          </NativeSelect.Root>
         </Flex>
       </Flex>
       <SkipNavContent />

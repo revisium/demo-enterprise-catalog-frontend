@@ -11,14 +11,14 @@ export const QuotePage = observer(function QuotePage() {
     <Container maxW="1240px" px="4" py={{ base: '8', md: '16' }}>
       <Stack as="header" gap="4">
         <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-          Runtime interaction
+          Sales inquiry
         </Text>
         <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '6xl' }} lineHeight="1">
-          Request quote mock form powered by @revisium/forms-core.
+          Request a regional quote from Nexora Systems.
         </Heading>
         <Text color="ink.500" fontSize="lg" maxW="720px">
-          This form does not call the backend yet. It proves the frontend form contract and keeps
-          runtime interaction ownership separate from Revisium catalog data.
+          Tell us where you operate and which product line you are evaluating. A regional specialist
+          can follow up with availability, pricing, and rollout guidance.
         </Text>
       </Stack>
 
@@ -111,11 +111,11 @@ export const QuotePage = observer(function QuotePage() {
           </chakra.select>
         </Stack>
         <Button alignSelf="start" bg="brand.500" borderRadius="control" color="white" type="submit">
-          Submit mock request
+          Submit request
         </Button>
         {vm.submitted ? (
           <Text color="brand.500" fontWeight="700">
-            Mock request captured. Backend ownership will start from this stable contract.
+            Request captured. A Nexora specialist will follow up with regional guidance.
           </Text>
         ) : null}
         {vm.submitError ? (

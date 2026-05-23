@@ -4,7 +4,7 @@ export default function ReleasesRoute() {
   return (
     <PlaceholderPage
       title="Catalog releases"
-      summary="Release notes and diff views will show branch/revision evidence while still running on mock data."
+      summary="Track product, documentation, availability, and price-book updates for procurement and partner teams."
     />
   );
 }

@@ -9,6 +9,8 @@ export interface CatalogProduct {
   readonly family: string;
   readonly category: string;
   readonly summary: string;
+  readonly buyerFit: string;
+  readonly customerNote: string;
   readonly imageAlt: string;
   readonly visualTone: 'gateway' | 'sensor' | 'cloud';
   readonly availability: string;
@@ -29,6 +31,7 @@ export interface CatalogRelease {
   readonly id: string;
   readonly label: string;
   readonly summary: string;
+  readonly scope: string;
 }
 
 export interface CatalogSnapshot {

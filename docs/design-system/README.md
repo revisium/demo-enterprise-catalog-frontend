@@ -23,6 +23,12 @@ iteration, not to freeze a brand too early.
   CSS classes.
 - `src/shared/ui/global.css` is only for minimal document reset.
 
+## Assets
+
+See [`assets.md`](./assets.md). The current `NX` mark is temporary; generated
+logo and product imagery should be handled after the company legend and page
+hierarchy are accepted.
+
 ## Responsive Rules
 
 - Product cards stack to one column on narrow viewports.
