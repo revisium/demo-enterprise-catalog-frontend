@@ -1,10 +1,22 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import { catalogSnapshot } from 'src/entities/catalog';
-import { createQuoteForm } from 'src/shared/forms';
+import { createQuoteForm, type QuoteFormValues } from 'src/shared/forms';
+
+function getDefaultQuoteFormValues(): QuoteFormValues {
+  const defaultProduct = catalogSnapshot.products[0];
+  const defaultRegion = defaultProduct?.availabilityByRegion[0];
+
+  return {
+    company: '',
+    email: '',
+    interest: defaultProduct?.name ?? '',
+    region: defaultRegion?.regionLabel ?? '',
+  };
+}
 
 export class QuotePageViewModel {
-  readonly form = createQuoteForm();
+  readonly form = createQuoteForm(getDefaultQuoteFormValues());
   submitted = false;
   submitError: string | undefined;
 
@@ -14,9 +26,9 @@ export class QuotePageViewModel {
 
   get regionOptions() {
     const regions = catalogSnapshot.products.flatMap((product) => product.availabilityByRegion);
-    const byLabel = new Map(regions.map((region) => [region.regionLabel, region.regionLabel]));
+    const regionLabels = [...new Set(regions.map((region) => region.regionLabel))];
 
-    return [...byLabel.entries()].map(([value, label]) => ({ label, value }));
+    return regionLabels.map((label) => ({ label, value: label }));
   }
 
   get interestOptions() {
