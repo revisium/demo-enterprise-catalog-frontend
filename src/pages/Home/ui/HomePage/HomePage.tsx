@@ -45,7 +45,9 @@ export const HomePage = observer(function HomePage() {
       <section className="section-grid" aria-label="Featured catalog entries">
         {vm.heroProducts.map((product) => (
           <article className="product-card" key={product.id}>
-            <div className="product-visual" role="img" aria-label={product.imageAlt} />
+            <div className="product-visual">
+              <span className="visually-hidden">{product.imageAlt}</span>
+            </div>
             <div className="card-body">
               <p className="eyebrow">{product.family}</p>
               <h2>{product.name}</h2>

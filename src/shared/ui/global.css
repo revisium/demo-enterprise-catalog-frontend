@@ -228,6 +228,17 @@ select {
     repeating-linear-gradient(90deg, transparent 0 28px, rgba(255, 255, 255, 0.18) 28px 30px);
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .card-body,
 .catalog-row,
 .release-row {
@@ -296,6 +307,13 @@ select {
   display: grid;
   gap: 0.3rem;
   color: #344642;
+  font-weight: 650;
+}
+
+.field-label {
+  min-height: auto;
+  color: #344642;
+  font-size: 1rem;
   font-weight: 650;
 }
 

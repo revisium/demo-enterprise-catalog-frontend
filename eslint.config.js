@@ -6,7 +6,7 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
-export default tseslint.config(
+export default [
   {
     ignores: [
       'build/**',
@@ -58,4 +58,4 @@ export default tseslint.config(
     },
   },
   prettier,
-);
+];

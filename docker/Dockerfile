@@ -33,4 +33,4 @@ USER appuser
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["npx", "react-router-serve", "./build/server/index.js"]
+CMD ["node", "./node_modules/@react-router/serve/bin.js", "./build/server/index.js"]

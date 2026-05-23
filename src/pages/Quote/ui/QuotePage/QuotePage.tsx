@@ -18,7 +18,7 @@ export const QuotePage = observer(function QuotePage() {
 
       <form className="quote-form" onSubmit={(event) => void handleSubmit(event)}>
         <label>
-          Company
+          <span className="field-label">Company</span>
           <input
             value={vm.form.controls.company.value}
             onBlur={() => vm.form.controls.company.blur()}
@@ -27,7 +27,7 @@ export const QuotePage = observer(function QuotePage() {
           <span>{vm.form.controls.company.visibleError}</span>
         </label>
         <label>
-          Work email
+          <span className="field-label">Work email</span>
           <input
             value={vm.form.controls.email.value}
             onBlur={() => vm.form.controls.email.blur()}
@@ -36,7 +36,7 @@ export const QuotePage = observer(function QuotePage() {
           <span>{vm.form.controls.email.visibleError}</span>
         </label>
         <label>
-          Region
+          <span className="field-label">Region</span>
           <select
             value={vm.form.controls.region.value}
             onChange={(event) => vm.form.controls.region.setValue(event.target.value)}
@@ -47,7 +47,7 @@ export const QuotePage = observer(function QuotePage() {
           </select>
         </label>
         <label>
-          Interest
+          <span className="field-label">Interest</span>
           <select
             value={vm.form.controls.interest.value}
             onChange={(event) => vm.form.controls.interest.setValue(event.target.value)}
