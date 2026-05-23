@@ -140,6 +140,10 @@ export class CustomerPortalPageViewModel {
     return this.actions[0];
   }
 
+  get favoritePlans() {
+    return this.savedPlans.filter((plan) => this.favoritedPlanIds.includes(plan.id));
+  }
+
   get sectionOptions() {
     return (Object.keys(sectionLabels) as PortalSection[]).map((id) => ({
       id,

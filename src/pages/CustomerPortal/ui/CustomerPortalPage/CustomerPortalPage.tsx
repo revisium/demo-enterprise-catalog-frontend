@@ -8,6 +8,7 @@ import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewM
 export const CustomerPortalPage = observer(function CustomerPortalPage() {
   const [vm] = useState(() => new CustomerPortalPageViewModel());
   const primaryAction = vm.primaryAction;
+  const displayedPlans = vm.selectedSection === 'favorites' ? vm.favoritePlans : vm.savedPlans;
 
   return (
     <PrototypePage
@@ -151,7 +152,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
             gap="3"
             p="4"
           >
-            {vm.savedPlans.map((plan) => (
+            {displayedPlans.map((plan) => (
               <Grid
                 alignItems="center"
                 borderColor="surface.200"
@@ -184,6 +185,11 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
                 </Button>
               </Grid>
             ))}
+            {displayedPlans.length === 0 ? (
+              <Text color="ink.500" fontSize="sm">
+                No favorite plans yet.
+              </Text>
+            ) : null}
           </Stack>
         ) : null}
 
