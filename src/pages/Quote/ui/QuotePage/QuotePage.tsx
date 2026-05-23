@@ -31,7 +31,7 @@ export const QuotePage = observer(function QuotePage() {
         gap="4"
         maxW="680px"
         mt="8"
-        onSubmit={(event) => vm.submit(event)}
+        onSubmit={vm.submit}
         p="4"
       >
         <Stack as="label" gap="1.5">
@@ -116,6 +116,11 @@ export const QuotePage = observer(function QuotePage() {
         {vm.submitted ? (
           <Text color="brand.500" fontWeight="700">
             Mock request captured. Backend ownership will start from this stable contract.
+          </Text>
+        ) : null}
+        {vm.submitError ? (
+          <Text color="red.700" fontWeight="700">
+            {vm.submitError}
           </Text>
         ) : null}
       </Stack>
