@@ -15,9 +15,12 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
 
   return (
     <main className="page-shell">
-      <section className="detail-layout">
+      <section className="detail-layout detail-hero">
         <div>
-          <p className="eyebrow">{product.family}</p>
+          <div className="card-kicker">
+            <span>{product.family}</span>
+            <strong>{product.lifecycle}</strong>
+          </div>
           <h1>{product.name}</h1>
           <p className="hero-summary">{product.summary}</p>
           <div className="tag-row">
@@ -28,9 +31,19 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             ))}
           </div>
         </div>
-        <div className="hero-panel">
+        <div className={`detail-visual product-visual-${product.visualTone}`}>
+          <span className="visually-hidden">{product.imageAlt}</span>
+          <span className="device-line device-line-primary" />
+          <span className="device-line device-line-secondary" />
+          <span className="device-dot device-dot-left" />
+          <span className="device-dot device-dot-right" />
+        </div>
+      </section>
+
+      <section className="detail-metrics" aria-label="Product metrics">
+        <div className="hero-panel metric-grid">
           {product.metrics.map((metric) => (
-            <div key={metric.label}>
+            <div className="metric-tile" key={metric.label}>
               <span className="metric-value">{metric.value}</span>
               <span className="metric-label">{metric.label}</span>
             </div>
@@ -51,6 +64,16 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             <dt>Connectivity</dt>
             <dd>{product.specs.connectivity}</dd>
           </dl>
+        </article>
+        <article className="spec-panel">
+          <h2>Documents</h2>
+          <div className="document-list">
+            {product.documents.map((document) => (
+              <span className="document-chip" key={document}>
+                {document}
+              </span>
+            ))}
+          </div>
         </article>
         <ExplainerPanel title="Source layer contract" items={vm.sourceEvidence} />
       </section>

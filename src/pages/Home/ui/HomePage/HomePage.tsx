@@ -10,13 +10,14 @@ export const HomePage = observer(function HomePage() {
 
   return (
     <main className="page-shell">
-      <section className="hero-grid">
+      <section className="hero-grid hero-grid-panel">
         <div className="hero-copy">
           <p className="eyebrow">Nexora Systems catalog</p>
-          <h1>Versioned enterprise product data for buyers, partners, and APIs.</h1>
+          <h1>Industrial devices, SaaS plans, and release evidence in one catalog.</h1>
           <p className="hero-summary">
-            Browse devices, SaaS plans, documents, and release evidence first. Open the
-            source layer when you want to inspect the Revisium-backed data contract.
+            Browse the customer-facing catalog first. Then inspect the source layer to
+            see how products, documents, price-book drafts, and revision proof will map
+            to Revisium.
           </p>
           <div className="hero-actions">
             <Link className="button-primary" to="/catalog">
@@ -27,17 +28,21 @@ export const HomePage = observer(function HomePage() {
             </Link>
           </div>
         </div>
-        <div className="hero-panel" aria-label="Catalog status summary">
-          <div>
-            <span className="metric-value">3</span>
+        <div className="hero-panel catalog-console" aria-label="Catalog status summary">
+          <div className="console-header">
+            <span>Catalog snapshot</span>
+            <strong>Mock branch</strong>
+          </div>
+          <div className="metric-tile">
+            <span className="metric-value">{vm.catalogCardCount}</span>
             <span className="metric-label">priority product cards</span>
           </div>
-          <div>
-            <span className="metric-value">2</span>
+          <div className="metric-tile">
+            <span className="metric-value">{vm.releaseCount}</span>
             <span className="metric-label">release states</span>
           </div>
-          <div>
-            <span className="metric-value">0</span>
+          <div className="metric-tile">
+            <span className="metric-value">{vm.backendCallCount}</span>
             <span className="metric-label">backend calls in this PR</span>
           </div>
         </div>
@@ -45,14 +50,29 @@ export const HomePage = observer(function HomePage() {
 
       <section className="section-grid" aria-label="Featured catalog entries">
         {vm.heroProducts.map((product) => (
-          <article className="product-card" key={product.id}>
-            <div className="product-visual">
+          <article className="product-card product-card-featured" key={product.id}>
+            <div className={`product-visual product-visual-${product.visualTone}`}>
               <span className="visually-hidden">{product.imageAlt}</span>
+              <span className="device-line device-line-primary" />
+              <span className="device-line device-line-secondary" />
+              <span className="device-dot device-dot-left" />
+              <span className="device-dot device-dot-right" />
             </div>
             <div className="card-body">
-              <p className="eyebrow">{product.family}</p>
+              <div className="card-kicker">
+                <span>{product.family}</span>
+                <strong>{product.lifecycle}</strong>
+              </div>
               <h2>{product.name}</h2>
               <p>{product.summary}</p>
+              <div className="compact-metrics">
+                {product.metrics.slice(0, 2).map((metric) => (
+                  <span key={metric.label}>
+                    <strong>{metric.value}</strong>
+                    {metric.label}
+                  </span>
+                ))}
+              </div>
               <div className="tag-row">
                 {product.protocols.slice(0, 3).map((protocol) => (
                   <span className="tag" key={protocol}>
@@ -68,7 +88,7 @@ export const HomePage = observer(function HomePage() {
         ))}
       </section>
 
-      <section className="two-column-section">
+      <section className="two-column-section release-section">
         <div>
           <p className="eyebrow">Release proof</p>
           <h2>Catalog and price-book changes stay visible before backend wiring.</h2>

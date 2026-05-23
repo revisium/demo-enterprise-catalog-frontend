@@ -5,6 +5,8 @@ import { HomePageDataSource } from '../api/HomePageDataSource';
 export class HomePageViewModel {
   private readonly dataSource = new HomePageDataSource();
 
+  readonly backendCallCount = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -17,11 +19,19 @@ export class HomePageViewModel {
     return this.dataSource.getSnapshot().releases;
   }
 
+  get catalogCardCount() {
+    return this.heroProducts.length;
+  }
+
+  get releaseCount() {
+    return this.releases.length;
+  }
+
   get proofItems() {
     return [
-      'Mock catalog rows mirror future Revisium tables.',
-      'Nested specs and document lists stay visible in the UI contract.',
-      'Release chips reserve space for branch/revision diff evidence.',
+      'Future project: enterprise-catalog-data.',
+      'Candidate tables: products, documents, catalogReleases.',
+      'Nested specs, protocol arrays, document arrays, and release states are already represented.',
     ];
   }
 }

@@ -11,12 +11,21 @@ export const CatalogPage = observer(function CatalogPage() {
     <main className="page-shell">
       <header className="page-header">
         <p className="eyebrow">Catalog</p>
-        <h1>Products, plans, and documents with mock Revisium-shaped data.</h1>
+        <h1>Browse product families with contract-shaped mock data.</h1>
         <p>
-          This page is intentionally frontend-only. The cards define the first UI
-          contract before schemas, generated clients, and backend runtime APIs exist.
+          Dense rows show the fields that need to survive into Revisium schemas:
+          availability, lifecycle, documents, protocols, and pricing signals.
         </p>
       </header>
+
+      <section className="summary-strip" aria-label="Catalog summary">
+        {vm.summaryMetrics.map((metric) => (
+          <div className="summary-tile" key={metric.label}>
+            <strong>{metric.value}</strong>
+            <span>{metric.label}</span>
+          </div>
+        ))}
+      </section>
 
       <div className="filter-strip" aria-label="Catalog family filters">
         {vm.families.map((family) => (
@@ -29,13 +38,25 @@ export const CatalogPage = observer(function CatalogPage() {
       <section className="catalog-table" aria-label="Catalog products">
         {vm.products.map((product) => (
           <article className="catalog-row" key={product.id}>
-            <div>
-              <p className="eyebrow">{product.category}</p>
+            <div className={`row-visual product-visual-${product.visualTone}`} aria-hidden="true" />
+            <div className="catalog-main-cell">
+              <div className="card-kicker">
+                <span>{product.category}</span>
+                <strong>{product.lifecycle}</strong>
+              </div>
               <h2>{product.name}</h2>
               <p>{product.summary}</p>
+              <div className="tag-row">
+                {product.protocols.map((protocol) => (
+                  <span className="tag" key={protocol}>
+                    {protocol}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="row-meta">
               <span>{product.availability}</span>
+              <span>{product.regionCount} source regions</span>
               <span>{product.documents.length} documents</span>
               <Link className="button-secondary" to={`/catalog/${product.id}`}>
                 Open
