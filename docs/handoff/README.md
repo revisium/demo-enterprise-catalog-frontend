@@ -14,6 +14,14 @@ projects.
 - MobX ViewModels with typed mock DataSources.
 - `@revisium/forms-core` for the quote interaction contract.
 
+## Delivery Stack
+
+- `CI` verifies pull requests and protected branch pushes.
+- `Build` publishes the Docker image from `docker/Dockerfile` on `master` and
+  version tags.
+- `Deploy` runs after a successful `Build` workflow on `master`, using the
+  shared Revisium deployment workflow and repository environment variables.
+
 ## First PR Scope
 
 - React Router SSR stack.
