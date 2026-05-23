@@ -28,6 +28,9 @@ npm run dev
 npm run verify
 ```
 
+Environment defaults live in `.env/`. Keep this demo mock-first until backend
+and Revisium contracts are intentionally connected.
+
 Local Sonar follows the same workflow as other Revisium repos:
 
 ```bash
