@@ -28,6 +28,21 @@ npm run dev
 npm run verify
 ```
 
+Local Sonar follows the same workflow as other Revisium repos:
+
+```bash
+cp .env.sonar.example .env.sonar
+npm run ci:local:sonar
+```
+
+`SONAR_TOKEN` is required for local Sonar. This frontend currently excludes
+coverage from the Quality Gate until test coverage is introduced.
+In a local Revisium workspace you can also point at an existing env file:
+
+```bash
+SONAR_ENV_FILE=../../forms-core/.env.sonar npm run ci:local:sonar
+```
+
 ## UX Direction
 
 - Enterprise catalog portal, not a generic marketing landing page.

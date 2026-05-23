@@ -71,3 +71,12 @@ npm run verify
 
 After PR creation, inspect CI and Sonar. Quality Gate success is not enough:
 valid new Sonar issues must be fixed, not ignored.
+
+When `SONAR_TOKEN` is available locally, run:
+
+```bash
+npm run ci:local:sonar
+```
+
+If the token is stored in another local repo, set `SONAR_ENV_FILE` instead of
+copying the secret into this repo.

@@ -48,6 +48,12 @@ Run the full repo gate unless the user explicitly asks for a narrower check:
 npm run verify
 ```
 
+When `SONAR_TOKEN` is available locally, run the local Sonar gate too:
+
+```bash
+npm run ci:local:sonar
+```
+
 `npm run verify` runs:
 
 ```bash

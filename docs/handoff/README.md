@@ -10,6 +10,7 @@ projects.
 
 - React Router SSR stack.
 - Local verification and CI.
+- Local Sonar scripts compatible with the frontend bootstrap stage.
 - Review contract and bot-facing instructions.
 - Page contracts for the first UI slice.
 - Mock data layer for catalog home, catalog list, product detail, and quote.
