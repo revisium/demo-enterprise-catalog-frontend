@@ -1,4 +1,24 @@
-import type { CatalogProduct, CatalogSnapshot } from '../model/catalogTypes';
+import type {
+  CatalogProduct,
+  CatalogRegionAvailability,
+  CatalogSnapshot,
+} from '../model/catalogTypes';
+
+const regionAvailability = (
+  regionId: string,
+  regionLabel: string,
+  dataCenterCode: string,
+  stock: number,
+  setupHours: number,
+  supportWindow: string,
+): CatalogRegionAvailability => ({
+  dataCenterCode,
+  regionId,
+  regionLabel,
+  setupHours,
+  stock,
+  supportWindow,
+});
 
 const products: readonly CatalogProduct[] = [
   {
@@ -38,30 +58,9 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 2,
     },
     availabilityByRegion: [
-      {
-        regionId: 'de-fra',
-        regionLabel: 'Frankfurt',
-        dataCenterCode: 'FRA-2',
-        stock: 42,
-        setupHours: 1,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'nl-ams',
-        regionLabel: 'Amsterdam',
-        dataCenterCode: 'AMS-1',
-        stock: 28,
-        setupHours: 1,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'us-nyc',
-        regionLabel: 'New York',
-        dataCenterCode: 'NYC-1',
-        stock: 9,
-        setupHours: 2,
-        supportWindow: 'business hours',
-      },
+      regionAvailability('de-fra', 'Frankfurt', 'FRA-2', 42, 1, '24/7'),
+      regionAvailability('nl-ams', 'Amsterdam', 'AMS-1', 28, 1, '24/7'),
+      regionAvailability('us-nyc', 'New York', 'NYC-1', 9, 2, 'business hours'),
     ],
     specs: {
       enclosure: 'Virtualized compute pool',
@@ -113,38 +112,10 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 1,
     },
     availabilityByRegion: [
-      {
-        regionId: 'de-fra',
-        regionLabel: 'Frankfurt',
-        dataCenterCode: 'FRA-1',
-        stock: 120,
-        setupHours: 1,
-        supportWindow: 'business hours',
-      },
-      {
-        regionId: 'nl-ams',
-        regionLabel: 'Amsterdam',
-        dataCenterCode: 'AMS-1',
-        stock: 84,
-        setupHours: 1,
-        supportWindow: 'business hours',
-      },
-      {
-        regionId: 'us-nyc',
-        regionLabel: 'New York',
-        dataCenterCode: 'NYC-1',
-        stock: 36,
-        setupHours: 2,
-        supportWindow: 'business hours',
-      },
-      {
-        regionId: 'sg-sin',
-        regionLabel: 'Singapore',
-        dataCenterCode: 'SIN-1',
-        stock: 14,
-        setupHours: 4,
-        supportWindow: 'business hours',
-      },
+      regionAvailability('de-fra', 'Frankfurt', 'FRA-1', 120, 1, 'business hours'),
+      regionAvailability('nl-ams', 'Amsterdam', 'AMS-1', 84, 1, 'business hours'),
+      regionAvailability('us-nyc', 'New York', 'NYC-1', 36, 2, 'business hours'),
+      regionAvailability('sg-sin', 'Singapore', 'SIN-1', 14, 4, 'business hours'),
     ],
     specs: {
       enclosure: 'Virtualized compute pool',
@@ -196,22 +167,8 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 10,
     },
     availabilityByRegion: [
-      {
-        regionId: 'de-fra',
-        regionLabel: 'Frankfurt',
-        dataCenterCode: 'FRA-2',
-        stock: 3,
-        setupHours: 4,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'nl-ams',
-        regionLabel: 'Amsterdam',
-        dataCenterCode: 'AMS-2',
-        stock: 7,
-        setupHours: 4,
-        supportWindow: '24/7',
-      },
+      regionAvailability('de-fra', 'Frankfurt', 'FRA-2', 3, 4, '24/7'),
+      regionAvailability('nl-ams', 'Amsterdam', 'AMS-2', 7, 4, '24/7'),
     ],
     specs: {
       enclosure: '1U dedicated server',
@@ -265,22 +222,8 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 10,
     },
     availabilityByRegion: [
-      {
-        regionId: 'de-fra',
-        regionLabel: 'Frankfurt',
-        dataCenterCode: 'FRA-2',
-        stock: 2,
-        setupHours: 8,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'us-nyc',
-        regionLabel: 'New York',
-        dataCenterCode: 'NYC-2',
-        stock: 1,
-        setupHours: 12,
-        supportWindow: '24/7',
-      },
+      regionAvailability('de-fra', 'Frankfurt', 'FRA-2', 2, 8, '24/7'),
+      regionAvailability('us-nyc', 'New York', 'NYC-2', 1, 12, '24/7'),
     ],
     specs: {
       enclosure: 'High-memory compute node',
@@ -335,30 +278,9 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 10,
     },
     availabilityByRegion: [
-      {
-        regionId: 'de-fra',
-        regionLabel: 'Frankfurt',
-        dataCenterCode: 'FRA-1',
-        stock: 10,
-        setupHours: 8,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'nl-ams',
-        regionLabel: 'Amsterdam',
-        dataCenterCode: 'AMS-2',
-        stock: 6,
-        setupHours: 8,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'sg-sin',
-        regionLabel: 'Singapore',
-        dataCenterCode: 'SIN-1',
-        stock: 4,
-        setupHours: 12,
-        supportWindow: 'business hours',
-      },
+      regionAvailability('de-fra', 'Frankfurt', 'FRA-1', 10, 8, '24/7'),
+      regionAvailability('nl-ams', 'Amsterdam', 'AMS-2', 6, 8, '24/7'),
+      regionAvailability('sg-sin', 'Singapore', 'SIN-1', 4, 12, 'business hours'),
     ],
     specs: {
       enclosure: 'Storage server pool',
@@ -412,22 +334,8 @@ const products: readonly CatalogProduct[] = [
       networkGbps: 10,
     },
     availabilityByRegion: [
-      {
-        regionId: 'nl-ams',
-        regionLabel: 'Amsterdam',
-        dataCenterCode: 'AMS-2',
-        stock: 2,
-        setupHours: 12,
-        supportWindow: '24/7',
-      },
-      {
-        regionId: 'sg-sin',
-        regionLabel: 'Singapore',
-        dataCenterCode: 'SIN-1',
-        stock: 1,
-        setupHours: 24,
-        supportWindow: 'business hours',
-      },
+      regionAvailability('nl-ams', 'Amsterdam', 'AMS-2', 2, 12, '24/7'),
+      regionAvailability('sg-sin', 'Singapore', 'SIN-1', 1, 24, 'business hours'),
     ],
     specs: {
       enclosure: 'GPU acceleration node',

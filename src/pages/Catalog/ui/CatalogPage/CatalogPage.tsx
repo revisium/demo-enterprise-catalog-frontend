@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import {
+  ChipGroup,
   FilterButton,
   FilterCard,
   PageIntroGrid,
@@ -56,68 +57,24 @@ export const CatalogPage = observer(function CatalogPage() {
               </Flex>
             </Flex>
 
-            <Stack gap="2">
-              <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
-                Plan families
-              </Text>
-              <Flex gap="2" wrap="wrap">
-                {vm.families.map((family) => {
-                  const selected = vm.selectedFamilyIds.includes(family.id);
-
-                  return (
-                    <FilterButton
-                      key={family.id}
-                      onClick={() => vm.toggleFamily(family.id)}
-                      selected={selected}
-                    >
-                      {family.label}
-                    </FilterButton>
-                  );
-                })}
-              </Flex>
-            </Stack>
-
-            <Stack gap="2">
-              <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
-                Regions
-              </Text>
-              <Flex gap="2" wrap="wrap">
-                {vm.regions.map((region) => {
-                  const selected = vm.selectedRegionIds.includes(region.id);
-
-                  return (
-                    <FilterButton
-                      key={region.id}
-                      onClick={() => vm.toggleRegion(region.id)}
-                      selected={selected}
-                    >
-                      {region.label}
-                    </FilterButton>
-                  );
-                })}
-              </Flex>
-            </Stack>
-
-            <Stack gap="2">
-              <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
-                Add-ons and capabilities
-              </Text>
-              <Flex gap="2" wrap="wrap">
-                {vm.addons.map((addon) => {
-                  const selected = vm.selectedAddonIds.includes(addon.id);
-
-                  return (
-                    <FilterButton
-                      key={addon.id}
-                      onClick={() => vm.toggleAddon(addon.id)}
-                      selected={selected}
-                    >
-                      {addon.label}
-                    </FilterButton>
-                  );
-                })}
-              </Flex>
-            </Stack>
+            <ChipGroup
+              label="Plan families"
+              onToggle={(id) => vm.toggleFamily(id)}
+              options={vm.families}
+              selectedIds={vm.selectedFamilyIds}
+            />
+            <ChipGroup
+              label="Regions"
+              onToggle={(id) => vm.toggleRegion(id)}
+              options={vm.regions}
+              selectedIds={vm.selectedRegionIds}
+            />
+            <ChipGroup
+              label="Add-ons and capabilities"
+              onToggle={(id) => vm.toggleAddon(id)}
+              options={vm.addons}
+              selectedIds={vm.selectedAddonIds}
+            />
           </FilterCard>
 
           <FilterCard>

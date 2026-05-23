@@ -2,13 +2,7 @@ import { Badge, Box, Container, Flex, Grid, Heading, Stack, Text } from '@chakra
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
-import {
-  FilterButton,
-  FilterCard,
-  PageIntroGrid,
-  SectionEyebrow,
-  SelectField,
-} from 'src/shared/ui';
+import { ChipGroup, FilterCard, PageIntroGrid, SectionEyebrow, SelectField } from 'src/shared/ui';
 import { LocationsPageViewModel } from '../../model/LocationsPageViewModel';
 
 export const LocationsPage = observer(function LocationsPage() {
@@ -32,21 +26,12 @@ export const LocationsPage = observer(function LocationsPage() {
         >
           <FilterCard>
             <SectionEyebrow>Server families</SectionEyebrow>
-            <Flex gap="2" wrap="wrap">
-              {vm.families.map((family) => {
-                const selected = vm.selectedFamilyIds.includes(family.id);
-
-                return (
-                  <FilterButton
-                    key={family.id}
-                    onClick={() => vm.toggleFamily(family.id)}
-                    selected={selected}
-                  >
-                    {family.label}
-                  </FilterButton>
-                );
-              })}
-            </Flex>
+            <ChipGroup
+              label="Families"
+              onToggle={(id) => vm.toggleFamily(id)}
+              options={vm.families}
+              selectedIds={vm.selectedFamilyIds}
+            />
           </FilterCard>
 
           <FilterCard>

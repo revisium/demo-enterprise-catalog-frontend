@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
 import {
+  ChipGroup,
   FilterButton,
   FilterCard,
   PageIntroGrid,
@@ -50,47 +51,18 @@ export const PricingPage = observer(function PricingPage() {
               </FilterButton>
             </Flex>
 
-            <Stack gap="2">
-              <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
-                Families
-              </Text>
-              <Flex gap="2" wrap="wrap">
-                {vm.families.map((family) => {
-                  const selected = vm.selectedFamilyIds.includes(family.id);
-
-                  return (
-                    <FilterButton
-                      key={family.id}
-                      onClick={() => vm.toggleFamily(family.id)}
-                      selected={selected}
-                    >
-                      {family.label}
-                    </FilterButton>
-                  );
-                })}
-              </Flex>
-            </Stack>
-
-            <Stack gap="2">
-              <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
-                Regions
-              </Text>
-              <Flex gap="2" wrap="wrap">
-                {vm.regions.map((region) => {
-                  const selected = vm.selectedRegionIds.includes(region.id);
-
-                  return (
-                    <FilterButton
-                      key={region.id}
-                      onClick={() => vm.toggleRegion(region.id)}
-                      selected={selected}
-                    >
-                      {region.label}
-                    </FilterButton>
-                  );
-                })}
-              </Flex>
-            </Stack>
+            <ChipGroup
+              label="Families"
+              onToggle={(id) => vm.toggleFamily(id)}
+              options={vm.families}
+              selectedIds={vm.selectedFamilyIds}
+            />
+            <ChipGroup
+              label="Regions"
+              onToggle={(id) => vm.toggleRegion(id)}
+              options={vm.regions}
+              selectedIds={vm.selectedRegionIds}
+            />
           </FilterCard>
 
           <FilterCard>

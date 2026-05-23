@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   Grid,
   Heading,
   SimpleGrid,
@@ -26,6 +27,13 @@ interface FilterButtonProps {
   readonly onClick: () => void;
   readonly selected: boolean;
   readonly tone?: 'brand' | 'success';
+}
+
+interface ChipGroupProps {
+  readonly label: string;
+  readonly onToggle: (id: string) => void;
+  readonly options: readonly FilterOption[];
+  readonly selectedIds: readonly string[];
 }
 
 interface FilterCardProps extends StackProps {
@@ -71,6 +79,27 @@ export function FilterButton({ children, onClick, selected, tone = 'brand' }: Fi
     >
       {children}
     </Button>
+  );
+}
+
+export function ChipGroup({ label, onToggle, options, selectedIds }: ChipGroupProps) {
+  return (
+    <Stack gap="2">
+      <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
+        {label}
+      </Text>
+      <Flex gap="2" wrap="wrap">
+        {options.map((option) => (
+          <FilterButton
+            key={option.id}
+            onClick={() => onToggle(option.id)}
+            selected={selectedIds.includes(option.id)}
+          >
+            {option.label}
+          </FilterButton>
+        ))}
+      </Flex>
+    </Stack>
   );
 }
 
