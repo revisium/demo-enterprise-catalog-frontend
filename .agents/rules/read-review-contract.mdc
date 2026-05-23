@@ -1,0 +1,11 @@
+---
+description: Use the frontend review contract before review or implementation.
+alwaysApply: true
+---
+
+# Read Review Contract
+
+Start review and implementation work from `REVIEW.md`, then follow the linked
+architecture, page spec, design-system, playbook, and checklist docs. Keep
+`.coderabbit.yaml`, `cubic.yaml`, and repo-local agent rules aligned with the
+same contract.
