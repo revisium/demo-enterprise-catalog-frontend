@@ -68,8 +68,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
             ))}
           </Flex>
           <Text color="darkPanelText" fontSize="sm">
-            These labels become CMS dictionary rows later; the public page only shows customer
-            terms.
+            Browse the most common terms customers use across documentation and guides.
           </Text>
         </Stack>
       </Grid>
@@ -136,6 +135,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
                 {vm.getHelpfulCount(article)} people found this helpful
               </Text>
               <Button
+                aria-pressed={vm.isHelpful(article.title)}
                 borderRadius="8px"
                 onClick={() => vm.toggleHelpful(article.title)}
                 size="sm"

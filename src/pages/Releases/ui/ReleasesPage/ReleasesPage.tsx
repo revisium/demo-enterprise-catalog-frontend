@@ -126,6 +126,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   {vm.getLikedCount(update)} customer reactions
                 </Text>
                 <Button
+                  aria-pressed={vm.isLiked(update.title)}
                   borderRadius="8px"
                   onClick={() => vm.toggleLike(update.title)}
                   size="sm"
