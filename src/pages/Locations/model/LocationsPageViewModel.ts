@@ -90,12 +90,16 @@ export class LocationsPageViewModel {
 
     return [...byRegion.entries()].map(([regionId, plans]) => {
       const updatedTimes = plans.map((row) => Date.parse(row.plan.system.updatedAt));
+      const fastestSetupHours = plans.reduce(
+        (fastest, row) => Math.min(fastest, row.setupHours),
+        Number.POSITIVE_INFINITY,
+      );
 
       return {
         dataCenterCodes: [...new Set(plans.map((row) => row.dataCenterCode))].sort((left, right) =>
           left.localeCompare(right),
         ),
-        fastestSetupHours: Math.min(...plans.map((row) => row.setupHours)),
+        fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
         families: [...new Set(plans.map((row) => row.plan.family))].sort((left, right) =>
           left.localeCompare(right),
         ),
@@ -162,7 +166,7 @@ export class LocationsPageViewModel {
   }
 
   setMinStock(value: string) {
-    this.minStock = Number(value);
+    this.minStock = this.parseNonNegativeNumber(value);
   }
 
   setSort(sortId: string) {
@@ -221,6 +225,12 @@ export class LocationsPageViewModel {
 
   private normalizeSupportWindow(value: string) {
     return value === '24/7' ? '24-7' : 'business-hours';
+  }
+
+  private parseNonNegativeNumber(value: string) {
+    const parsed = Number(value);
+
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
   }
 
   private toggleValue(values: readonly string[], value: string) {

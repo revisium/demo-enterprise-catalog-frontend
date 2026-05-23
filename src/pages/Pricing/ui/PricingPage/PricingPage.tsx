@@ -33,12 +33,14 @@ export const PricingPage = observer(function PricingPage() {
               <FilterButton
                 onClick={() => vm.setBillingTerm('monthly')}
                 selected={vm.billingTermId === 'monthly'}
+                tone="neutral"
               >
                 Monthly
               </FilterButton>
               <FilterButton
                 onClick={() => vm.setBillingTerm('yearly')}
                 selected={vm.billingTermId === 'yearly'}
+                tone="neutral"
               >
                 Yearly
               </FilterButton>

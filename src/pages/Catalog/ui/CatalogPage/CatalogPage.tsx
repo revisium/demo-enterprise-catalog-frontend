@@ -45,12 +45,14 @@ export const CatalogPage = observer(function CatalogPage() {
                 <FilterButton
                   onClick={() => vm.setFilterMode('all')}
                   selected={vm.filterMode === 'all'}
+                  tone="neutral"
                 >
                   Match all
                 </FilterButton>
                 <FilterButton
                   onClick={() => vm.setFilterMode('any')}
                   selected={vm.filterMode === 'any'}
+                  tone="neutral"
                 >
                   Match any
                 </FilterButton>

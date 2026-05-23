@@ -76,7 +76,10 @@ export class CatalogPageViewModel {
         month: 'short',
       }).format(new Date(product.system.updatedAt)),
       effectivePrice: product.pricing.monthlyUsd,
-      maxSetupHours: Math.max(...product.availabilityByRegion.map((region) => region.setupHours)),
+      maxSetupHours: product.availabilityByRegion.reduce(
+        (max, region) => Math.max(max, region.setupHours),
+        0,
+      ),
       totalStock: product.availabilityByRegion.reduce((total, region) => total + region.stock, 0),
     }));
   }
@@ -149,11 +152,11 @@ export class CatalogPageViewModel {
   }
 
   setMaxMonthlyPrice(value: string) {
-    this.maxMonthlyPrice = Number(value);
+    this.maxMonthlyPrice = this.parseNonNegativeNumber(value);
   }
 
   setMinRamGb(value: string) {
-    this.minRamGb = Number(value);
+    this.minRamGb = this.parseNonNegativeNumber(value);
   }
 
   setRequireCompliance(value: boolean) {
@@ -207,7 +210,8 @@ export class CatalogPageViewModel {
   private formatAddon(addon: string) {
     return addon
       .split('-')
-      .map((part) => part[0]?.toUpperCase() + part.slice(1))
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
   }
 
@@ -275,6 +279,12 @@ export class CatalogPageViewModel {
 
   private matchesStock(product: CatalogProductRow) {
     return !this.stockOnly || product.totalStock > 0;
+  }
+
+  private parseNonNegativeNumber(value: string) {
+    const parsed = Number(value);
+
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
   }
 
   private toggleValue(values: readonly string[], value: string) {

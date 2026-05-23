@@ -116,7 +116,7 @@ export class PricingPageViewModel {
   }
 
   setMaxMonthlyPrice(value: string) {
-    this.maxMonthlyPrice = Number(value);
+    this.maxMonthlyPrice = this.parseNonNegativeNumber(value);
   }
 
   setSort(sortId: string) {
@@ -168,6 +168,12 @@ export class PricingPageViewModel {
     const matchesStock = !this.stockOnly || row.region.stock > 0;
 
     return matchesFamily && matchesRegion && matchesPrice && matchesStock;
+  }
+
+  private parseNonNegativeNumber(value: string) {
+    const parsed = Number(value);
+
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
   }
 
   private toggleValue(values: readonly string[], value: string) {

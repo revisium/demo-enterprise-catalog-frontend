@@ -26,7 +26,7 @@ interface FilterButtonProps {
   readonly children: ReactNode;
   readonly onClick: () => void;
   readonly selected: boolean;
-  readonly tone?: 'brand' | 'success';
+  readonly tone?: 'brand' | 'neutral' | 'success';
 }
 
 interface ChipGroupProps {
@@ -64,15 +64,20 @@ interface SelectFieldProps {
 export function FilterButton({ children, onClick, selected, tone = 'brand' }: FilterButtonProps) {
   const selectedBg = tone === 'success' ? 'successBg' : 'brand.50';
   const selectedBorder = tone === 'success' ? 'successBorder' : 'activeBorder';
-  const selectedColor = tone === 'success' ? 'ink.900' : 'brand.500';
+  let color = 'ink.900';
+
+  if (tone === 'brand') {
+    color = selected ? 'brand.500' : 'ink.700';
+  }
 
   return (
     <Button
+      aria-pressed={selected}
       bg={selected ? selectedBg : 'white'}
       borderColor={selected ? selectedBorder : 'surface.200'}
       borderRadius="8px"
       borderWidth="1px"
-      color={selected ? selectedColor : 'ink.700'}
+      color={color}
       onClick={onClick}
       size="sm"
       variant="ghost"
