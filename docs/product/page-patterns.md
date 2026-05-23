@@ -17,6 +17,19 @@ Mock data should match future contract shape:
 
 ## Proof Layer
 
-Each data-backed page should reserve space for a compact source/explainer panel.
-During mock-first work, the panel names future evidence. After backend/Revisium
-connection, it should show only real links, requests, and response examples.
+Do not show source-layer proof inside the customer-facing layout during the
+mock-first phase. Data-backed pages should first read as useful product pages.
+
+After backend/Revisium connection, proof can appear in a separate explainer
+surface with real links, requests, response examples, source fields, and
+revision evidence.
+
+## Query Page Polish
+
+Catalog, pricing, and locations pages should always provide:
+
+- clear filter hints in customer language;
+- empty states with a reset action;
+- mobile layouts that keep row labels, prices, stock, and setup text readable;
+- no mock labels, project names, table names, row IDs, or source widgets in the
+  public layout.

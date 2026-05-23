@@ -140,6 +140,10 @@ export class LocationsPageViewModel {
     return supportOptions;
   }
 
+  get hasNoMatches() {
+    return this.filteredLocations.length === 0;
+  }
+
   get summaryMetrics() {
     return [
       { label: 'Regions', value: String(this.filteredLocations.length) },
@@ -167,6 +171,13 @@ export class LocationsPageViewModel {
 
   setMinStock(value: string) {
     this.minStock = this.parseNonNegativeNumber(value);
+  }
+
+  resetFilters() {
+    this.minStock = 0;
+    this.selectedFamilyIds = [];
+    this.selectedSupportWindowId = 'all';
+    this.sortId = 'stock';
   }
 
   setSort(sortId: string) {

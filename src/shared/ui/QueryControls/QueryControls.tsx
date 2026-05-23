@@ -40,6 +40,13 @@ interface FilterCardProps extends StackProps {
   readonly children: ReactNode;
 }
 
+interface EmptyStateProps {
+  readonly actionLabel?: string;
+  readonly onAction?: () => void;
+  readonly summary: string;
+  readonly title: string;
+}
+
 interface MetricGridProps {
   readonly ariaLabel: string;
   readonly metrics: readonly Metric[];
@@ -104,6 +111,34 @@ export function ChipGroup({ label, onToggle, options, selectedIds }: ChipGroupPr
           </FilterButton>
         ))}
       </Flex>
+    </Stack>
+  );
+}
+
+export function EmptyState({ actionLabel, onAction, summary, title }: EmptyStateProps) {
+  return (
+    <Stack
+      align="start"
+      bg="white"
+      borderColor="surface.200"
+      borderRadius="8px"
+      borderWidth="1px"
+      gap="3"
+      p={{ base: '4', md: '5' }}
+    >
+      <Stack gap="1">
+        <Heading as="h2" color="ink.900" fontSize="xl">
+          {title}
+        </Heading>
+        <Text color="ink.500" fontSize="sm" maxW="680px">
+          {summary}
+        </Text>
+      </Stack>
+      {onAction && actionLabel ? (
+        <Button borderRadius="8px" onClick={onAction} size="sm" variant="outline">
+          {actionLabel}
+        </Button>
+      ) : null}
     </Stack>
   );
 }
@@ -181,6 +216,14 @@ export function PageIntroGrid({
 export function SectionEyebrow({ children }: { readonly children: ReactNode }) {
   return (
     <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+      {children}
+    </Text>
+  );
+}
+
+export function FieldHint({ children }: { readonly children: ReactNode }) {
+  return (
+    <Text color="ink.500" fontSize="sm">
       {children}
     </Text>
   );

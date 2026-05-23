@@ -5,6 +5,8 @@ import { Link } from 'react-router';
 
 import {
   ChipGroup,
+  EmptyState,
+  FieldHint,
   FilterButton,
   FilterCard,
   PageIntroGrid,
@@ -24,8 +26,8 @@ export const CatalogPage = observer(function CatalogPage() {
           eyebrow="Servers"
           metrics={vm.summaryMetrics}
           metricsLabel="Catalog summary"
-          summary="Compare server plans by availability, region, contract term, documentation, support, and commercial readiness."
-          title="Browse cloud and dedicated server plans."
+          summary="Find a production-ready server by region, stock, price, support level, and hardware profile."
+          title="Browse server plans with live-style availability."
         />
 
         <Grid
@@ -36,9 +38,9 @@ export const CatalogPage = observer(function CatalogPage() {
           <FilterCard>
             <Flex align="center" justify="space-between" gap="3" wrap="wrap">
               <Stack gap="0">
-                <SectionEyebrow>Filter logic</SectionEyebrow>
+                <SectionEyebrow>Search mode</SectionEyebrow>
                 <Heading as="h2" color="ink.900" fontSize="xl">
-                  Find matching server plans
+                  Combine plan, region, and capability filters
                 </Heading>
               </Stack>
               <Flex gap="2" wrap="wrap">
@@ -58,6 +60,10 @@ export const CatalogPage = observer(function CatalogPage() {
                 </FilterButton>
               </Flex>
             </Flex>
+            <FieldHint>
+              Use match all for a strict shortlist, or match any when you are exploring
+              alternatives.
+            </FieldHint>
 
             <ChipGroup
               label="Plan families"
@@ -80,7 +86,11 @@ export const CatalogPage = observer(function CatalogPage() {
           </FilterCard>
 
           <FilterCard>
-            <SectionEyebrow>Nested fields and sort</SectionEyebrow>
+            <SectionEyebrow>Specs and sorting</SectionEyebrow>
+            <FieldHint>
+              Narrow the list by budget or memory, then sort by availability, price, or recent
+              updates.
+            </FieldHint>
             <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               <SelectField
                 label="Memory"
@@ -123,6 +133,14 @@ export const CatalogPage = observer(function CatalogPage() {
         </Grid>
 
         <Stack as="section" aria-label="Catalog products" gap="3">
+          {vm.hasNoMatches ? (
+            <EmptyState
+              actionLabel="Reset filters"
+              onAction={() => vm.resetFilters()}
+              summary="The current filter mix is too narrow. Reset the filters or switch to match any to compare nearby options."
+              title="No server plans match these filters"
+            />
+          ) : null}
           {vm.filteredProducts.map((product) => (
             <Grid
               alignItems="stretch"
@@ -158,7 +176,9 @@ export const CatalogPage = observer(function CatalogPage() {
                 <Heading as="h2" color="ink.900" fontSize="xl">
                   {product.name}
                 </Heading>
-                <Text color="ink.500">{product.summary}</Text>
+                <Text color="ink.500" fontSize={{ base: 'sm', md: 'md' }}>
+                  {product.summary}
+                </Text>
                 <Flex gap="2" wrap="wrap">
                   {product.protocols.map((protocol) => (
                     <Badge bg="panelSubtleBg" color="ink.700" key={protocol}>
@@ -167,7 +187,7 @@ export const CatalogPage = observer(function CatalogPage() {
                   ))}
                 </Flex>
               </Stack>
-              <Stack align="start" color="ink.500" fontSize="sm" gap="2">
+              <Stack align="start" color="ink.500" fontSize="sm" gap="2" minW="0">
                 <Text>{product.availability}</Text>
                 <Text>
                   {product.hardware.cpuCores} cores · {product.hardware.ramGb} GB RAM ·{' '}

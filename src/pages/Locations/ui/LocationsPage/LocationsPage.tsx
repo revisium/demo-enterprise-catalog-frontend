@@ -2,7 +2,15 @@ import { Badge, Box, Container, Flex, Grid, Heading, Stack, Text } from '@chakra
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
-import { ChipGroup, FilterCard, PageIntroGrid, SectionEyebrow, SelectField } from 'src/shared/ui';
+import {
+  ChipGroup,
+  EmptyState,
+  FieldHint,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  SelectField,
+} from 'src/shared/ui';
 import { LocationsPageViewModel } from '../../model/LocationsPageViewModel';
 
 export const LocationsPage = observer(function LocationsPage() {
@@ -15,8 +23,8 @@ export const LocationsPage = observer(function LocationsPage() {
           eyebrow="Locations"
           metrics={vm.summaryMetrics}
           metricsLabel="Location summary"
-          summary="Compare regional availability, support windows, active server families, and the latest plan updates before opening a quote."
-          title="Choose a data-center region by stock and setup time."
+          summary="Pick a region by available inventory, setup speed, support coverage, and server families."
+          title="Choose a data-center region."
         />
 
         <Grid
@@ -26,6 +34,9 @@ export const LocationsPage = observer(function LocationsPage() {
         >
           <FilterCard>
             <SectionEyebrow>Server families</SectionEyebrow>
+            <FieldHint>
+              See only regions that can supply the server families you care about.
+            </FieldHint>
             <ChipGroup
               label="Families"
               onToggle={(id) => vm.toggleFamily(id)}
@@ -36,6 +47,9 @@ export const LocationsPage = observer(function LocationsPage() {
 
           <FilterCard>
             <SectionEyebrow>Availability view</SectionEyebrow>
+            <FieldHint>
+              Raise the stock threshold for larger rollouts or choose a support window.
+            </FieldHint>
             <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               <SelectField
                 label="Stock"
@@ -61,6 +75,14 @@ export const LocationsPage = observer(function LocationsPage() {
         </Grid>
 
         <Stack as="section" aria-label="Data-center locations" gap="3">
+          {vm.hasNoMatches ? (
+            <EmptyState
+              actionLabel="Reset filters"
+              onAction={() => vm.resetFilters()}
+              summary="No region currently matches this family, stock, and support combination. Reset filters to compare all regions."
+              title="No regions match these filters"
+            />
+          ) : null}
           {vm.filteredLocations.map((location) => (
             <Grid
               alignItems="stretch"

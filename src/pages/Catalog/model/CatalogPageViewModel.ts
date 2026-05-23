@@ -134,6 +134,10 @@ export class CatalogPageViewModel {
     );
   }
 
+  get hasNoMatches() {
+    return this.filteredProducts.length === 0;
+  }
+
   get summaryMetrics() {
     return [
       { label: 'Matches', value: String(this.filteredProducts.length) },
@@ -149,6 +153,18 @@ export class CatalogPageViewModel {
 
   setFilterMode(mode: CatalogFilterMode) {
     this.filterMode = mode;
+  }
+
+  resetFilters() {
+    this.selectedAddonIds = [];
+    this.selectedFamilyIds = [];
+    this.selectedRegionIds = [];
+    this.filterMode = 'all';
+    this.maxMonthlyPrice = 0;
+    this.minRamGb = 0;
+    this.requireCompliance = false;
+    this.sortId = 'display-order';
+    this.stockOnly = true;
   }
 
   setMaxMonthlyPrice(value: string) {
