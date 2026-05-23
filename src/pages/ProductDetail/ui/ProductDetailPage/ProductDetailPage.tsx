@@ -1,19 +1,19 @@
 import {
   Badge,
   Box,
+  Button,
   Container,
   Flex,
   Grid,
   Heading,
-  SimpleGrid,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 
-import { ProductVisual } from 'src/shared/ui';
+import { MetricGrid, ProductVisual, SectionEyebrow } from 'src/shared/ui';
 import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewModel';
 
 export const ProductDetailPage = observer(function ProductDetailPage() {
@@ -55,6 +55,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                 </Badge>
               ))}
             </Flex>
+            <Flex gap="2" wrap="wrap">
+              <Button asChild bg="ctaBg" borderRadius="8px" color="white">
+                <Link to="/quote">Request quote</Link>
+              </Button>
+              <Button asChild borderRadius="8px" variant="outline">
+                <Link to="/compare">Compare plans</Link>
+              </Button>
+            </Flex>
           </Stack>
           <ProductVisual
             alt={product.imageAlt}
@@ -64,25 +72,9 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
           />
         </Grid>
 
-        <SimpleGrid aria-label="Product metrics" columns={{ base: 1, md: 3 }} gap="3" mt="5">
-          {product.metrics.map((metric) => (
-            <Box
-              bg="white"
-              borderColor="surface.200"
-              borderRadius="8px"
-              borderWidth="1px"
-              key={metric.label}
-              p="4"
-            >
-              <Text color="ink.900" fontSize="2xl" fontWeight="780">
-                {metric.value}
-              </Text>
-              <Text color="ink.500" fontSize="sm">
-                {metric.label}
-              </Text>
-            </Box>
-          ))}
-        </SimpleGrid>
+        <Box bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" mt="5" p="4">
+          <MetricGrid ariaLabel="Product metrics" metrics={vm.summaryMetrics} />
+        </Box>
 
         <Grid
           gap={{ base: '5', lg: '6' }}
@@ -154,6 +146,77 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                 </Badge>
               ))}
             </Flex>
+          </Stack>
+        </Grid>
+
+        <Grid
+          gap={{ base: '5', lg: '6' }}
+          mt={{ base: '5', md: '6' }}
+          templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }}
+        >
+          <Stack
+            bg="white"
+            borderColor="surface.200"
+            borderRadius="8px"
+            borderWidth="1px"
+            gap="3"
+            p="4"
+          >
+            <SectionEyebrow>Regional availability</SectionEyebrow>
+            {product.availabilityByRegion.map((region) => (
+              <Grid
+                alignItems="center"
+                borderColor="surface.200"
+                borderRadius="8px"
+                borderWidth="1px"
+                gap="3"
+                key={region.regionId}
+                p="3"
+                templateColumns={{ base: '1fr', md: '1fr 90px 110px' }}
+              >
+                <Stack gap="1">
+                  <Text color="ink.900" fontWeight="780">
+                    {region.regionLabel}
+                  </Text>
+                  <Text color="ink.500" fontSize="sm">
+                    {region.dataCenterCode} · {region.supportWindow}
+                  </Text>
+                </Stack>
+                <Text color="ink.900" fontWeight="760">
+                  {region.stock} units
+                </Text>
+                <Text color="ink.500" fontSize="sm">
+                  setup {region.setupHours}h
+                </Text>
+              </Grid>
+            ))}
+          </Stack>
+          <Stack
+            bg="surface.900"
+            borderRadius="8px"
+            boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
+            color="white"
+            gap="3"
+            p="4"
+          >
+            <Text
+              color="darkPanelMutedText"
+              fontSize="xs"
+              fontWeight="700"
+              textTransform="uppercase"
+            >
+              Commercial summary
+            </Text>
+            <Text fontSize="3xl" fontWeight="800" lineHeight="1">
+              ${product.pricing.monthlyUsd}/mo
+            </Text>
+            <Text color="darkPanelText" fontSize="sm">
+              ${product.pricing.yearlyMonthlyUsd}/mo on yearly term · ${product.pricing.setupUsd}{' '}
+              setup fee.
+            </Text>
+            <Text color="darkPanelText" fontSize="sm">
+              {product.customerNote}
+            </Text>
           </Stack>
         </Grid>
       </Container>

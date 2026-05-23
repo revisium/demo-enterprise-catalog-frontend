@@ -14,9 +14,12 @@ backend.
 - Backend owns quote submissions.
 - Revisium does not own submitted user intent.
 - Form values should become the candidate mutation input.
+- Plan and region choices should come from the same typed catalog snapshot during
+  the mock-first phase.
 
 ## Next UI Decisions
 
 - Required fields.
 - Confirmation state.
-- Whether quote starts from a product detail page or standalone route.
+- How product detail should prefill quote intent after route/query contracts are
+  stabilized.

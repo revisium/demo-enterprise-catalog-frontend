@@ -7,14 +7,16 @@ export interface QuoteFormValues {
   readonly interest: string;
 }
 
-export function createQuoteForm() {
+const fallbackValues: QuoteFormValues = {
+  company: '',
+  email: '',
+  region: '',
+  interest: '',
+};
+
+export function createQuoteForm(defaultValues: QuoteFormValues = fallbackValues) {
   return createForm({
-    defaultValues: {
-      company: '',
-      email: '',
-      region: 'North America',
-      interest: 'Edge Gateway X4',
-    } satisfies QuoteFormValues,
+    defaultValues,
     fields: {
       company: field<string>({
         validators: {

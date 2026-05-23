@@ -1,29 +1,22 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { createQuoteForm } from 'src/shared/forms';
+import { catalogSnapshot } from 'src/entities/catalog';
+import { createQuoteForm, type QuoteFormValues } from 'src/shared/forms';
 
-interface QuoteSelectOption {
-  readonly label: string;
-  readonly value: string;
+function getDefaultQuoteFormValues(): QuoteFormValues {
+  const defaultProduct = catalogSnapshot.products[0];
+  const defaultRegion = defaultProduct?.availabilityByRegion[0];
+
+  return {
+    company: '',
+    email: '',
+    interest: defaultProduct?.name ?? '',
+    region: defaultRegion?.regionLabel ?? '',
+  };
 }
 
-const regionOptions: readonly QuoteSelectOption[] = [
-  { label: 'New York', value: 'New York' },
-  { label: 'Europe', value: 'Europe' },
-  { label: 'Frankfurt', value: 'Frankfurt' },
-  { label: 'Amsterdam', value: 'Amsterdam' },
-  { label: 'Singapore', value: 'Singapore' },
-];
-
-const interestOptions: readonly QuoteSelectOption[] = [
-  { label: 'Business VM 8', value: 'Business VM 8' },
-  { label: 'Dedicated R2', value: 'Dedicated R2' },
-  { label: 'Database D4', value: 'Database D4' },
-  { label: 'Storage S3', value: 'Storage S3' },
-];
-
 export class QuotePageViewModel {
-  readonly form = createQuoteForm();
+  readonly form = createQuoteForm(getDefaultQuoteFormValues());
   submitted = false;
   submitError: string | undefined;
 
@@ -32,11 +25,29 @@ export class QuotePageViewModel {
   }
 
   get regionOptions() {
-    return regionOptions;
+    const regions = catalogSnapshot.products.flatMap((product) => product.availabilityByRegion);
+    const regionLabels = [...new Set(regions.map((region) => region.regionLabel))];
+
+    return regionLabels.map((label) => ({ label, value: label }));
   }
 
   get interestOptions() {
-    return interestOptions;
+    return catalogSnapshot.products.map((product) => ({
+      label: product.name,
+      value: product.name,
+    }));
+  }
+
+  get selectedPlanSummary() {
+    const selectedPlan = catalogSnapshot.products.find(
+      (product) => product.name === this.form.controls.interest.value,
+    );
+
+    if (!selectedPlan) {
+      return undefined;
+    }
+
+    return `${selectedPlan.hardware.cpuCores} cores, ${selectedPlan.hardware.ramGb} GB RAM, from $${selectedPlan.pricing.monthlyUsd}/mo`;
   }
 
   submit = (event?: { preventDefault(): void }) => {

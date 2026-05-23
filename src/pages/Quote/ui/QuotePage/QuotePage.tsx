@@ -156,6 +156,16 @@ export const QuotePage = observer(function QuotePage() {
                 </chakra.select>
               </Stack>
             </Grid>
+            {vm.selectedPlanSummary ? (
+              <Stack bg="surface.50" borderRadius="8px" gap="1" p="3">
+                <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                  Selected plan
+                </Text>
+                <Text color="ink.900" fontWeight="760">
+                  {vm.selectedPlanSummary}
+                </Text>
+              </Stack>
+            ) : null}
             <Button alignSelf="start" bg="ctaBg" borderRadius="8px" color="white" type="submit">
               Submit request
             </Button>
