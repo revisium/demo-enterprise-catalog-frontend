@@ -15,6 +15,16 @@ Prototype typed mock data from the shared catalog snapshot.
 - term, max price, and stock controls model AND filters;
 - sort covers price, stock, setup time, RAM, and last updated time;
 - rows flatten plan data plus nested regional availability.
+- selected price rows model user-owned runtime state that can be carried into
+  quote creation.
+
+## UX Scope
+
+- filter and sort a regional price-book table;
+- compare monthly and yearly effective prices without leaving the table;
+- select regional rows into a quote draft panel;
+- keep selected rows visible while the user adjusts billing term;
+- make the next step a quote flow, not a generic contact action.
 
 ## Future Contract
 

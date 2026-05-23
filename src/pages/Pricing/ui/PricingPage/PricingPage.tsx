@@ -1,6 +1,7 @@
-import { Badge, Box, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router';
 
 import {
   ChipGroup,
@@ -8,6 +9,7 @@ import {
   FieldHint,
   FilterButton,
   FilterCard,
+  MetricGrid,
   PageIntroGrid,
   SectionEyebrow,
   SelectField,
@@ -94,53 +96,127 @@ export const PricingPage = observer(function PricingPage() {
           </FilterCard>
         </Grid>
 
-        <Stack gap="2">
-          {vm.hasNoMatches ? (
-            <EmptyState
-              actionLabel="Reset filters"
-              onAction={() => vm.resetFilters()}
-              summary="There are no price rows for this combination. Reset filters to return to the full regional price list."
-              title="No price rows match these filters"
-            />
-          ) : null}
-          {vm.filteredRows.map((row) => (
-            <Grid
-              alignItems="center"
-              bg="white"
-              borderColor="surface.200"
-              borderRadius="8px"
-              borderWidth="1px"
-              gap="3"
-              key={`${row.plan.id}-${row.region.regionId}-${vm.billingTermId}`}
-              p="3"
-              templateColumns={{ base: '1fr', lg: '1fr 150px 150px 120px' }}
-            >
-              <Stack gap="0">
+        <Grid
+          alignItems="start"
+          gap="3"
+          templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
+        >
+          <Stack gap="2">
+            {vm.hasNoMatches ? (
+              <EmptyState
+                actionLabel="Reset filters"
+                onAction={() => vm.resetFilters()}
+                summary="There are no price rows for this combination. Reset filters to return to the full regional price list."
+                title="No price rows match these filters"
+              />
+            ) : null}
+            {vm.filteredRows.map((row) => (
+              <Grid
+                alignItems="center"
+                bg={vm.isRowSelected(row.id) ? 'brand.50' : 'white'}
+                borderColor={vm.isRowSelected(row.id) ? 'activeBorder' : 'surface.200'}
+                borderRadius="8px"
+                borderWidth="1px"
+                gap="3"
+                key={`${row.id}-${vm.billingTermId}`}
+                p="3"
+                templateColumns={{ base: '1fr', lg: '1fr 130px 150px 120px 110px' }}
+              >
+                <Stack gap="0">
+                  <Text color="ink.900" fontWeight="760">
+                    {row.plan.name}
+                  </Text>
+                  <Text color="ink.500" fontSize="sm">
+                    {row.region.regionLabel} · {row.family} · {row.plan.hardware.ramGb} GB RAM
+                  </Text>
+                </Stack>
                 <Text color="ink.900" fontWeight="760">
-                  {row.plan.name}
+                  ${row.billingTermPrice}/mo
                 </Text>
                 <Text color="ink.500" fontSize="sm">
-                  {row.region.regionLabel} · {row.family} · {row.plan.hardware.ramGb} GB RAM
+                  Setup ${row.plan.pricing.setupUsd} · {row.region.setupHours}h
                 </Text>
-              </Stack>
-              <Text color="ink.900" fontWeight="760">
-                ${row.billingTermPrice}/mo
-              </Text>
-              <Text color="ink.500" fontSize="sm">
-                Setup ${row.plan.pricing.setupUsd} · {row.region.setupHours}h
-              </Text>
-              <Badge
-                alignSelf="center"
-                bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
-                borderRadius="8px"
-                color={row.region.stock > 0 ? 'successText' : 'amberText'}
-                justifySelf={{ base: 'start', lg: 'end' }}
-              >
-                {row.region.stock} units
-              </Badge>
-            </Grid>
-          ))}
-        </Stack>
+                <Badge
+                  alignSelf="center"
+                  bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                  borderRadius="8px"
+                  color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                  justifySelf={{ base: 'start', lg: 'end' }}
+                >
+                  {row.region.stock} units
+                </Badge>
+                <Button
+                  aria-pressed={vm.isRowSelected(row.id)}
+                  borderRadius="8px"
+                  justifySelf={{ base: 'start', lg: 'end' }}
+                  onClick={() => vm.toggleRow(row.id)}
+                  size="sm"
+                  variant={vm.isRowSelected(row.id) ? 'solid' : 'outline'}
+                >
+                  {vm.isRowSelected(row.id) ? 'Selected' : 'Select'}
+                </Button>
+              </Grid>
+            ))}
+          </Stack>
+
+          <FilterCard position={{ xl: 'sticky' }} top="76px">
+            <SectionEyebrow>Quote draft</SectionEyebrow>
+            <FieldHint>
+              Select regional rows to prepare the server list that will move into the quote flow.
+            </FieldHint>
+            <MetricGrid ariaLabel="Quote draft summary" metrics={vm.quoteSummary} />
+            <Stack gap="2">
+              {vm.selectedRows.length === 0 ? (
+                <Text color="ink.500" fontSize="sm">
+                  No rows selected yet.
+                </Text>
+              ) : null}
+              {vm.selectedRows.map((row) => (
+                <Grid
+                  alignItems="center"
+                  bg="panelGlassBg"
+                  borderColor="surface.200"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  gap="2"
+                  key={row.id}
+                  p="3"
+                  templateColumns="1fr auto"
+                >
+                  <Stack gap="0">
+                    <Text color="ink.900" fontSize="sm" fontWeight="760">
+                      {row.plan.name}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.region.regionLabel} · ${row.billingTermPrice}/mo
+                    </Text>
+                  </Stack>
+                  <Button
+                    borderRadius="8px"
+                    onClick={() => vm.removeSelectedRow(row.id)}
+                    size="xs"
+                    variant="ghost"
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+              ))}
+            </Stack>
+            <Box
+              asChild
+              bg="ctaBg"
+              borderRadius="8px"
+              color="white"
+              fontSize="sm"
+              fontWeight="760"
+              px="4"
+              py="2.5"
+              textAlign="center"
+            >
+              <RouterLink to="/quote">Continue to quote</RouterLink>
+            </Box>
+          </FilterCard>
+        </Grid>
       </Container>
     </Box>
   );
