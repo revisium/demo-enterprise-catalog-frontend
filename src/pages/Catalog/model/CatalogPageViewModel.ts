@@ -1,6 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 
+import type { CatalogProduct } from 'src/entities/catalog';
 import { CatalogPageDataSource } from '../api/CatalogPageDataSource';
+
+type CatalogProductRow = CatalogProduct & {
+  readonly detailHref: string;
+};
 
 export class CatalogPageViewModel {
   private readonly dataSource = new CatalogPageDataSource();
@@ -9,8 +14,11 @@ export class CatalogPageViewModel {
     makeAutoObservable(this);
   }
 
-  get products() {
-    return this.dataSource.getProducts();
+  get products(): readonly CatalogProductRow[] {
+    return this.dataSource.getProducts().map((product) => ({
+      ...product,
+      detailHref: `/catalog/${product.id}`,
+    }));
   }
 
   get families() {

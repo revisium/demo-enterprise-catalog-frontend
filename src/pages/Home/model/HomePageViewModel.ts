@@ -1,6 +1,18 @@
 import { makeAutoObservable } from 'mobx';
 
+import type { CatalogProduct, CatalogRelease } from 'src/entities/catalog';
 import { HomePageDataSource } from '../api/HomePageDataSource';
+
+interface HeroMetricDescriptor {
+  readonly label: string;
+  readonly value: number;
+}
+
+type HomeCatalogCard = CatalogProduct & {
+  readonly detailHref: string;
+  readonly previewMetrics: CatalogProduct['metrics'];
+  readonly previewProtocols: CatalogProduct['protocols'];
+};
 
 export class HomePageViewModel {
   private readonly dataSource = new HomePageDataSource();
@@ -11,11 +23,27 @@ export class HomePageViewModel {
     makeAutoObservable(this);
   }
 
-  get heroProducts() {
-    return this.dataSource.getSnapshot().products.slice(0, 3);
+  get heroMetrics(): readonly HeroMetricDescriptor[] {
+    return [
+      { label: 'priority product cards', value: this.catalogCardCount },
+      { label: 'release states', value: this.releaseCount },
+      { label: 'backend calls in this PR', value: this.backendCallCount },
+    ];
   }
 
-  get releases() {
+  get heroProducts(): readonly HomeCatalogCard[] {
+    return this.dataSource
+      .getSnapshot()
+      .products.slice(0, 3)
+      .map((product) => ({
+        ...product,
+        detailHref: `/catalog/${product.id}`,
+        previewMetrics: product.metrics.slice(0, 2),
+        previewProtocols: product.protocols.slice(0, 3),
+      }));
+  }
+
+  get releases(): readonly CatalogRelease[] {
     return this.dataSource.getSnapshot().releases;
   }
 

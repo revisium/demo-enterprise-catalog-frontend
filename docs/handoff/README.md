@@ -6,6 +6,14 @@ Stage 1 is frontend-first bootstrap. The goal is to create several convincing
 catalog pages with typed mock data before connecting backend or Revisium
 projects.
 
+## Current UI Stack
+
+- React Router SSR.
+- Chakra UI theme and primitives for layout, cards, buttons, badges, and form
+  controls.
+- MobX ViewModels with typed mock DataSources.
+- `@revisium/forms-core` for the quote interaction contract.
+
 ## First PR Scope
 
 - React Router SSR stack.
@@ -18,9 +26,9 @@ projects.
 
 ## Next PRs
 
-1. Review the first home/catalog/product-detail UI direction.
+1. Review the Chakra-based home/catalog/product-detail UI direction.
 2. Stabilize responsive behavior and any visual changes from review.
-3. Build pricing and release-diff pages on mock data.
+3. Build pricing and release-diff pages on mock data using the Chakra theme.
 4. Expand resources/documents and compare flows.
 5. Freeze contracts for Revisium tables, generated clients, and backend runtime
    interactions.

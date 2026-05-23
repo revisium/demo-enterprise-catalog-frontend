@@ -52,6 +52,8 @@ Block a PR when any of these are true:
 - User-visible code changes without a matching docs update.
 - React components fetch data, build API payloads, own business state, or create
   form engines directly.
+- Page-specific CSS classes are introduced for component styling instead of
+  Chakra primitives, style props, or theme tokens.
 - Mock data is untyped or placed directly in React views.
 - Shared abstractions are introduced before two real consumers need them.
 - A file exports multiple non-trivial React components.
