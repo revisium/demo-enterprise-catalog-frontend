@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import { createQuoteForm } from 'src/shared/forms';
 
@@ -15,7 +15,9 @@ export class QuotePageViewModel {
     event?.preventDefault();
 
     this.submitForm().catch((error: unknown) => {
-      this.submitError = error instanceof Error ? error.message : 'Quote request validation failed.';
+      runInAction(() => {
+        this.submitError = error instanceof Error ? error.message : 'Quote request validation failed.';
+      });
     });
   };
 
@@ -27,6 +29,8 @@ export class QuotePageViewModel {
       return;
     }
 
-    this.submitted = true;
+    runInAction(() => {
+      this.submitted = true;
+    });
   }
 }
