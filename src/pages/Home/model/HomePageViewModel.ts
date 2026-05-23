@@ -246,6 +246,22 @@ export class HomePageViewModel {
     );
   }
 
+  get regionPlans() {
+    return this.plans.filter((plan) => plan.regionIds.includes(this.selectedRegionId));
+  }
+
+  get selectablePlans() {
+    if (this.matchingPlans.length > 0) {
+      return this.matchingPlans;
+    }
+
+    return this.regionPlans;
+  }
+
+  get hasExactPlanMatches() {
+    return this.matchingPlans.length > 0;
+  }
+
   get selectedPrice() {
     if (this.selectedBillingTermId === 'yearly') {
       return this.selectedPlan.yearlyPrice;
@@ -288,6 +304,13 @@ export class HomePageViewModel {
 
     if (nextPlan) {
       this.selectedPlanId = nextPlan.id;
+      return;
+    }
+
+    const regionalFallback = this.regionPlans[0];
+
+    if (regionalFallback) {
+      this.selectedPlanId = regionalFallback.id;
     }
   }
 }

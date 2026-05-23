@@ -218,15 +218,14 @@ export const HomePage = observer(function HomePage() {
                     </Heading>
                   </Stack>
                   <Text color="#667085" fontSize="sm">
-                    {vm.matchingPlans.length} plans match
+                    {vm.selectablePlans.length}{' '}
+                    {vm.hasExactPlanMatches ? 'plans match' : 'nearby plans'}
                   </Text>
                 </Flex>
 
                 <Stack gap="2">
                   {vm.plans.map((plan) => {
-                    const matches =
-                      plan.regionIds.includes(vm.selectedRegionId) &&
-                      plan.useCaseIds.includes(vm.selectedUseCaseId);
+                    const selectable = vm.selectablePlans.some((item) => item.id === plan.id);
                     const selected = plan.id === selectedPlan.id;
 
                     return (
@@ -238,8 +237,8 @@ export const HomePage = observer(function HomePage() {
                         borderWidth="1px"
                         gap="3"
                         key={plan.id}
-                        opacity={matches ? 1 : 0.45}
-                        onClick={() => matches && vm.selectPlan(plan.id)}
+                        opacity={selectable ? 1 : 0.45}
+                        onClick={() => selectable && vm.selectPlan(plan.id)}
                         p="3"
                         templateColumns={{ base: '1fr', md: '1fr auto' }}
                       >
