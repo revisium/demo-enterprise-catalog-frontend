@@ -67,6 +67,19 @@ const config = defineConfig({
         headerBg: {
           value: 'color-mix(in srgb, white 84%, transparent)',
         },
+        pagePremiumBg: {
+          value:
+            'linear-gradient(180deg, #f7fbff 0%, {colors.surface.50} 46%, {colors.surface.100} 100%)',
+        },
+        panelGlassBg: {
+          value: 'color-mix(in srgb, white 88%, transparent)',
+        },
+        panelSubtleBg: {
+          value: '#f8fafc',
+        },
+        recommendationBg: {
+          value: 'linear-gradient(135deg, white 0%, #f7fbff 58%, #eaf6ff 100%)',
+        },
         panelDarkBg: {
           value:
             'linear-gradient(145deg, color-mix(in srgb, {colors.surface.900} 96%, transparent), color-mix(in srgb, {colors.brand.500} 90%, transparent)), {colors.surface.900}',
@@ -77,11 +90,47 @@ const config = defineConfig({
         ctaBg: {
           value: 'linear-gradient(135deg, {colors.surface.900} 0%, {colors.brand.600} 100%)',
         },
+        reserveButtonBg: {
+          value: 'linear-gradient(135deg, white 0%, #c7f9ef 100%)',
+        },
         brandBorderMuted: {
           value: 'color-mix(in srgb, {colors.brand.500} 18%, transparent)',
         },
         brandBorderActive: {
           value: 'color-mix(in srgb, {colors.brand.500} 45%, transparent)',
+        },
+        panelBorderStrong: {
+          value: '#d9e7f5',
+        },
+        activeBorder: {
+          value: '#8dc2ff',
+        },
+        successBg: {
+          value: '#ecfdf3',
+        },
+        successBorder: {
+          value: '#7bdcb5',
+        },
+        successText: {
+          value: '#087443',
+        },
+        amberBg: {
+          value: '#fff7e6',
+        },
+        amberText: {
+          value: '#915930',
+        },
+        darkPanelMutedText: {
+          value: '#a9b8cf',
+        },
+        darkPanelText: {
+          value: '#c9d3e2',
+        },
+        darkPanelBorder: {
+          value: '#344054',
+        },
+        darkBadgeBg: {
+          value: 'color-mix(in srgb, white 10%, transparent)',
         },
         navIdleBg: {
           value: 'color-mix(in srgb, white 68%, transparent)',

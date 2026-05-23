@@ -21,19 +21,15 @@ export const HomePage = observer(function HomePage() {
   const selectedPlan = vm.selectedPlan;
 
   return (
-    <Box
-      bg="linear-gradient(180deg, #f7fbff 0%, #f5f7fb 46%, #eef3f8 100%)"
-      color="#101828"
-      minH="calc(100dvh - 56px)"
-    >
+    <Box bg="pagePremiumBg" color="ink.900" minH="calc(100dvh - 56px)">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Grid
           gap={{ base: '5', md: '6' }}
           templateColumns={{ base: '1fr', lg: '344px minmax(0, 1fr)' }}
         >
           <Stack
-            bg="color-mix(in srgb, #ffffff 88%, transparent)"
-            borderColor="#e1e8f0"
+            bg="panelGlassBg"
+            borderColor="surface.200"
             borderRadius="8px"
             borderWidth="1px"
             boxShadow="0 24px 70px rgba(16, 24, 40, 0.08)"
@@ -41,13 +37,13 @@ export const HomePage = observer(function HomePage() {
             p={{ base: '4', md: '5' }}
           >
             <Stack gap="2">
-              <Text color="#0b5bd3" fontSize="xs" fontWeight="760" textTransform="uppercase">
+              <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
                 HelioStack
               </Text>
               <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} lineHeight="0.98">
                 Cloud server catalog
               </Heading>
-              <Text color="#667085" fontSize="sm">
+              <Text color="ink.500" fontSize="sm">
                 Select a use case, location, and contract. The catalog shows the best server plan
                 and price.
               </Text>
@@ -71,11 +67,11 @@ export const HomePage = observer(function HomePage() {
               <SimpleGrid columns={2} gap="2">
                 {vm.regions.map((region) => (
                   <Button
-                    bg={vm.selectedRegionId === region.id ? '#eef6ff' : '#ffffff'}
-                    borderColor={vm.selectedRegionId === region.id ? '#8dc2ff' : '#e1e8f0'}
+                    bg={vm.selectedRegionId === region.id ? 'brand.50' : 'white'}
+                    borderColor={vm.selectedRegionId === region.id ? 'activeBorder' : 'surface.200'}
                     borderRadius="8px"
                     borderWidth="1px"
-                    color="#101828"
+                    color="ink.900"
                     h="auto"
                     minH="4.25rem"
                     key={region.id}
@@ -88,7 +84,7 @@ export const HomePage = observer(function HomePage() {
                       <Text fontSize="sm" fontWeight="760">
                         {region.label}
                       </Text>
-                      <Text color="#667085" fontSize="xs">
+                      <Text color="ink.500" fontSize="xs">
                         {region.availability}
                       </Text>
                     </Stack>
@@ -102,11 +98,13 @@ export const HomePage = observer(function HomePage() {
               <SimpleGrid columns={2} gap="2">
                 {vm.billingTerms.map((term) => (
                   <Button
-                    bg={vm.selectedBillingTermId === term.id ? '#ecfdf3' : '#ffffff'}
-                    borderColor={vm.selectedBillingTermId === term.id ? '#7bdcb5' : '#e1e8f0'}
+                    bg={vm.selectedBillingTermId === term.id ? 'successBg' : 'white'}
+                    borderColor={
+                      vm.selectedBillingTermId === term.id ? 'successBorder' : 'surface.200'
+                    }
                     borderRadius="8px"
                     borderWidth="1px"
-                    color="#101828"
+                    color="ink.900"
                     h="auto"
                     minH="4.25rem"
                     key={term.id}
@@ -119,7 +117,7 @@ export const HomePage = observer(function HomePage() {
                       <Text fontSize="sm" fontWeight="760">
                         {term.label}
                       </Text>
-                      <Text color="#667085" fontSize="xs">
+                      <Text color="ink.500" fontSize="xs">
                         {term.summary}
                       </Text>
                     </Stack>
@@ -131,8 +129,8 @@ export const HomePage = observer(function HomePage() {
 
           <Stack gap={{ base: '5', md: '6' }}>
             <Grid
-              bg="linear-gradient(135deg, #ffffff 0%, #f7fbff 58%, #eaf6ff 100%)"
-              borderColor="#d9e7f5"
+              bg="recommendationBg"
+              borderColor="panelBorderStrong"
               borderRadius="8px"
               borderWidth="1px"
               boxShadow="0 28px 90px rgba(16, 24, 40, 0.1)"
@@ -148,13 +146,13 @@ export const HomePage = observer(function HomePage() {
                 </Flex>
 
                 <Stack gap="3">
-                  <Text color="#0b5bd3" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                  <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
                     Recommended server
                   </Text>
                   <Heading as="h2" fontSize={{ base: '4xl', md: '5xl' }} lineHeight="0.95">
                     {selectedPlan.name}
                   </Heading>
-                  <Text color="#475467" fontSize="md" maxW="660px">
+                  <Text color="ink.700" fontSize="md" maxW="660px">
                     {selectedPlan.summary}
                   </Text>
                 </Stack>
@@ -168,26 +166,31 @@ export const HomePage = observer(function HomePage() {
               </Stack>
 
               <Stack
-                bg="#101828"
+                bg="surface.900"
                 borderRadius="8px"
                 boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
                 color="white"
                 gap="3"
                 p="4"
               >
-                <Text color="#a9b8cf" fontSize="xs" fontWeight="700" textTransform="uppercase">
+                <Text
+                  color="darkPanelMutedText"
+                  fontSize="xs"
+                  fontWeight="700"
+                  textTransform="uppercase"
+                >
                   Price
                 </Text>
                 <Text fontSize="4xl" fontWeight="800" lineHeight="1">
                   {vm.selectedPrice}
                 </Text>
-                <Text color="#c9d3e2" fontSize="sm">
+                <Text color="darkPanelText" fontSize="sm">
                   {selectedPlan.setup} · {selectedPlan.availability}
                 </Text>
                 <Button
-                  bg="linear-gradient(135deg, #ffffff 0%, #c7f9ef 100%)"
+                  bg="reserveButtonBg"
                   borderRadius="8px"
-                  color="#101828"
+                  color="ink.900"
                   disabled={!vm.canReserveServer}
                   title="Reservation will be connected with the backend flow"
                 >
@@ -195,7 +198,7 @@ export const HomePage = observer(function HomePage() {
                 </Button>
                 <Button
                   asChild
-                  borderColor="#344054"
+                  borderColor="darkPanelBorder"
                   borderRadius="8px"
                   color="white"
                   variant="outline"
@@ -210,8 +213,8 @@ export const HomePage = observer(function HomePage() {
               templateColumns={{ base: '1fr', xl: 'minmax(0, 1.35fr) 0.65fr' }}
             >
               <Stack
-                bg="#ffffff"
-                borderColor="#e1e8f0"
+                bg="white"
+                borderColor="surface.200"
                 borderRadius="8px"
                 borderWidth="1px"
                 gap="3"
@@ -219,14 +222,19 @@ export const HomePage = observer(function HomePage() {
               >
                 <Flex align="center" justify="space-between" gap="3" wrap="wrap">
                   <Stack gap="0">
-                    <Text color="#0b5bd3" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                    <Text
+                      color="brand.500"
+                      fontSize="xs"
+                      fontWeight="760"
+                      textTransform="uppercase"
+                    >
                       Matching plans
                     </Text>
                     <Heading as="h2" fontSize="xl">
                       Choose another server
                     </Heading>
                   </Stack>
-                  <Text color="#667085" fontSize="sm">
+                  <Text color="ink.500" fontSize="sm">
                     {vm.selectablePlans.length}{' '}
                     {vm.hasExactPlanMatches ? 'plans match' : 'nearby plans'}
                   </Text>
@@ -237,11 +245,11 @@ export const HomePage = observer(function HomePage() {
                     <Button
                       alignItems="center"
                       aria-pressed={plan.selected}
-                      bg={plan.selected ? '#eef6ff' : '#ffffff'}
-                      borderColor={plan.selected ? '#8dc2ff' : '#e1e8f0'}
+                      bg={plan.selected ? 'brand.50' : 'white'}
+                      borderColor={plan.selected ? 'activeBorder' : 'surface.200'}
                       borderRadius="8px"
                       borderWidth="1px"
-                      color="#101828"
+                      color="ink.900"
                       disabled={!plan.selectable}
                       display="grid"
                       gap="3"
@@ -258,14 +266,14 @@ export const HomePage = observer(function HomePage() {
                       w="100%"
                     >
                       <Stack gap="0" minW="0">
-                        <Text color="#101828" fontWeight="760">
+                        <Text color="ink.900" fontWeight="760">
                           {plan.name}
                         </Text>
-                        <Text color="#667085" fontSize="sm">
+                        <Text color="ink.500" fontSize="sm">
                           {plan.cpu} · {plan.ram} · {plan.storage}
                         </Text>
                       </Stack>
-                      <Text color={plan.selected ? '#0b5bd3' : '#344054'} fontWeight="760">
+                      <Text color={plan.selected ? 'brand.500' : 'ink.700'} fontWeight="760">
                         {plan.displayPrice}
                       </Text>
                     </Button>
@@ -283,17 +291,17 @@ export const HomePage = observer(function HomePage() {
                 <InfoPanel title="Updates">
                   {vm.updates.map((item) => (
                     <Box
-                      bg="#f8fafc"
-                      borderColor="#e1e8f0"
+                      bg="panelSubtleBg"
+                      borderColor="surface.200"
                       borderRadius="8px"
                       borderWidth="1px"
                       key={item.label}
                       p="3"
                     >
-                      <Text color="#101828" fontWeight="760">
+                      <Text color="ink.900" fontWeight="760">
                         {item.label}
                       </Text>
-                      <Text color="#667085" fontSize="sm">
+                      <Text color="ink.500" fontSize="sm">
                         {item.summary}
                       </Text>
                     </Box>
@@ -321,11 +329,11 @@ function ChoiceButton({
 }) {
   return (
     <Button
-      bg={active ? '#eef6ff' : '#ffffff'}
-      borderColor={active ? '#8dc2ff' : '#e1e8f0'}
+      bg={active ? 'brand.50' : 'white'}
+      borderColor={active ? 'activeBorder' : 'surface.200'}
       borderRadius="8px"
       borderWidth="1px"
-      color="#101828"
+      color="ink.900"
       h="auto"
       minH="4.75rem"
       justifyContent="flex-start"
@@ -340,7 +348,7 @@ function ChoiceButton({
         <Text fontWeight="760" lineHeight="1.2">
           {label}
         </Text>
-        <Text color="#667085" fontSize="xs" lineHeight="1.25" overflowWrap="anywhere">
+        <Text color="ink.500" fontSize="xs" lineHeight="1.25" overflowWrap="anywhere">
           {summary}
         </Text>
       </Stack>
@@ -356,8 +364,8 @@ function InfoPanel({
   readonly title: string;
 }) {
   return (
-    <Stack bg="#ffffff" borderColor="#e1e8f0" borderRadius="8px" borderWidth="1px" gap="3" p="4">
-      <Text color="#0b5bd3" fontSize="xs" fontWeight="760" textTransform="uppercase">
+    <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="3" p="4">
+      <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
         {title}
       </Text>
       {children}
@@ -367,8 +375,8 @@ function InfoPanel({
 
 function InfoRow({ children }: { readonly children: React.ReactNode }) {
   return (
-    <Box bg="#f8fafc" borderColor="#e1e8f0" borderRadius="8px" borderWidth="1px" p="3">
-      <Text color="#344054" fontSize="sm">
+    <Box bg="panelSubtleBg" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
+      <Text color="ink.700" fontSize="sm">
         {children}
       </Text>
     </Box>
@@ -377,11 +385,11 @@ function InfoRow({ children }: { readonly children: React.ReactNode }) {
 
 function MetricCard({ label, value }: { readonly label: string; readonly value: string }) {
   return (
-    <Box bg="#ffffff" borderColor="#e1e8f0" borderRadius="8px" borderWidth="1px" p="3">
-      <Text color="#101828" fontSize="lg" fontWeight="780">
+    <Box bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
+      <Text color="ink.900" fontSize="lg" fontWeight="780">
         {value}
       </Text>
-      <Text color="#667085" fontSize="xs">
+      <Text color="ink.500" fontSize="xs">
         {label}
       </Text>
     </Box>
@@ -390,7 +398,7 @@ function MetricCard({ label, value }: { readonly label: string; readonly value: 
 
 function SectionLabel({ children }: { readonly children: React.ReactNode }) {
   return (
-    <Text color="#667085" fontSize="xs" fontWeight="700" textTransform="uppercase">
+    <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
       {children}
     </Text>
   );
@@ -404,9 +412,9 @@ function SoftBadge({
   readonly tone: 'amber' | 'blue' | 'green';
 }) {
   const palette = {
-    amber: { bg: '#fff7e6', color: '#915930' },
-    blue: { bg: '#eef6ff', color: '#0b5bd3' },
-    green: { bg: '#ecfdf3', color: '#087443' },
+    amber: { bg: 'amberBg', color: 'amberText' },
+    blue: { bg: 'brand.50', color: 'brand.500' },
+    green: { bg: 'successBg', color: 'successText' },
   }[tone];
 
   return (
