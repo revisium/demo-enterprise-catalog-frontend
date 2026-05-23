@@ -7,11 +7,11 @@
 | `/catalog/:productId` | Scaffolded | Server plan detail, specs, regions, add-ons | typed mock   | validate detail hierarchy        |
 | `/pricing`            | Prototype  | Price rows by plan, region, and term        | typed mock   | dense price table pattern        |
 | `/locations`          | Prototype  | Data-center stock and support windows       | typed mock   | location card/table pattern      |
-| `/compare`            | Planned    | Server plan comparison                      | typed mock   | comparison row model             |
-| `/resources`          | Planned    | Docs, SLA, networking, billing, API docs    | typed mock   | docs index pattern               |
-| `/releases`           | Planned    | Stock, docs, and price-book updates         | typed mock   | update timeline pattern          |
+| `/compare`            | Prototype  | Server plan comparison                      | typed mock   | comparison row model             |
+| `/resources`          | Prototype  | Docs, SLA, networking, billing, API docs    | typed mock   | docs index pattern               |
+| `/releases`           | Prototype  | Stock, docs, and price-book updates         | typed mock   | update timeline pattern          |
 | `/quote`              | Scaffolded | Runtime quote request form                  | mock form    | backend mutation contract        |
-| `/app`                | Planned    | Authorized customer portal dashboard        | backend mock | auth shell and dashboard widgets |
+| `/app`                | Prototype  | Authorized customer portal dashboard        | backend mock | auth shell and dashboard widgets |
 
 ## Page Status Rules
 

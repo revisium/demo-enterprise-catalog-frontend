@@ -1,10 +1,5 @@
-import { PlaceholderPage } from 'src/shared/ui';
+import { ReleasesPage } from 'src/pages/Releases';
 
 export default function ReleasesRoute() {
-  return (
-    <PlaceholderPage
-      title="Updates"
-      summary="Track server stock, data-center launches, documentation changes, and price-book revisions."
-    />
-  );
+  return <ReleasesPage />;
 }

@@ -1,10 +1,5 @@
-import { PlaceholderPage } from 'src/shared/ui';
+import { ResourcesPage } from 'src/pages/Resources';
 
 export default function ResourcesRoute() {
-  return (
-    <PlaceholderPage
-      title="Docs"
-      summary="Guides, SLA notes, networking help, backup instructions, billing rules, and API documentation for customers."
-    />
-  );
+  return <ResourcesPage />;
 }
