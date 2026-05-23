@@ -58,6 +58,9 @@ export class ComparePageViewModel {
   }
 
   get highlights() {
+    const monthlyPrices = this.products.map((product) => product.pricing.monthlyUsd);
+    const lowestMonthlyPrice = monthlyPrices.length > 0 ? Math.min(...monthlyPrices) : 0;
+
     return [
       {
         label: 'Plans compared',
@@ -65,7 +68,7 @@ export class ComparePageViewModel {
       },
       {
         label: 'Lowest monthly',
-        value: `$${Math.min(...this.products.map((product) => product.pricing.monthlyUsd))}`,
+        value: `$${lowestMonthlyPrice}`,
       },
       {
         label: 'Regions covered',
@@ -94,7 +97,9 @@ export class ComparePageViewModel {
   }
 
   private getFastestSetup(product: CatalogProduct) {
-    return Math.min(...product.availabilityByRegion.map((region) => region.setupHours));
+    const setupHours = product.availabilityByRegion.map((region) => region.setupHours);
+
+    return setupHours.length > 0 ? Math.min(...setupHours) : 0;
   }
 
   private getTotalStock(product: CatalogProduct) {
