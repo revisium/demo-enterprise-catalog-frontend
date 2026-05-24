@@ -4,7 +4,50 @@ import type {
   PortalOrganization,
   PortalQuote,
   PortalSavedPlan,
+  PortalUser,
 } from '../model/portalTypes';
+
+export const portalUsers: readonly PortalUser[] = [
+  {
+    email: 'mira.chen@northwind.example',
+    id: 'mira-chen',
+    name: 'Mira Chen',
+    organizationIds: ['northwind'],
+    preferences: {
+      currencyId: 'usd',
+      languageId: 'en',
+      preferredRegionId: 'de-fra',
+    },
+    primaryOrganizationId: 'northwind',
+    role: 'Operations',
+  },
+  {
+    email: 'noah.patel@northwind.example',
+    id: 'noah-patel',
+    name: 'Noah Patel',
+    organizationIds: ['northwind'],
+    preferences: {
+      currencyId: 'usd',
+      languageId: 'en',
+      preferredRegionId: 'us-nyc',
+    },
+    primaryOrganizationId: 'northwind',
+    role: 'Finance',
+  },
+  {
+    email: 'kai.tan@orbit.example',
+    id: 'kai-tan',
+    name: 'Kai Tan',
+    organizationIds: ['orbit'],
+    preferences: {
+      currencyId: 'usd',
+      languageId: 'en',
+      preferredRegionId: 'sg-sin',
+    },
+    primaryOrganizationId: 'orbit',
+    role: 'Buyer',
+  },
+];
 
 export const portalOrganizations: readonly PortalOrganization[] = [
   {
@@ -34,6 +77,7 @@ export const portalQuotes: readonly PortalQuote[] = [
     organizationId: 'northwind',
     plan: 'Dedicated R2',
     region: 'Frankfurt',
+    requesterUserId: 'mira-chen',
     status: 'Sales review',
     summary: 'Yearly term, private VLAN, backup, monitoring, and enterprise support.',
     updatedAt: '2 hours ago',
@@ -46,6 +90,7 @@ export const portalQuotes: readonly PortalQuote[] = [
     organizationId: 'northwind',
     plan: 'Database D4',
     region: 'New York',
+    requesterUserId: 'noah-patel',
     status: 'Customer reply',
     summary: 'Waiting for final region approval and data-retention note.',
     updatedAt: 'Yesterday',
@@ -58,6 +103,7 @@ export const portalQuotes: readonly PortalQuote[] = [
     organizationId: 'orbit',
     plan: 'Business VM 8',
     region: 'Singapore',
+    requesterUserId: 'kai-tan',
     status: 'Submitted',
     summary: 'APAC launch bundle with backup and monitoring add-ons.',
     updatedAt: '3 hours ago',
@@ -70,6 +116,7 @@ export const portalSavedPlans: readonly PortalSavedPlan[] = [
     monthlyUsd: 310,
     name: 'Frankfurt production app',
     organizationId: 'northwind',
+    ownerUserId: 'mira-chen',
     plan: 'Dedicated R2',
     region: 'Frankfurt',
     status: 'Ready for quote',
@@ -79,6 +126,7 @@ export const portalSavedPlans: readonly PortalSavedPlan[] = [
     monthlyUsd: 420,
     name: 'Analytics database',
     organizationId: 'northwind',
+    ownerUserId: 'noah-patel',
     plan: 'Database D4',
     region: 'New York',
     status: 'Draft',
@@ -88,6 +136,7 @@ export const portalSavedPlans: readonly PortalSavedPlan[] = [
     monthlyUsd: 180,
     name: 'APAC backup target',
     organizationId: 'orbit',
+    ownerUserId: 'kai-tan',
     plan: 'Storage S3',
     region: 'Singapore',
     status: 'Shared',
@@ -98,6 +147,7 @@ export const portalFavorites: readonly PortalFavorite[] = [
   {
     id: 'favorite-dedicated-r2',
     organizationId: 'northwind',
+    ownerUserId: 'mira-chen',
     summary: 'Pinned for the production app renewal.',
     title: 'Dedicated R2',
     type: 'Server',
@@ -105,6 +155,7 @@ export const portalFavorites: readonly PortalFavorite[] = [
   {
     id: 'favorite-frankfurt',
     organizationId: 'northwind',
+    ownerUserId: 'mira-chen',
     summary: 'Preferred EU location for regulated workloads.',
     title: 'Frankfurt data center',
     type: 'Region',
@@ -112,6 +163,7 @@ export const portalFavorites: readonly PortalFavorite[] = [
   {
     id: 'favorite-release-2026-05',
     organizationId: 'orbit',
+    ownerUserId: 'kai-tan',
     summary: 'APAC stock and pricing update.',
     title: 'May regional capacity update',
     type: 'Update',
@@ -125,6 +177,7 @@ export const portalAuditEvents: readonly PortalAuditEvent[] = [
     id: 'audit-1',
     organizationId: 'northwind',
     scope: 'Quote',
+    userId: 'mira-chen',
     when: '2 hours ago',
   },
   {
@@ -133,6 +186,7 @@ export const portalAuditEvents: readonly PortalAuditEvent[] = [
     id: 'audit-2',
     organizationId: 'northwind',
     scope: 'Saved plan',
+    userId: 'noah-patel',
     when: 'Yesterday',
   },
   {
@@ -141,6 +195,7 @@ export const portalAuditEvents: readonly PortalAuditEvent[] = [
     id: 'audit-3',
     organizationId: 'orbit',
     scope: 'Saved plan',
+    userId: 'kai-tan',
     when: '3 hours ago',
   },
 ];

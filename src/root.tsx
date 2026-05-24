@@ -1,7 +1,16 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import {
+  data,
+  Links,
+  type LoaderFunctionArgs,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from 'react-router';
 
 import { AppLayout } from './app/layouts/AppLayout/AppLayout';
 import { AppProvider } from './app/providers/AppProvider';
+import { refreshPortalDemoSessionCookies } from './entities/portal';
 import './shared/ui/global.css';
 
 interface LayoutProps {
@@ -25,6 +34,15 @@ export function Layout({ children }: LayoutProps) {
       </body>
     </html>
   );
+}
+
+export function loader({ request }: LoaderFunctionArgs) {
+  const { headers } = refreshPortalDemoSessionCookies({
+    cookieHeader: request.headers.get('Cookie'),
+    requestUrl: request.url,
+  });
+
+  return data(null, { headers });
 }
 
 export default function Root() {

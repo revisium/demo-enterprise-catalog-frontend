@@ -3,11 +3,16 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
+import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
 
-export const CustomerPortalPage = observer(function CustomerPortalPage() {
-  const [vm] = useState(() => new CustomerPortalPageViewModel());
+export const CustomerPortalPage = observer(function CustomerPortalPage({
+  session,
+}: {
+  readonly session: PortalDemoSession;
+}) {
+  const [vm] = useState(() => new CustomerPortalPageViewModel(session));
   const activeOrganization = vm.activeOrganization;
   const primaryQuote = vm.primaryQuote;
 
@@ -18,15 +23,31 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
           eyebrow="Customer portal"
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
-          summary="Manage organization-specific quotes, saved server plans, favorites, and audit history."
+          summary="Manage user-specific quotes, saved server plans, favorites, preferences, and activity."
           title="Operate customer server workspaces."
         />
 
         <Grid
           gap="3"
           my={{ base: '5', md: '6' }}
-          templateColumns={{ base: '1fr', xl: '1fr 1fr 1fr' }}
+          templateColumns={{ base: '1fr', xl: 'repeat(4, minmax(0, 1fr))' }}
         >
+          <FilterCard>
+            <SectionEyebrow>Signed-in user</SectionEyebrow>
+            <Heading as="h2" color="ink.900" fontSize="2xl">
+              {vm.currentUser.name}
+            </Heading>
+            <FieldHint>
+              This workspace is opened from the current browser session and scoped to this user.
+            </FieldHint>
+            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <AccountFact label="Email" value={vm.currentUser.email} />
+              {vm.sessionRows.map((row) => (
+                <AccountFact key={row.label} label={row.label} value={row.value} />
+              ))}
+            </Grid>
+          </FilterCard>
+
           <FilterCard>
             <SectionEyebrow>Organization</SectionEyebrow>
             <Heading as="h2" color="ink.900" fontSize="2xl">
@@ -96,8 +117,36 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
           </FilterCard>
 
           <FilterCard>
+            <SectionEyebrow>Preferences</SectionEyebrow>
+            <FieldHint>
+              User defaults are checked before saved plans, quotes, and feedback are stored.
+            </FieldHint>
+            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              {vm.preferenceRows.map((row) => (
+                <AccountFact key={row.label} label={row.label} value={row.value} />
+              ))}
+            </Grid>
+          </FilterCard>
+        </Grid>
+
+        <Grid gap="3" mb={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
+          <FilterCard>
+            <SectionEyebrow>Workspace checks</SectionEyebrow>
+            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              {vm.validationRows.map((row) => (
+                <AccountFact key={row.label} label={row.label} value={row.value} />
+              ))}
+            </Grid>
+          </FilterCard>
+
+          <FilterCard>
             <SectionEyebrow>Recent activity</SectionEyebrow>
             <Stack gap="2">
+              {vm.auditEvents.length === 0 ? (
+                <Text color="ink.500" fontSize="sm">
+                  No recent activity for this user.
+                </Text>
+              ) : null}
               {vm.auditEvents.map((event) => (
                 <Stack
                   borderColor="surface.200"

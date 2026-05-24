@@ -6,6 +6,7 @@ import {
   portalOrganizations,
   portalQuotes,
   portalSavedPlans,
+  type PortalDemoSession,
   type PortalMetric,
   type PortalQuote,
 } from 'src/entities/portal';
@@ -19,12 +20,17 @@ const sectionLabels: Record<PortalSection, string> = {
 };
 
 export class CustomerPortalPageViewModel {
-  favoritedPlanIds: readonly string[] = ['plan-dedicated-r2-fra'];
-  selectedOrganizationId = portalOrganizations[0]?.id ?? '';
+  favoritedPlanIds: readonly string[] = [];
+  selectedOrganizationId: string;
   selectedSection: PortalSection = 'plans';
 
-  constructor() {
+  constructor(readonly session: PortalDemoSession) {
+    this.selectedOrganizationId = session.user.primaryOrganizationId;
     makeAutoObservable(this);
+  }
+
+  get currentUser() {
+    return this.session.user;
   }
 
   get activeOrganization() {
@@ -41,13 +47,17 @@ export class CustomerPortalPageViewModel {
 
   get auditEvents() {
     return portalAuditEvents.filter(
-      (event) => event.organizationId === this.selectedOrganizationId,
+      (event) =>
+        event.organizationId === this.selectedOrganizationId &&
+        event.userId === this.currentUser.id,
     );
   }
 
   get favoriteItems() {
     return portalFavorites.filter(
-      (favorite) => favorite.organizationId === this.selectedOrganizationId,
+      (favorite) =>
+        favorite.organizationId === this.selectedOrganizationId &&
+        favorite.ownerUserId === this.currentUser.id,
     );
   }
 
@@ -81,10 +91,23 @@ export class CustomerPortalPageViewModel {
   }
 
   get organizationOptions() {
-    return portalOrganizations.map((organization) => ({
-      id: organization.id,
-      label: organization.name,
-    }));
+    return portalOrganizations
+      .filter((organization) => this.currentUser.organizationIds.includes(organization.id))
+      .map((organization) => ({
+        id: organization.id,
+        label: organization.name,
+      }));
+  }
+
+  get preferenceRows() {
+    return [
+      { label: 'Language', value: this.getLanguageLabel(this.currentUser.preferences.languageId) },
+      { label: 'Currency', value: this.currentUser.preferences.currencyId.toUpperCase() },
+      {
+        label: 'Preferred region',
+        value: this.getRegionLabel(this.currentUser.preferences.preferredRegionId),
+      },
+    ];
   }
 
   get primaryQuote() {
@@ -92,11 +115,51 @@ export class CustomerPortalPageViewModel {
   }
 
   get quotes() {
-    return portalQuotes.filter((quote) => quote.organizationId === this.selectedOrganizationId);
+    return portalQuotes.filter(
+      (quote) =>
+        quote.organizationId === this.selectedOrganizationId &&
+        quote.requesterUserId === this.currentUser.id,
+    );
   }
 
   get savedPlans() {
-    return portalSavedPlans.filter((plan) => plan.organizationId === this.selectedOrganizationId);
+    return portalSavedPlans.filter(
+      (plan) =>
+        plan.organizationId === this.selectedOrganizationId &&
+        plan.ownerUserId === this.currentUser.id,
+    );
+  }
+
+  get sessionRows() {
+    return [
+      { label: 'Role', value: this.currentUser.role },
+      {
+        label: 'Session',
+        value: this.session.cookieMode === 'httpOnly' ? 'Secure cookie' : 'Demo',
+      },
+      {
+        label: 'Device',
+        value: this.session.fingerprintStatus === 'recognized' ? 'Recognized' : 'Created',
+      },
+    ];
+  }
+
+  get validationRows() {
+    return [
+      { label: 'User role', value: `${this.currentUser.role} can manage quotes` },
+      {
+        label: 'Language',
+        value: `${this.getLanguageLabel(this.currentUser.preferences.languageId)} active`,
+      },
+      {
+        label: 'Currency',
+        value: `${this.currentUser.preferences.currencyId.toUpperCase()} allowed`,
+      },
+      {
+        label: 'Region',
+        value: `${this.getRegionLabel(this.currentUser.preferences.preferredRegionId)} available`,
+      },
+    ];
   }
 
   get sectionOptions() {
@@ -160,5 +223,29 @@ export class CustomerPortalPageViewModel {
     this.favoritedPlanIds = this.favoritedPlanIds.includes(planId)
       ? this.favoritedPlanIds.filter((id) => id !== planId)
       : [...this.favoritedPlanIds, planId];
+  }
+
+  private getLanguageLabel(languageId: string) {
+    const labels: Record<string, string> = {
+      ar: 'Arabic',
+      en: 'English',
+      es: 'Spanish',
+      fr: 'French',
+      ru: 'Russian',
+      zh: 'Chinese',
+    };
+
+    return labels[languageId] ?? languageId;
+  }
+
+  private getRegionLabel(regionId: string) {
+    const labels: Record<string, string> = {
+      'de-fra': 'Frankfurt',
+      'nl-ams': 'Amsterdam',
+      'sg-sin': 'Singapore',
+      'us-nyc': 'New York',
+    };
+
+    return labels[regionId] ?? regionId;
   }
 }

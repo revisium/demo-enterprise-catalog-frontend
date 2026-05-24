@@ -14,6 +14,7 @@ export default [
   route('releases', 'app/routes/releases.tsx'),
   route('releases/:updateId', 'app/routes/releases.$updateId.tsx'),
   route('quote', 'app/routes/quote.tsx'),
+  route('auth/demo/refresh', 'app/routes/auth.demo.refresh.tsx'),
   route('app', 'app/routes/app.tsx'),
   route('app/plans/:planId', 'app/routes/app.plans.$planId.tsx'),
   route('app/quotes/:quoteId', 'app/routes/app.quotes.$quoteId.tsx'),
