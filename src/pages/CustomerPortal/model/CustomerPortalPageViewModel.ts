@@ -5,7 +5,6 @@ import {
   portalFavorites,
   portalOrganizations,
   portalQuotes,
-  portalReferenceChecks,
   portalSavedPlans,
   type PortalDemoSession,
   type PortalMetric,
@@ -13,6 +12,17 @@ import {
 } from 'src/entities/portal';
 
 type PortalSection = 'favorites' | 'plans' | 'quotes';
+type ReferenceStatus = 'Active' | 'Allowed' | 'Available' | 'Published';
+
+interface ReferenceCheckRow {
+  readonly id: string;
+  readonly label: string;
+  readonly scope: string;
+  readonly status: ReferenceStatus;
+  readonly value: string;
+}
+
+type ReferenceCheckTuple = readonly [string, string, string, ReferenceStatus, string];
 
 const sectionLabels: Record<PortalSection, string> = {
   favorites: 'Favorites',
@@ -163,10 +173,34 @@ export class CustomerPortalPageViewModel {
   }
 
   get validationRows() {
-    return portalReferenceChecks.filter(
-      (check) =>
-        check.organizationId === this.selectedOrganizationId && check.userId === this.currentUser.id,
-    );
+    const primaryPlan = this.savedPlans[0];
+    const rows: readonly ReferenceCheckTuple[] = [
+      [
+        'language',
+        'Language',
+        'Preference',
+        'Active',
+        this.getLanguageLabel(this.currentUser.preferences.languageId),
+      ],
+      [
+        'currency',
+        'Currency',
+        'Preference',
+        'Allowed',
+        this.currentUser.preferences.currencyId.toUpperCase(),
+      ],
+      [
+        'region',
+        'Preferred region',
+        'Catalog',
+        'Available',
+        this.getRegionLabel(this.currentUser.preferences.preferredRegionId),
+      ],
+      ['saved-plan', 'Saved plan', 'Catalog', 'Active', primaryPlan?.plan ?? 'No saved plan'],
+      ['saved-guide', 'Saved guide', 'Docs', 'Published', 'Choose a production server plan'],
+    ];
+
+    return rows.map((row) => this.toReferenceCheck(row));
   }
 
   get sectionOptions() {
@@ -254,5 +288,21 @@ export class CustomerPortalPageViewModel {
     };
 
     return labels[regionId] ?? regionId;
+  }
+
+  private toReferenceCheck([
+    id,
+    label,
+    scope,
+    status,
+    value,
+  ]: ReferenceCheckTuple): ReferenceCheckRow {
+    return {
+      id,
+      label,
+      scope,
+      status,
+      value,
+    };
   }
 }

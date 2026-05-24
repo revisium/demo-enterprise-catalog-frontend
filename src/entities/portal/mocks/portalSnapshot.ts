@@ -3,28 +3,9 @@ import type {
   PortalFavorite,
   PortalOrganization,
   PortalQuote,
-  PortalReferenceCheck,
   PortalSavedPlan,
   PortalUser,
 } from '../model/portalTypes';
-
-const referenceCheck = (
-  id: string,
-  label: string,
-  organizationId: string,
-  userId: string,
-  scope: string,
-  status: PortalReferenceCheck['status'],
-  value: string,
-): PortalReferenceCheck => ({
-  id,
-  label,
-  organizationId,
-  scope,
-  status,
-  userId,
-  value,
-});
 
 export const portalUsers: readonly PortalUser[] = [
   {
@@ -217,70 +198,4 @@ export const portalAuditEvents: readonly PortalAuditEvent[] = [
     userId: 'kai-tan',
     when: '3 hours ago',
   },
-];
-
-export const portalReferenceChecks: readonly PortalReferenceCheck[] = [
-  referenceCheck(
-    'check-mira-language',
-    'Language',
-    'northwind',
-    'mira-chen',
-    'Preference',
-    'Active',
-    'English',
-  ),
-  referenceCheck(
-    'check-mira-currency',
-    'Currency',
-    'northwind',
-    'mira-chen',
-    'Preference',
-    'Allowed',
-    'USD',
-  ),
-  referenceCheck(
-    'check-mira-region',
-    'Preferred region',
-    'northwind',
-    'mira-chen',
-    'Catalog',
-    'Available',
-    'Frankfurt',
-  ),
-  referenceCheck(
-    'check-mira-plan',
-    'Saved plan',
-    'northwind',
-    'mira-chen',
-    'Catalog',
-    'Active',
-    'Dedicated R2',
-  ),
-  referenceCheck(
-    'check-mira-docs',
-    'Saved guide',
-    'northwind',
-    'mira-chen',
-    'Docs',
-    'Published',
-    'Choose a production server plan',
-  ),
-  referenceCheck(
-    'check-kai-language',
-    'Language',
-    'orbit',
-    'kai-tan',
-    'Preference',
-    'Active',
-    'English',
-  ),
-  referenceCheck(
-    'check-kai-region',
-    'Preferred region',
-    'orbit',
-    'kai-tan',
-    'Catalog',
-    'Available',
-    'Singapore',
-  ),
 ];
