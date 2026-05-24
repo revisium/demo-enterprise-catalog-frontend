@@ -20,8 +20,10 @@ iteration, not to freeze a brand too early.
 
 ## Current Layout Contract
 
-- Header: glass-like sticky bar, constrained content, public navigation, portal
-  entry, quote CTA, and language control.
+- Header: glass-like sticky bar, constrained content, compact brand mark,
+  horizontally scrollable public navigation, portal entry, quote CTA, and
+  language control. Desktop uses a three-column grid so navigation stays inside
+  the same `1240px` content rail as the pages.
 - Main page spacing: `24-36px` vertical page padding and `20-24px` gaps between
   major widgets.
 - Home layout: left configurator, right recommendation and plan list.
@@ -30,8 +32,8 @@ iteration, not to freeze a brand too early.
   `brand.50`/`brand.500` badges.
 - Product, catalog, quote, and planned pages use `recommendationBg` for the main
   intro panel and `surface.900` for compact dark status/action panels.
-- Footer: simple constrained link strip for pricing, docs, updates, and customer
-  portal.
+- Footer: constrained product summary plus grouped links for explore,
+  resources, and account actions.
 - Text inside buttons must wrap inside the control. Use stable min-heights for
   option cards so descriptions cannot visually escape their parent.
 

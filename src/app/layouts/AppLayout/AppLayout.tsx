@@ -2,11 +2,13 @@ import {
   Box,
   Container,
   Flex,
+  Grid,
   HStack,
   Link as ChakraLink,
   NativeSelect,
   SkipNavContent,
   SkipNavLink,
+  Stack,
   Text,
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router';
@@ -21,8 +23,35 @@ const navItems = [
   { label: 'Servers', to: '/catalog' },
   { label: 'Pricing', to: '/pricing' },
   { label: 'Locations', to: '/locations' },
+  { label: 'Compare', to: '/compare' },
   { label: 'Docs', to: '/resources' },
   { label: 'Updates', to: '/releases' },
+] as const;
+
+const footerGroups = [
+  {
+    label: 'Explore',
+    links: [
+      { label: 'Servers', to: '/catalog' },
+      { label: 'Pricing', to: '/pricing' },
+      { label: 'Compare', to: '/compare' },
+      { label: 'Locations', to: '/locations' },
+    ],
+  },
+  {
+    label: 'Resources',
+    links: [
+      { label: 'Docs', to: '/resources' },
+      { label: 'Updates', to: '/releases' },
+    ],
+  },
+  {
+    label: 'Account',
+    links: [
+      { label: 'Customer portal', to: '/app' },
+      { label: 'Request quote', to: '/quote' },
+    ],
+  },
 ] as const;
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -40,7 +69,17 @@ export function AppLayout({ children }: AppLayoutProps) {
         backdropBlur="xl"
       >
         <Container maxW="1240px" px={{ base: '3', md: '5' }}>
-          <Flex align="center" gap="3" justify="space-between" minH="14" py="2">
+          <Grid
+            alignItems="center"
+            columnGap={{ base: '2', lg: '4' }}
+            minH={{ base: '14', md: '15' }}
+            py={{ base: '2', md: '2.5' }}
+            rowGap="2"
+            templateColumns={{
+              base: 'minmax(0, 1fr) auto',
+              lg: 'auto minmax(0, 1fr) auto',
+            }}
+          >
             <ChakraLink asChild color="ink.900" flexShrink="0" fontWeight="750">
               <NavLink to="/">
                 <HStack gap="3">
@@ -66,12 +105,23 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </HStack>
               </NavLink>
             </ChakraLink>
-            <Flex align="center" gap="2" justify="flex-end" minW="0">
-              <Flex as="nav" aria-label="Primary navigation" gap="1" minW="0" overflowX="auto">
-                {navItems.map((item) => (
-                  <HeaderLink item={item} key={item.to} />
-                ))}
-              </Flex>
+
+            <Flex
+              as="nav"
+              aria-label="Primary navigation"
+              gap="1"
+              gridColumn={{ base: '1 / -1', lg: 'auto' }}
+              minW="0"
+              overflowX="auto"
+              px={{ base: '0', lg: '1' }}
+              py="0.5"
+            >
+              {navItems.map((item) => (
+                <HeaderLink item={item} key={item.to} />
+              ))}
+            </Flex>
+
+            <Flex align="center" gap="1.5" justify="flex-end" minW="0">
               <ChakraLink asChild flexShrink="0">
                 <NavLink to="/app">
                   {({ isActive }) => (
@@ -83,7 +133,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       color={isActive ? 'brand.500' : 'ink.700'}
                       fontSize="xs"
                       fontWeight="700"
-                      px="2.5"
+                      px={{ base: '2', md: '2.5' }}
                       py="1.5"
                       whiteSpace="nowrap"
                     >
@@ -104,7 +154,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       color="white"
                       fontSize="xs"
                       fontWeight="760"
-                      px="2.5"
+                      px={{ base: '2', md: '2.5' }}
                       py="1.5"
                       whiteSpace="nowrap"
                     >
@@ -135,24 +185,42 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <NativeSelect.Indicator />
               </NativeSelect.Root>
             </Flex>
-          </Flex>
+          </Grid>
         </Container>
       </Box>
       <SkipNavContent />
       <Box id="app-content">{children}</Box>
       <Box as="footer" borderColor="surface.200" borderTopWidth="1px" bg="white">
-        <Container maxW="1240px" px={{ base: '3', md: '5' }} py="5">
-          <Flex align="center" gap="3" justify="space-between" wrap="wrap">
-            <Text color="ink.500" fontSize="sm">
-              HelioStack cloud server catalog
-            </Text>
-            <Flex gap="3" wrap="wrap">
-              <FooterLink to="/pricing">Pricing</FooterLink>
-              <FooterLink to="/resources">Docs</FooterLink>
-              <FooterLink to="/releases">Updates</FooterLink>
-              <FooterLink to="/app">Customer portal</FooterLink>
-            </Flex>
-          </Flex>
+        <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '7' }}>
+          <Grid
+            alignItems="start"
+            gap={{ base: '5', md: '6' }}
+            templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) repeat(3, auto)' }}
+          >
+            <Stack gap="2" maxW="420px">
+              <Text color="ink.900" fontWeight="760">
+                HelioStack
+              </Text>
+              <Text color="ink.500" fontSize="sm">
+                Cloud and dedicated server catalog with regional prices, stock, docs, and customer
+                quote workflows.
+              </Text>
+            </Stack>
+            {footerGroups.map((group) => (
+              <Stack gap="2.5" key={group.label} minW={{ md: '120px' }}>
+                <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                  {group.label}
+                </Text>
+                <Stack gap="1.5">
+                  {group.links.map((link) => (
+                    <FooterLink key={link.to} to={link.to}>
+                      {link.label}
+                    </FooterLink>
+                  ))}
+                </Stack>
+              </Stack>
+            ))}
+          </Grid>
         </Container>
       </Box>
     </Box>
@@ -171,7 +239,7 @@ function HeaderLink({ item }: { readonly item: (typeof navItems)[number] }) {
             color={isActive ? 'brand.500' : 'ink.700'}
             fontSize="xs"
             fontWeight="700"
-            px="2.5"
+            px={{ base: '2', md: '2.5' }}
             py="1.5"
             whiteSpace="nowrap"
             bg={isActive ? 'brand.50' : 'white'}
