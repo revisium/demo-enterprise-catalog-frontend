@@ -22,6 +22,11 @@ interface Metric {
   readonly value: string;
 }
 
+interface QuerySummaryRow {
+  readonly label: string;
+  readonly value: string;
+}
+
 interface FilterButtonProps {
   readonly children: ReactNode;
   readonly onClick: () => void;
@@ -66,6 +71,10 @@ interface SelectFieldProps {
   readonly onChange: (value: string) => void;
   readonly options: readonly FilterOption[];
   readonly value: string;
+}
+
+interface QuerySummaryProps {
+  readonly rows: readonly QuerySummaryRow[];
 }
 
 export function FilterButton({ children, onClick, selected, tone = 'brand' }: FilterButtonProps) {
@@ -210,6 +219,33 @@ export function PageIntroGrid({
       <MetricGrid ariaLabel={metricsLabel} metrics={metrics} />
       {children ?? null}
     </Grid>
+  );
+}
+
+export function QuerySummary({ rows }: QuerySummaryProps) {
+  return (
+    <Stack
+      bg="panelGlassBg"
+      borderColor="surface.200"
+      borderRadius="8px"
+      borderWidth="1px"
+      gap="2"
+      p="3"
+    >
+      <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+        Query summary
+      </Text>
+      {rows.map((row) => (
+        <Flex gap="3" justify="space-between" key={row.label}>
+          <Text color="ink.500" fontSize="sm">
+            {row.label}
+          </Text>
+          <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+            {row.value}
+          </Text>
+        </Flex>
+      ))}
+    </Stack>
   );
 }
 
