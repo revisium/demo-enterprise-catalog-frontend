@@ -58,8 +58,10 @@ export class LocationDetailPageViewModel {
   selectedFamilyIds: readonly string[] = [];
   selectedSupportWindowId: SupportWindowId = 'all';
   sortId: LocationPlanSortId = 'price-efficiency';
+  routeRegionId: string | undefined;
 
-  constructor(private readonly routeRegionId: string | undefined) {
+  constructor(routeRegionId: string | undefined) {
+    this.routeRegionId = routeRegionId;
     makeAutoObservable(this);
   }
 
@@ -201,6 +203,15 @@ export class LocationDetailPageViewModel {
 
   setMinStock(value: string) {
     this.minStock = this.parseNonNegativeNumber(value);
+  }
+
+  setRouteRegionId(regionId: string | undefined) {
+    if (this.routeRegionId === regionId) {
+      return;
+    }
+
+    this.routeRegionId = regionId;
+    this.resetFilters();
   }
 
   setSort(sortId: string) {

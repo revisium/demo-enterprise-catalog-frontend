@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 import {
@@ -18,8 +18,12 @@ import { LocationDetailPageViewModel } from '../../model/LocationDetailPageViewM
 
 export const LocationDetailPage = observer(function LocationDetailPage() {
   const params = useParams();
-  const vm = useMemo(() => new LocationDetailPageViewModel(params.regionId), [params.regionId]);
+  const [vm] = useState(() => new LocationDetailPageViewModel(params.regionId));
   const { regionSummary } = vm;
+
+  useEffect(() => {
+    vm.setRouteRegionId(params.regionId);
+  }, [params.regionId, vm]);
 
   return (
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
