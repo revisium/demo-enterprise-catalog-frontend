@@ -1,6 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 
-import type { CatalogProduct } from 'src/entities/catalog';
+import {
+  calculateCatalogReadinessScore,
+  calculatePriceEfficiencyScore,
+  normalizeSupportWindowId,
+  type CatalogProduct,
+} from 'src/entities/catalog';
 import { LocationsPageDataSource } from '../api/LocationsPageDataSource';
 
 type LocationSortId =
@@ -103,7 +108,7 @@ export class LocationsPageViewModel {
           effectiveMonthlyPrice: plan.pricing.monthlyUsd,
           planHref: `/catalog/${plan.id}`,
           plan,
-          priceEfficiencyScore: this.calculatePriceEfficiencyScore(plan),
+          priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
           setupHours: availability.setupHours,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
@@ -128,7 +133,7 @@ export class LocationsPageViewModel {
       const enterpriseRows = plans.filter((row) => row.plan.supportTier === 'Enterprise').length;
       const enterpriseCoveragePercent =
         plans.length > 0 ? Math.round((enterpriseRows / plans.length) * 100) : 0;
-      const readinessScore = this.calculateReadinessScore({
+      const readinessScore = calculateCatalogReadinessScore({
         enterpriseCoveragePercent,
         familyCoveragePercent,
         fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
@@ -322,38 +327,10 @@ export class LocationsPageViewModel {
     const matchesSupport =
       this.selectedSupportWindowId === 'all' ||
       location.supportWindows.some(
-        (window) => this.normalizeSupportWindow(window) === this.selectedSupportWindowId,
+        (window) => normalizeSupportWindowId(window) === this.selectedSupportWindowId,
       );
 
     return matchesFamily && matchesStock && matchesReadiness && matchesSupport;
-  }
-
-  private calculateReadinessScore(input: {
-    readonly enterpriseCoveragePercent: number;
-    readonly familyCoveragePercent: number;
-    readonly fastestSetupHours: number;
-    readonly totalStock: number;
-  }) {
-    const stockScore = Math.min(input.totalStock, 120) / 120;
-    const setupScore = Math.max(0, 24 - input.fastestSetupHours) / 24;
-    const familyScore = input.familyCoveragePercent / 100;
-    const supportScore = input.enterpriseCoveragePercent / 100;
-
-    return Math.round(
-      (stockScore * 0.35 + setupScore * 0.25 + familyScore * 0.25 + supportScore * 0.15) * 100,
-    );
-  }
-
-  private calculatePriceEfficiencyScore(plan: CatalogProduct) {
-    if (plan.pricing.monthlyUsd <= 0) {
-      return 0;
-    }
-
-    return Math.round(
-      ((plan.hardware.cpuCores + plan.hardware.ramGb / 4 + plan.hardware.storageTb) /
-        plan.pricing.monthlyUsd) *
-        100,
-    );
   }
 
   private getReadinessThreshold() {
@@ -366,10 +343,6 @@ export class LocationsPageViewModel {
     }
 
     return 0;
-  }
-
-  private normalizeSupportWindow(value: string) {
-    return value === '24/7' ? '24-7' : 'business-hours';
   }
 
   private parseNonNegativeNumber(value: string) {
