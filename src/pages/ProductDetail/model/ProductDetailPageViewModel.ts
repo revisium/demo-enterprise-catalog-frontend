@@ -48,6 +48,11 @@ const alternativeSortOptions: readonly FilterOption[] = [
 ];
 
 export class ProductDetailPageViewModel {
+  private static readonly dateFormat = new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'short',
+  });
+
   private readonly dataSource = new ProductDetailPageDataSource();
 
   alternativeSortId: AlternativeSortId = 'price-efficiency';
@@ -116,6 +121,10 @@ export class ProductDetailPageViewModel {
     );
   }
 
+  get hasNoRegionMatches() {
+    return this.visibleRegionRows.length === 0;
+  }
+
   get alternativeRows(): readonly AlternativeProductRow[] {
     const productRegionIds = new Set(
       this.product.availabilityByRegion.map((region) => region.regionId),
@@ -176,10 +185,7 @@ export class ProductDetailPageViewModel {
   }
 
   formatDate(value: string) {
-    return new Intl.DateTimeFormat('en', {
-      day: 'numeric',
-      month: 'short',
-    }).format(new Date(value));
+    return ProductDetailPageViewModel.dateFormat.format(new Date(value));
   }
 
   setAlternativeSort(sortId: string) {

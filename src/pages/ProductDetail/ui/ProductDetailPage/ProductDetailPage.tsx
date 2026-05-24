@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 import {
+  EmptyState,
   FieldHint,
   FilterButton,
   FilterCard,
@@ -18,7 +19,6 @@ import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewMod
 export const ProductDetailPage = observer(function ProductDetailPage() {
   const params = useParams();
   const [vm] = useState(() => new ProductDetailPageViewModel(params.productId));
-  const { product } = vm;
 
   useEffect(() => {
     vm.setProductId(params.productId);
@@ -40,19 +40,19 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
         >
           <Stack gap="4">
             <Flex align="center" color="ink.500" fontSize="sm" fontWeight="700" gap="2" wrap="wrap">
-              <Text>{product.family}</Text>
+              <Text>{vm.product.family}</Text>
               <Badge bg="successBg" borderRadius="8px" color="successText">
-                {product.lifecycle}
+                {vm.product.lifecycle}
               </Badge>
             </Flex>
             <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '5xl' }} lineHeight="1">
-              {product.name}
+              {vm.product.name}
             </Heading>
             <Text color="ink.700" fontSize="md" maxW="720px">
-              {product.summary}
+              {vm.product.summary}
             </Text>
             <Flex gap="2" wrap="wrap">
-              {product.protocols.map((protocol) => (
+              {vm.product.protocols.map((protocol) => (
                 <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={protocol}>
                   {protocol}
                 </Badge>
@@ -71,10 +71,10 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             </Flex>
           </Stack>
           <ProductVisual
-            alt={product.imageAlt}
+            alt={vm.product.imageAlt}
             minH="320px"
             radius="8px"
-            tone={product.visualTone}
+            tone={vm.product.visualTone}
           />
         </Grid>
 
@@ -145,25 +145,25 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                 Platform
               </Text>
               <Text as="dd" color="ink.900" m="0">
-                {product.specs.enclosure}
+                {vm.product.specs.enclosure}
               </Text>
               <Text as="dt" color="ink.500">
                 Security
               </Text>
               <Text as="dd" color="ink.900" m="0">
-                {product.specs.ingress}
+                {vm.product.specs.ingress}
               </Text>
               <Text as="dt" color="ink.500">
                 SLA
               </Text>
               <Text as="dd" color="ink.900" m="0">
-                {product.specs.operatingRange}
+                {vm.product.specs.operatingRange}
               </Text>
               <Text as="dt" color="ink.500">
                 Network
               </Text>
               <Text as="dd" color="ink.900" m="0">
-                {product.specs.connectivity}
+                {vm.product.specs.connectivity}
               </Text>
             </Grid>
           </Stack>
@@ -179,7 +179,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               Documents
             </Heading>
             <Flex gap="3" wrap="wrap">
-              {product.documents.map((document) => (
+              {vm.product.documents.map((document) => (
                 <Badge
                   bg="brand.50"
                   borderColor="brandBorderMuted"
@@ -211,6 +211,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             p="4"
           >
             <SectionEyebrow>Regional availability</SectionEyebrow>
+            {vm.hasNoRegionMatches ? (
+              <EmptyState
+                actionLabel="Show all regions"
+                onAction={() => vm.setInStockRegionsOnly(false)}
+                summary="This plan has no in-stock regions under the current availability view."
+                title="No in-stock regions"
+              />
+            ) : null}
             {vm.visibleRegionRows.map((region) => (
               <Grid
                 alignItems="center"
@@ -264,14 +272,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               Commercial summary
             </Text>
             <Text fontSize="3xl" fontWeight="800" lineHeight="1">
-              ${product.pricing.monthlyUsd}/mo
+              ${vm.product.pricing.monthlyUsd}/mo
             </Text>
             <Text color="darkPanelText" fontSize="sm">
-              ${product.pricing.yearlyMonthlyUsd}/mo on yearly term · ${product.pricing.setupUsd}{' '}
-              setup fee.
+              ${vm.product.pricing.yearlyMonthlyUsd}/mo on yearly term · $
+              {vm.product.pricing.setupUsd} setup fee.
             </Text>
             <Text color="darkPanelText" fontSize="sm">
-              {product.customerNote}
+              {vm.product.customerNote}
             </Text>
           </Stack>
         </Grid>
