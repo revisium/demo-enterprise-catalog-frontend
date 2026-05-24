@@ -47,7 +47,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             </Flex>
             <Flex gap="2" wrap="wrap">
               <Button asChild bg="ctaBg" borderRadius="8px" color="white">
-                <Link to={`/quote?plan=${product.id}`}>Request quote</Link>
+                <Link to={vm.quotePath}>Request quote</Link>
               </Button>
               <Button asChild borderRadius="8px" variant="outline">
                 <Link to="/compare">Compare plans</Link>

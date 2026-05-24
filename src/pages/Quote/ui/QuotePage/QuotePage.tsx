@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Container, Flex, Grid, Stack, Text, chakra } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { FieldHint, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
@@ -8,13 +8,17 @@ import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 
 export const QuotePage = observer(function QuotePage() {
   const [searchParams] = useSearchParams();
-  const [vm] = useState(
+  const planId = searchParams.get('plan');
+  const regionId = searchParams.get('region');
+  const term = searchParams.get('term');
+  const vm = useMemo(
     () =>
       new QuotePageViewModel({
-        planId: searchParams.get('plan'),
-        regionId: searchParams.get('region'),
-        term: searchParams.get('term'),
+        planId,
+        regionId,
+        term,
       }),
+    [planId, regionId, term],
   );
 
   return (
@@ -62,8 +66,8 @@ export const QuotePage = observer(function QuotePage() {
                   borderColor="surface.200"
                   borderRadius="8px"
                   borderWidth="1px"
-                  onBlur={() => vm.form.controls.company.blur()}
-                  onChange={(event) => vm.form.controls.company.setValue(event.currentTarget.value)}
+                  onBlur={() => vm.blurCompany()}
+                  onChange={(event) => vm.setCompany(event.currentTarget.value)}
                   p="3"
                   value={vm.form.controls.company.value}
                   w="100%"
@@ -81,8 +85,8 @@ export const QuotePage = observer(function QuotePage() {
                   borderColor="surface.200"
                   borderRadius="8px"
                   borderWidth="1px"
-                  onBlur={() => vm.form.controls.email.blur()}
-                  onChange={(event) => vm.form.controls.email.setValue(event.currentTarget.value)}
+                  onBlur={() => vm.blurEmail()}
+                  onChange={(event) => vm.setEmail(event.currentTarget.value)}
                   p="3"
                   value={vm.form.controls.email.value}
                   w="100%"
@@ -127,7 +131,7 @@ export const QuotePage = observer(function QuotePage() {
                   borderColor="surface.200"
                   borderRadius="8px"
                   borderWidth="1px"
-                  onChange={(event) => vm.form.controls.region.setValue(event.currentTarget.value)}
+                  onChange={(event) => vm.setRegion(event.currentTarget.value)}
                   p="3"
                   value={vm.form.controls.region.value}
                   w="100%"
@@ -155,10 +159,8 @@ export const QuotePage = observer(function QuotePage() {
                   borderRadius="8px"
                   borderWidth="1px"
                   min="1"
-                  onBlur={() => vm.form.controls.quantity.blur()}
-                  onChange={(event) =>
-                    vm.form.controls.quantity.setValue(event.currentTarget.value)
-                  }
+                  onBlur={() => vm.blurQuantity()}
+                  onChange={(event) => vm.setQuantity(event.currentTarget.value)}
                   p="3"
                   type="number"
                   value={vm.form.controls.quantity.value}

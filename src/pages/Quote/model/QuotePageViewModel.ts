@@ -42,10 +42,10 @@ function getDefaultQuoteFormValues(defaults: QuoteDefaults = {}): QuoteFormValue
     billingTerm,
     company: '',
     email: '',
-    interest: selectedProduct?.name ?? '',
+    interest: selectedProduct?.id ?? '',
     priority: 'standard',
     quantity: '1',
-    region: selectedRegion?.regionLabel ?? '',
+    region: selectedRegion?.regionId ?? '',
   };
 }
 
@@ -67,15 +67,15 @@ export class QuotePageViewModel {
     const regions = this.selectedPlan
       ? this.selectedPlan.availabilityByRegion
       : catalogSnapshot.products.flatMap((product) => product.availabilityByRegion);
-    const regionLabels = [...new Set(regions.map((region) => region.regionLabel))];
+    const byId = new Map(regions.map((region) => [region.regionId, region.regionLabel]));
 
-    return regionLabels.map((label) => ({ label, value: label }));
+    return [...byId.entries()].map(([value, label]) => ({ label, value }));
   }
 
   get interestOptions() {
     return catalogSnapshot.products.map((product) => ({
       label: product.name,
-      value: product.name,
+      value: product.id,
     }));
   }
 
@@ -91,13 +91,13 @@ export class QuotePageViewModel {
 
   get selectedPlan() {
     return catalogSnapshot.products.find(
-      (product) => product.name === this.form.controls.interest.value,
+      (product) => product.id === this.form.controls.interest.value,
     );
   }
 
   get selectedRegionAvailability() {
     return this.selectedPlan?.availabilityByRegion.find(
-      (region) => region.regionLabel === this.form.controls.region.value,
+      (region) => region.regionId === this.form.controls.region.value,
     );
   }
 
@@ -136,7 +136,7 @@ export class QuotePageViewModel {
 
     return selectedPlan.availabilityByRegion.map((region) => ({
       id: region.regionId,
-      active: region.regionLabel === this.form.controls.region.value,
+      active: region.regionId === this.form.controls.region.value,
       label: region.regionLabel,
       setup: `${region.setupHours}h setup`,
       stock: `${region.stock} units`,
@@ -170,16 +170,36 @@ export class QuotePageViewModel {
     );
   }
 
+  blurCompany() {
+    this.form.controls.company.blur();
+  }
+
+  blurEmail() {
+    this.form.controls.email.blur();
+  }
+
+  blurQuantity() {
+    this.form.controls.quantity.blur();
+  }
+
+  setCompany(value: string) {
+    this.form.controls.company.setValue(value);
+  }
+
+  setEmail(value: string) {
+    this.form.controls.email.setValue(value);
+  }
+
   setInterest(value: string) {
     this.form.controls.interest.setValue(value);
 
     const selectedPlan = this.selectedPlan;
     const currentRegionStillAvailable = selectedPlan?.availabilityByRegion.some(
-      (region) => region.regionLabel === this.form.controls.region.value,
+      (region) => region.regionId === this.form.controls.region.value,
     );
 
     if (selectedPlan && !currentRegionStillAvailable) {
-      this.form.controls.region.setValue(selectedPlan.availabilityByRegion[0]?.regionLabel ?? '');
+      this.form.controls.region.setValue(selectedPlan.availabilityByRegion[0]?.regionId ?? '');
     }
 
     if (
@@ -194,6 +214,18 @@ export class QuotePageViewModel {
   setPriority(value: string) {
     this.form.controls.priority.setValue(
       priorityOptions.some((option) => option.value === value) ? value : 'standard',
+    );
+  }
+
+  setQuantity(value: string) {
+    this.form.controls.quantity.setValue(value);
+  }
+
+  setRegion(value: string) {
+    this.form.controls.region.setValue(
+      this.regionOptions.some((option) => option.value === value)
+        ? value
+        : (this.regionOptions[0]?.value ?? ''),
     );
   }
 
