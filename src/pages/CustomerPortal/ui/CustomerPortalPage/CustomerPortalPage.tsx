@@ -17,7 +17,8 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
 }: {
   readonly session: PortalDemoSession;
 }) {
-  const actionFetcher = useFetcher<PortalActionResponse>();
+  const contentFeedbackFetcher = useFetcher<PortalActionResponse>();
+  const preferenceFetcher = useFetcher<PortalActionResponse>();
   const [vm] = useState(() => new CustomerPortalPageViewModel(session));
   const activeOrganization = vm.activeOrganization;
   const primaryQuote = vm.primaryQuote;
@@ -156,7 +157,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
               referenced content.
             </FieldHint>
             <Stack gap="2">
-              <actionFetcher.Form action="/app/actions/preferences" method="post">
+              <preferenceFetcher.Form action="/app/actions/preferences" method="post">
                 <input
                   name="languageId"
                   type="hidden"
@@ -175,21 +176,17 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                 <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                   Save defaults
                 </Button>
-              </actionFetcher.Form>
-              <actionFetcher.Form action="/app/actions/content-feedback" method="post">
+              </preferenceFetcher.Form>
+              {preferenceFetcher.data ? <ActionMessage response={preferenceFetcher.data} /> : null}
+              <contentFeedbackFetcher.Form action="/app/actions/content-feedback" method="post">
                 <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
                 <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
                 <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                   Save update
                 </Button>
-              </actionFetcher.Form>
-              {actionFetcher.data ? (
-                <Text
-                  color={actionFetcher.data.status === 'accepted' ? 'successText' : 'amberText'}
-                  fontSize="sm"
-                >
-                  {actionFetcher.data.message}
-                </Text>
+              </contentFeedbackFetcher.Form>
+              {contentFeedbackFetcher.data ? (
+                <ActionMessage response={contentFeedbackFetcher.data} />
               ) : null}
             </Stack>
           </FilterCard>
@@ -267,6 +264,14 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
     </Box>
   );
 });
+
+function ActionMessage({ response }: { readonly response: PortalActionResponse }) {
+  return (
+    <Text color={response.status === 'accepted' ? 'successText' : 'amberText'} fontSize="sm">
+      {response.message}
+    </Text>
+  );
+}
 
 function AccountFact({ label, value }: { readonly label: string; readonly value: string }) {
   return (

@@ -2,6 +2,8 @@ import { refreshPortalDemoSessionCookies, resolvePortalDemoSession } from 'src/e
 import type { PortalDemoSession } from 'src/entities/portal';
 
 interface PortalActionResult {
+  readonly checks: readonly string[];
+  readonly message: string;
   readonly status: 'accepted' | 'rejected';
 }
 
