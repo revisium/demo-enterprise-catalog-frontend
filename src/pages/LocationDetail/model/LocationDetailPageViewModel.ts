@@ -333,7 +333,7 @@ export class LocationDetailPageViewModel {
     return [
       this.selectedFamilyIds.length > 0 ? 'family' : undefined,
       this.minStock > 0 ? 'stock' : undefined,
-      this.selectedSupportWindowId !== 'all' ? 'support window' : undefined,
+      this.selectedSupportWindowId === 'all' ? undefined : 'support window',
     ].filter((label): label is string => typeof label === 'string');
   }
 
