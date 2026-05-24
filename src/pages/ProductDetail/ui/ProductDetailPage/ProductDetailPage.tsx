@@ -114,10 +114,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             </Flex>
           </FilterCard>
 
-          <FilterCard>
-            <SectionEyebrow>Plan summary</SectionEyebrow>
-            <QuerySummary rows={vm.queryRows} />
-          </FilterCard>
+          <QuerySummary rows={vm.queryRows} />
         </Grid>
 
         <Grid
@@ -171,24 +168,76 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             gap="4"
             p="4"
           >
-            <Heading as="h2" color="ink.900" fontSize="2xl">
-              Documents
-            </Heading>
-            <Flex gap="3" wrap="wrap">
-              {vm.product.documents.map((document) => (
-                <Badge
-                  bg="brand.50"
-                  borderColor="brandBorderMuted"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  color="brand.500"
-                  key={document}
-                  px="3"
-                  py="2"
-                >
-                  {document}
-                </Badge>
+            <Stack gap="1">
+              <Heading as="h2" color="ink.900" fontSize="2xl">
+                Plan package
+              </Heading>
+              <FieldHint>
+                Add-ons and documents stay visible here so the quote page can focus on request
+                details.
+              </FieldHint>
+            </Stack>
+            <Stack gap="2">
+              {vm.packageRows.map((row) => (
+                <Flex gap="3" justify="space-between" key={row.label}>
+                  <Text color="ink.500" fontSize="sm">
+                    {row.label}
+                  </Text>
+                  <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                    {row.value}
+                  </Text>
+                </Flex>
               ))}
+            </Stack>
+            <Stack gap="2">
+              <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                Add-ons
+              </Text>
+              <Flex gap="2" wrap="wrap">
+                {vm.addOnRows.map((addon) => (
+                  <Badge
+                    bg="successBg"
+                    borderColor="successBorder"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    color="successText"
+                    key={addon.id}
+                    px="3"
+                    py="2"
+                  >
+                    {addon.label}
+                  </Badge>
+                ))}
+              </Flex>
+            </Stack>
+            <Stack gap="2">
+              <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                Documents
+              </Text>
+              <Flex gap="3" wrap="wrap">
+                {vm.product.documents.map((document) => (
+                  <Badge
+                    bg="brand.50"
+                    borderColor="brandBorderMuted"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    color="brand.500"
+                    key={document}
+                    px="3"
+                    py="2"
+                  >
+                    {document}
+                  </Badge>
+                ))}
+              </Flex>
+            </Stack>
+            <Flex gap="3" wrap="wrap">
+              <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
+                <Link to={vm.quotePath}>Prepare quote</Link>
+              </Button>
+              <Button asChild borderRadius="8px" size="sm" variant="outline">
+                <Link to="/pricing">Check price rows</Link>
+              </Button>
             </Flex>
           </Stack>
         </Grid>
@@ -246,6 +295,9 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                   </Badge>
                   <Button asChild borderRadius="8px" size="xs" variant="outline">
                     <Link to={region.locationHref}>Open region</Link>
+                  </Button>
+                  <Button asChild borderRadius="8px" size="xs" variant="outline">
+                    <Link to={region.quoteHref}>Quote here</Link>
                   </Button>
                 </Stack>
               </Grid>
@@ -343,9 +395,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                     </Badge>
                   </Flex>
                 </Stack>
-                <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-                  <Link to={row.detailHref}>Open</Link>
-                </Button>
+                <Stack align="stretch" gap="2">
+                  <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
+                    <Link to={row.detailHref}>Open</Link>
+                  </Button>
+                  <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
+                    <Link to={row.quoteHref}>Quote</Link>
+                  </Button>
+                </Stack>
               </Grid>
             ))}
           </Grid>

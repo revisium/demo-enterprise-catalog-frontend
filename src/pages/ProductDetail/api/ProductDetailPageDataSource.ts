@@ -1,18 +1,19 @@
 import { catalogSnapshot, type CatalogProduct } from 'src/entities/catalog';
 
 export class ProductDetailPageDataSource {
+  private readonly products: readonly CatalogProduct[] = [...catalogSnapshot.products];
+
   getProduct(productId: string | undefined): CatalogProduct {
-    const product =
-      catalogSnapshot.products.find((item) => item.id === productId) ?? catalogSnapshot.products[0];
+    const product = this.products.find((item) => item.id === productId) ?? this.products[0];
 
     if (!product) {
-      throw new Error('Product catalog mock snapshot is empty');
+      throw new Error('Product catalog snapshot is empty');
     }
 
     return product;
   }
 
   getProducts(): readonly CatalogProduct[] {
-    return [...catalogSnapshot.products];
+    return this.products;
   }
 }

@@ -11,6 +11,10 @@ Read [`company.md`](./company.md) before adding major pages. It defines the
 company legend, buyer context, and source-data boundaries that keep the demo
 realistic.
 
+Use [`demo-surface-map.md`](./demo-surface-map.md) when adding or polishing
+pages. It defines each route's unique demo role so the prototype does not repeat
+the same interaction under different labels.
+
 ## Route Map
 
 | Route                     | Purpose                                                     | Main source                                       |
