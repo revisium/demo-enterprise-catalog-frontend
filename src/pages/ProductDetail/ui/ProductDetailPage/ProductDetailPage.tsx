@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 import {
@@ -19,10 +19,6 @@ import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewMod
 export const ProductDetailPage = observer(function ProductDetailPage() {
   const params = useParams();
   const [vm] = useState(() => new ProductDetailPageViewModel(params.productId));
-
-  useEffect(() => {
-    vm.setProductId(params.productId);
-  }, [params.productId, vm]);
 
   return (
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
@@ -275,8 +271,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               ${vm.product.pricing.monthlyUsd}/mo
             </Text>
             <Text color="darkPanelText" fontSize="sm">
-              ${vm.product.pricing.yearlyMonthlyUsd}/mo on yearly term · $
-              {vm.product.pricing.setupUsd} setup fee.
+              {vm.commercialTermLabel}
             </Text>
             <Text color="darkPanelText" fontSize="sm">
               {vm.product.customerNote}

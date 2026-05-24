@@ -27,10 +27,14 @@ interface AlternativeProductRow {
   readonly displayUpdatedDate: string;
   readonly overlapRegionCount: number;
   readonly plan: CatalogProduct;
-  readonly priceDelta: number;
   readonly priceDeltaLabel: string;
   readonly priceEfficiencyScore: number;
   readonly totalStock: number;
+}
+
+interface AlternativeCandidate {
+  readonly overlapRegionCount: number;
+  readonly plan: CatalogProduct;
 }
 
 const regionSortOptions: readonly FilterOption[] = [
@@ -100,6 +104,10 @@ export class ProductDetailPageViewModel {
     return calculatePriceEfficiencyScore(this.product);
   }
 
+  get commercialTermLabel() {
+    return `$${this.product.pricing.yearlyMonthlyUsd}/mo on yearly term · $${this.product.pricing.setupUsd} setup fee.`;
+  }
+
   get regionRows(): readonly ProductRegionRow[] {
     const enterpriseCoveragePercent = this.product.supportTier === 'Enterprise' ? 100 : 0;
 
@@ -126,6 +134,12 @@ export class ProductDetailPageViewModel {
   }
 
   get alternativeRows(): readonly AlternativeProductRow[] {
+    return this.sortedAlternativeCandidates
+      .slice(0, 4)
+      .map((candidate) => this.toAlternativeRow(candidate));
+  }
+
+  private get alternativeCandidates(): readonly AlternativeCandidate[] {
     const productRegionIds = new Set(
       this.product.availabilityByRegion.map((region) => region.regionId),
     );
@@ -138,21 +152,20 @@ export class ProductDetailPageViewModel {
         ).length;
 
         return {
-          detailHref: `/catalog/${plan.id}`,
-          displayUpdatedDate: this.formatDate(plan.system.updatedAt),
           overlapRegionCount,
           plan,
-          priceDelta: plan.pricing.monthlyUsd - this.product.pricing.monthlyUsd,
-          priceDeltaLabel: this.formatPriceDelta(
-            plan.pricing.monthlyUsd - this.product.pricing.monthlyUsd,
-          ),
-          priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
-          totalStock: this.getTotalStock(plan),
         };
       })
-      .filter((row) => row.plan.family === this.product.family || row.overlapRegionCount > 0)
-      .sort((left, right) => this.compareAlternativeRows(left, right))
-      .slice(0, 4);
+      .filter(
+        (candidate) =>
+          candidate.plan.family === this.product.family || candidate.overlapRegionCount > 0,
+      );
+  }
+
+  private get sortedAlternativeCandidates() {
+    return [...this.alternativeCandidates].sort((left, right) =>
+      this.compareAlternativeCandidates(left, right),
+    );
   }
 
   get regionSortOptions() {
@@ -196,35 +209,24 @@ export class ProductDetailPageViewModel {
     this.inStockRegionsOnly = value;
   }
 
-  setProductId(productId: string | undefined) {
-    if (this.productId === productId) {
-      return;
-    }
-
-    this.productId = productId;
-    this.regionSortId = 'readiness';
-    this.alternativeSortId = 'price-efficiency';
-    this.inStockRegionsOnly = true;
-  }
-
   setRegionSort(sortId: string) {
     this.regionSortId = this.isRegionSortId(sortId) ? sortId : 'readiness';
   }
 
-  private compareAlternativeRows(left: AlternativeProductRow, right: AlternativeProductRow) {
+  private compareAlternativeCandidates(left: AlternativeCandidate, right: AlternativeCandidate) {
     if (this.alternativeSortId === 'monthly-price') {
       return left.plan.pricing.monthlyUsd - right.plan.pricing.monthlyUsd;
     }
 
     if (this.alternativeSortId === 'stock') {
-      return right.totalStock - left.totalStock;
+      return this.getTotalStock(right.plan) - this.getTotalStock(left.plan);
     }
 
     if (this.alternativeSortId === 'recently-updated') {
       return Date.parse(right.plan.system.updatedAt) - Date.parse(left.plan.system.updatedAt);
     }
 
-    return right.priceEfficiencyScore - left.priceEfficiencyScore;
+    return calculatePriceEfficiencyScore(right.plan) - calculatePriceEfficiencyScore(left.plan);
   }
 
   private compareRegionRows(left: ProductRegionRow, right: ProductRegionRow) {
@@ -257,6 +259,20 @@ export class ProductDetailPageViewModel {
 
   private getTotalStock(product: CatalogProduct) {
     return product.availabilityByRegion.reduce((total, region) => total + region.stock, 0);
+  }
+
+  private toAlternativeRow(candidate: AlternativeCandidate): AlternativeProductRow {
+    const priceDelta = candidate.plan.pricing.monthlyUsd - this.product.pricing.monthlyUsd;
+
+    return {
+      detailHref: `/catalog/${candidate.plan.id}`,
+      displayUpdatedDate: this.formatDate(candidate.plan.system.updatedAt),
+      overlapRegionCount: candidate.overlapRegionCount,
+      plan: candidate.plan,
+      priceDeltaLabel: this.formatPriceDelta(priceDelta),
+      priceEfficiencyScore: calculatePriceEfficiencyScore(candidate.plan),
+      totalStock: this.getTotalStock(candidate.plan),
+    };
   }
 
   private isAlternativeSortId(value: string): value is AlternativeSortId {

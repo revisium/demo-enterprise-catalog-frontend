@@ -12,7 +12,7 @@ export class ProductDetailPageDataSource {
     return product;
   }
 
-  getProducts() {
-    return catalogSnapshot.products;
+  getProducts(): readonly CatalogProduct[] {
+    return [...catalogSnapshot.products];
   }
 }
