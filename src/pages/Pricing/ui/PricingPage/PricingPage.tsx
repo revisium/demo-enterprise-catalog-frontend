@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router';
@@ -11,6 +11,7 @@ import {
   FilterCard,
   MetricGrid,
   PageIntroGrid,
+  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from 'src/shared/ui';
@@ -30,11 +31,16 @@ export const PricingPage = observer(function PricingPage() {
           title="Compare regional price rows."
         />
 
-        <Grid gap="3" my={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', xl: '1fr 1fr' }}>
+        <Grid
+          gap="3"
+          my={{ base: '5', md: '6' }}
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+        >
           <FilterCard>
-            <SectionEyebrow>Filters</SectionEyebrow>
+            <SectionEyebrow>Commercial view</SectionEyebrow>
             <FieldHint>
-              Choose a billing term, keep only available stock, then narrow by family or region.
+              Choose the price term, keep available stock, and decide how selected add-ons should
+              match.
             </FieldHint>
             <Flex gap="2" wrap="wrap">
               <FilterButton
@@ -59,26 +65,57 @@ export const PricingPage = observer(function PricingPage() {
                 In stock
               </FilterButton>
             </Flex>
+            <SelectField
+              label="Add-on matching"
+              onChange={(value) => vm.setAddonMatchMode(value)}
+              options={vm.addOnMatchOptions}
+              value={vm.addonMatchMode}
+            />
+            <ChipGroup
+              label="Add-ons"
+              onToggle={(id) => vm.toggleAddon(id)}
+              options={vm.addons}
+              selectedIds={vm.selectedAddonIds}
+            />
+          </FilterCard>
 
+          <FilterCard>
+            <SectionEyebrow>Server filters</SectionEyebrow>
+            <FieldHint>
+              Narrow by server family and memory while preserving multiple selected values.
+            </FieldHint>
             <ChipGroup
               label="Families"
               onToggle={(id) => vm.toggleFamily(id)}
               options={vm.families}
               selectedIds={vm.selectedFamilyIds}
             />
+            <SelectField
+              label="Minimum memory"
+              onChange={(value) => vm.setMinRamGb(value)}
+              options={vm.minRamOptions}
+              value={String(vm.minRamGb)}
+            />
+          </FilterCard>
+
+          <FilterCard>
+            <SectionEyebrow>Regional price rows</SectionEyebrow>
+            <FieldHint>
+              Filter by location, support window, setup time, and price; then choose the sort
+              policy.
+            </FieldHint>
             <ChipGroup
               label="Regions"
               onToggle={(id) => vm.toggleRegion(id)}
               options={vm.regions}
               selectedIds={vm.selectedRegionIds}
             />
-          </FilterCard>
-
-          <FilterCard>
-            <SectionEyebrow>Price view</SectionEyebrow>
-            <FieldHint>
-              Sort the price rows by budget, regional stock, setup time, memory, or freshness.
-            </FieldHint>
+            <ChipGroup
+              label="Support windows"
+              onToggle={(id) => vm.toggleSupportWindow(id)}
+              options={vm.supportWindows}
+              selectedIds={vm.selectedSupportWindows}
+            />
             <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               <SelectField
                 label="Max price"
@@ -87,12 +124,19 @@ export const PricingPage = observer(function PricingPage() {
                 value={String(vm.maxMonthlyPrice)}
               />
               <SelectField
-                label="Sort"
+                label="Max setup"
+                onChange={(value) => vm.setMaxSetupHours(value)}
+                options={vm.maxSetupOptions}
+                value={String(vm.maxSetupHours)}
+              />
+              <SelectField
+                label="Sort rows"
                 onChange={(value) => vm.setSort(value)}
                 options={vm.sortOptions}
                 value={vm.sortId}
               />
             </Grid>
+            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
         </Grid>
 
@@ -102,6 +146,22 @@ export const PricingPage = observer(function PricingPage() {
           templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
         >
           <Stack gap="2">
+            <Flex align="end" justify="space-between" gap="3" wrap="wrap">
+              <Stack gap="1">
+                <SectionEyebrow>Price-book rows</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  Regional server prices
+                </Heading>
+              </Stack>
+              <Button
+                borderRadius="8px"
+                onClick={() => vm.resetFilters()}
+                size="sm"
+                variant="outline"
+              >
+                Reset filters
+              </Button>
+            </Flex>
             {vm.hasNoMatches ? (
               <EmptyState
                 actionLabel="Reset filters"
@@ -123,31 +183,59 @@ export const PricingPage = observer(function PricingPage() {
                   gap="3"
                   key={`${row.id}-${vm.billingTermId}`}
                   p="3"
-                  templateColumns={{ base: '1fr', lg: '1fr 130px 150px 120px 110px' }}
+                  templateColumns={{ base: '1fr', lg: 'minmax(0, 1.3fr) 120px 180px 130px 132px' }}
                 >
                   <Stack gap="0">
-                    <Text color="ink.900" fontWeight="760">
-                      {row.plan.name}
-                    </Text>
+                    <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
+                      <RouterLink to={row.detailHref}>{row.plan.name}</RouterLink>
+                    </Box>
                     <Text color="ink.500" fontSize="sm">
-                      {row.region.regionLabel} · {row.family} · {row.plan.hardware.ramGb} GB RAM
+                      {row.family} · {row.plan.hardware.cpuCores} vCPU · {row.plan.hardware.ramGb}{' '}
+                      GB RAM
+                    </Text>
+                    <Flex gap="1.5" mt="2" wrap="wrap">
+                      {row.plan.addons.slice(0, 3).map((addon) => (
+                        <Badge
+                          bg="panelGlassBg"
+                          borderColor="surface.200"
+                          borderRadius="8px"
+                          borderWidth="1px"
+                          color="ink.600"
+                          key={addon}
+                        >
+                          {addon}
+                        </Badge>
+                      ))}
+                    </Flex>
+                  </Stack>
+                  <Stack gap="0">
+                    <Text color="ink.900" fontWeight="760">
+                      ${row.billingTermPrice}/mo
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      save ${row.yearlySavingsUsd}/yr
                     </Text>
                   </Stack>
-                  <Text color="ink.900" fontWeight="760">
-                    ${row.billingTermPrice}/mo
-                  </Text>
-                  <Text color="ink.500" fontSize="sm">
-                    Setup ${row.plan.pricing.setupUsd} · {row.region.setupHours}h
-                  </Text>
-                  <Badge
-                    alignSelf="center"
-                    bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
-                    borderRadius="8px"
-                    color={row.region.stock > 0 ? 'successText' : 'amberText'}
-                    justifySelf={{ base: 'start', lg: 'end' }}
-                  >
-                    {row.region.stock} units
-                  </Badge>
+                  <Stack gap="0">
+                    <Text color="ink.900" fontWeight="700">
+                      {row.region.regionLabel}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.region.supportWindow} · setup {row.region.setupHours}h
+                    </Text>
+                  </Stack>
+                  <Stack align={{ base: 'start', lg: 'end' }} gap="1">
+                    <Badge
+                      bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                      borderRadius="8px"
+                      color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                    >
+                      {row.region.stock} units
+                    </Badge>
+                    <Text color="ink.500" fontSize="xs">
+                      score {row.priceEfficiencyScore}
+                    </Text>
+                  </Stack>
                   <Button
                     aria-pressed={selected}
                     borderRadius="8px"

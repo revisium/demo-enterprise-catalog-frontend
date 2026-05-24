@@ -12,9 +12,12 @@ Prototype typed mock data from the shared catalog snapshot.
 ## Query Shape
 
 - family and region chips model OR filters inside the selected group;
-- term, max price, and stock controls model AND filters;
-- sort covers price, stock, setup time, RAM, and last updated time;
-- rows flatten plan data plus nested regional availability.
+- add-on chips can match any selected add-on or require all selected add-ons;
+- term, max price, stock, minimum RAM, max setup time, and support-window
+  controls model AND filters;
+- sort covers effective price, computed price efficiency, computed yearly
+  savings, stock, setup time, RAM, catalog display order, and last updated time;
+- rows flatten plan data plus nested regional availability;
 - selected price rows model user-owned runtime state that can be carried into
   quote creation.
 
@@ -22,6 +25,7 @@ Prototype typed mock data from the shared catalog snapshot.
 
 - filter and sort a regional price-book table;
 - compare monthly and yearly effective prices without leaving the table;
+- inspect the active query summary in customer language;
 - select regional rows into a quote draft panel;
 - keep selected rows visible while the user adjusts billing term;
 - make the next step a quote flow with selected row and billing term prefill.
