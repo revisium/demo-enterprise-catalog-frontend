@@ -20,5 +20,5 @@ export function loader({ request }: LoaderFunctionArgs) {
 export default function CustomerPortalRoute() {
   const { session } = useLoaderData<typeof loader>();
 
-  return <CustomerPortalPage session={session} />;
+  return <CustomerPortalPage key={session.user.id} session={session} />;
 }
