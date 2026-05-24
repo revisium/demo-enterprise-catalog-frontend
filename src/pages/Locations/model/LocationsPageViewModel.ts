@@ -3,8 +3,12 @@ import { makeAutoObservable } from 'mobx';
 import {
   calculateCatalogReadinessScore,
   calculatePriceEfficiencyScore,
+  createStockFilterOptions,
   normalizeSupportWindowId,
+  supportWindowFilterOptions,
+  type CatalogFilterOption,
   type CatalogProduct,
+  type CatalogRegionSummaryFields,
 } from 'src/entities/catalog';
 import { LocationsPageDataSource } from '../api/LocationsPageDataSource';
 
@@ -18,11 +22,6 @@ type LocationSortId =
 type ReadinessBandId = 'all' | 'high' | 'medium';
 type SupportWindowId = '24-7' | 'all' | 'business-hours';
 
-interface FilterOption {
-  readonly id: string;
-  readonly label: string;
-}
-
 interface LocationPlanRow {
   readonly dataCenterCode: string;
   readonly effectiveMonthlyPrice: number;
@@ -34,22 +33,12 @@ interface LocationPlanRow {
   readonly supportWindow: string;
 }
 
-interface LocationRow {
-  readonly dataCenterCodes: readonly string[];
-  readonly enterpriseCoveragePercent: number;
-  readonly fastestSetupHours: number;
-  readonly families: readonly string[];
-  readonly familyCoveragePercent: number;
+interface LocationRow extends CatalogRegionSummaryFields {
   readonly latestUpdatedAt: string;
   readonly plans: readonly LocationPlanRow[];
-  readonly readinessScore: number;
-  readonly regionId: string;
-  readonly regionLabel: string;
-  readonly supportWindows: readonly string[];
-  readonly totalStock: number;
 }
 
-const sortOptions: readonly FilterOption[] = [
+const sortOptions: readonly CatalogFilterOption[] = [
   { id: 'stock', label: 'Most stock' },
   { id: 'readiness-score', label: 'Best readiness score' },
   { id: 'fastest-setup', label: 'Fastest setup' },
@@ -58,24 +47,14 @@ const sortOptions: readonly FilterOption[] = [
   { id: 'region-name', label: 'Region name' },
 ];
 
-const readinessOptions: readonly FilterOption[] = [
+const readinessOptions: readonly CatalogFilterOption[] = [
   { id: 'all', label: 'Any readiness' },
   { id: 'medium', label: '70+ score' },
   { id: 'high', label: '85+ score' },
 ];
 
-const stockOptions: readonly FilterOption[] = [
-  { id: '0', label: 'Any stock' },
-  { id: '5', label: '5+ units' },
-  { id: '20', label: '20+ units' },
-  { id: '50', label: '50+ units' },
-];
-
-const supportOptions: readonly FilterOption[] = [
-  { id: 'all', label: 'Any support' },
-  { id: '24-7', label: '24/7 support' },
-  { id: 'business-hours', label: 'Business hours' },
-];
+const stockOptions = createStockFilterOptions([5, 20, 50]);
+const supportOptions = supportWindowFilterOptions;
 
 export class LocationsPageViewModel {
   private readonly dataSource = new LocationsPageDataSource();
@@ -167,7 +146,7 @@ export class LocationsPageViewModel {
     );
   }
 
-  get families(): readonly FilterOption[] {
+  get families(): readonly CatalogFilterOption[] {
     return [...new Set(this.products.map((product) => product.family))].map((family) => ({
       id: family,
       label: family,

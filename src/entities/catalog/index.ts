@@ -5,7 +5,9 @@ export {
   getFastestSetupHours,
   normalizeSupportWindowId,
 } from './model/catalogComputed';
+export { createStockFilterOptions, supportWindowFilterOptions } from './model/catalogFilters';
 export type { CatalogReadinessInput } from './model/catalogComputed';
+export type { CatalogFilterOption, CatalogRegionSummaryFields } from './model/catalogFilters';
 export type {
   CatalogHardware,
   CatalogMetric,

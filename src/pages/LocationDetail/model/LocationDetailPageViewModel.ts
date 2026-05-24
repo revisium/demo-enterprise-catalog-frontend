@@ -3,9 +3,13 @@ import { makeAutoObservable } from 'mobx';
 import {
   calculateCatalogReadinessScore,
   calculatePriceEfficiencyScore,
+  createStockFilterOptions,
   getFastestSetupHours,
   normalizeSupportWindowId,
+  supportWindowFilterOptions,
+  type CatalogFilterOption,
   type CatalogProduct,
+  type CatalogRegionSummaryFields,
 } from 'src/entities/catalog';
 import { LocationDetailPageDataSource } from '../api/LocationDetailPageDataSource';
 
@@ -17,11 +21,6 @@ type LocationPlanSortId =
   | 'recently-updated'
   | 'stock';
 type SupportWindowId = '24-7' | 'all' | 'business-hours';
-
-interface FilterOption {
-  readonly id: string;
-  readonly label: string;
-}
 
 interface LocationPlanRow {
   readonly dataCenterCode: string;
@@ -35,22 +34,12 @@ interface LocationPlanRow {
   readonly supportWindow: string;
 }
 
-interface RegionSummaryRow {
-  readonly dataCenterCodes: readonly string[];
-  readonly enterpriseCoveragePercent: number;
-  readonly families: readonly string[];
-  readonly familyCoveragePercent: number;
-  readonly fastestSetupHours: number;
+interface RegionSummaryRow extends CatalogRegionSummaryFields {
   readonly href: string;
   readonly planCount: number;
-  readonly readinessScore: number;
-  readonly regionId: string;
-  readonly regionLabel: string;
-  readonly supportWindows: readonly string[];
-  readonly totalStock: number;
 }
 
-const sortOptions: readonly FilterOption[] = [
+const sortOptions: readonly CatalogFilterOption[] = [
   { id: 'price-efficiency', label: 'Best price efficiency' },
   { id: 'stock', label: 'Most stock' },
   { id: 'fastest-setup', label: 'Fastest setup' },
@@ -59,18 +48,8 @@ const sortOptions: readonly FilterOption[] = [
   { id: 'display-order', label: 'Catalog order' },
 ];
 
-const stockOptions: readonly FilterOption[] = [
-  { id: '0', label: 'Any stock' },
-  { id: '2', label: '2+ units' },
-  { id: '5', label: '5+ units' },
-  { id: '20', label: '20+ units' },
-];
-
-const supportOptions: readonly FilterOption[] = [
-  { id: 'all', label: 'Any support' },
-  { id: '24-7', label: '24/7 support' },
-  { id: 'business-hours', label: 'Business hours' },
-];
+const stockOptions = createStockFilterOptions([2, 5, 20]);
+const supportOptions = supportWindowFilterOptions;
 
 export class LocationDetailPageViewModel {
   private readonly dataSource = new LocationDetailPageDataSource();
@@ -158,7 +137,7 @@ export class LocationDetailPageViewModel {
       .slice(0, 3);
   }
 
-  get familyOptions(): readonly FilterOption[] {
+  get familyOptions(): readonly CatalogFilterOption[] {
     return this.regionSummary.families.map((family) => ({ id: family, label: family }));
   }
 
