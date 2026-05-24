@@ -27,7 +27,7 @@ export const CatalogPage = observer(function CatalogPage() {
           eyebrow="Servers"
           metrics={vm.summaryMetrics}
           metricsLabel="Catalog summary"
-          summary="Filter server plans by region, stock, price, support, and hardware."
+          summary="Filter server plans by region, stock, price, docs, and hardware."
           title="Server catalog."
         />
 
@@ -37,7 +37,7 @@ export const CatalogPage = observer(function CatalogPage() {
           mt={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: '340px minmax(0, 1fr)' }}
         >
-          <StickyPanel aria-label="Catalog filters">
+          <StickyPanel aria-label="Catalog filters" as="aside">
             <FilterCard>
               <Stack gap="3">
                 <SectionEyebrow>Filters</SectionEyebrow>
