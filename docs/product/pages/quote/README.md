@@ -22,6 +22,8 @@ UI contract.
 - keep the request reviewable before submission;
 - show the expected review path from draft to sales review and customer
   approval;
+- make the next authenticated step explicit: quote follow-up, comments, saved
+  plans, favorites, and preferences continue in `/app`;
 - show a local confirmation state without connecting to a backend.
 
 ## Query Shape
@@ -42,3 +44,5 @@ UI contract.
   the mock-first phase.
 - Quote review status, comments, approvals, and follow-up actions belong to the
   authenticated backend workspace.
+- The quote page may link to the console, but it must not duplicate console
+  quote timelines or authenticated comments.

@@ -139,10 +139,45 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }}
         >
           <FilterCard>
-            <SectionEyebrow>Workspace checks</SectionEyebrow>
+            <SectionEyebrow>Reference checks</SectionEyebrow>
             <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              {vm.validationRows.length === 0 ? (
+                <Box
+                  bg="panelGlassBg"
+                  borderColor="surface.200"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  p="3"
+                >
+                  <Text color="ink.500" fontSize="sm">
+                    No reference checks for this user and organization.
+                  </Text>
+                </Box>
+              ) : null}
               {vm.validationRows.map((row) => (
-                <AccountFact key={row.label} label={row.label} value={row.value} />
+                <Box
+                  bg="panelGlassBg"
+                  borderColor="surface.200"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  key={row.id}
+                  p="3"
+                >
+                  <Flex align="center" gap="2" justify="space-between">
+                    <Text color="ink.500" fontSize="xs">
+                      {row.label}
+                    </Text>
+                    <Badge bg="successBg" borderRadius="8px" color="successText">
+                      {row.status}
+                    </Badge>
+                  </Flex>
+                  <Text color="ink.900" fontSize="sm" fontWeight="760">
+                    {row.value}
+                  </Text>
+                  <Text color="ink.500" fontSize="xs">
+                    {row.scope}
+                  </Text>
+                </Box>
               ))}
             </Grid>
           </FilterCard>
@@ -150,8 +185,8 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           <FilterCard>
             <SectionEyebrow>Workspace actions</SectionEyebrow>
             <FieldHint>
-              User actions are accepted only after the backend checks session, preferences, and
-              referenced content.
+              User actions are accepted only after the server checks the session and referenced
+              catalog, region, language, currency, and content choices.
             </FieldHint>
             <Stack gap="2">
               <preferenceFetcher.Form action="/app/actions/preferences" method="post">

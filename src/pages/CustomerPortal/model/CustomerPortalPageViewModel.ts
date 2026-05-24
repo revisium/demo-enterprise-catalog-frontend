@@ -1,15 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
-import {
-  portalAuditEvents,
-  portalFavorites,
-  portalOrganizations,
-  portalQuotes,
-  portalSavedPlans,
-  type PortalDemoSession,
-  type PortalMetric,
-  type PortalQuote,
-} from 'src/entities/portal';
+import { type PortalDemoSession, type PortalMetric, type PortalQuote } from 'src/entities/portal';
+import { CustomerPortalPageDataSource } from '../api/CustomerPortalPageDataSource';
 
 type PortalSection = 'favorites' | 'plans' | 'quotes';
 
@@ -20,13 +12,15 @@ const sectionLabels: Record<PortalSection, string> = {
 };
 
 export class CustomerPortalPageViewModel {
+  private readonly dataSource = new CustomerPortalPageDataSource();
+
   favoritedPlanIds: readonly string[] = [];
   selectedOrganizationId: string;
   selectedSection: PortalSection = 'plans';
 
   constructor(readonly session: PortalDemoSession) {
     this.selectedOrganizationId = session.user.primaryOrganizationId;
-    makeAutoObservable(this);
+    makeAutoObservable<this, 'dataSource'>(this, { dataSource: false });
   }
 
   get currentUser() {
@@ -34,31 +28,15 @@ export class CustomerPortalPageViewModel {
   }
 
   get activeOrganization() {
-    const organization =
-      portalOrganizations.find((organization) => organization.id === this.selectedOrganizationId) ??
-      portalOrganizations[0];
-
-    if (!organization) {
-      throw new Error('Customer portal mock organizations are empty');
-    }
-
-    return organization;
+    return this.dataSource.getOrganization(this.selectedOrganizationId);
   }
 
   get auditEvents() {
-    return portalAuditEvents.filter(
-      (event) =>
-        event.organizationId === this.selectedOrganizationId &&
-        event.userId === this.currentUser.id,
-    );
+    return this.dataSource.getAuditEvents(this.selectedOrganizationId, this.currentUser.id);
   }
 
   get favoriteItems() {
-    return portalFavorites.filter(
-      (favorite) =>
-        favorite.organizationId === this.selectedOrganizationId &&
-        favorite.ownerUserId === this.currentUser.id,
-    );
+    return this.dataSource.getFavoriteItems(this.selectedOrganizationId, this.currentUser.id);
   }
 
   get favoritePlans() {
@@ -91,12 +69,7 @@ export class CustomerPortalPageViewModel {
   }
 
   get organizationOptions() {
-    return portalOrganizations
-      .filter((organization) => this.currentUser.organizationIds.includes(organization.id))
-      .map((organization) => ({
-        id: organization.id,
-        label: organization.name,
-      }));
+    return this.dataSource.getOrganizationOptions(this.currentUser);
   }
 
   get preferenceActionPayload() {
@@ -110,11 +83,14 @@ export class CustomerPortalPageViewModel {
 
   get preferenceRows() {
     return [
-      { label: 'Language', value: this.getLanguageLabel(this.currentUser.preferences.languageId) },
+      {
+        label: 'Language',
+        value: this.dataSource.getLanguageLabel(this.currentUser.preferences.languageId),
+      },
       { label: 'Currency', value: this.currentUser.preferences.currencyId.toUpperCase() },
       {
         label: 'Preferred region',
-        value: this.getRegionLabel(this.currentUser.preferences.preferredRegionId),
+        value: this.dataSource.getRegionLabel(this.currentUser.preferences.preferredRegionId),
       },
     ];
   }
@@ -124,19 +100,11 @@ export class CustomerPortalPageViewModel {
   }
 
   get quotes() {
-    return portalQuotes.filter(
-      (quote) =>
-        quote.organizationId === this.selectedOrganizationId &&
-        quote.requesterUserId === this.currentUser.id,
-    );
+    return this.dataSource.getQuotes(this.selectedOrganizationId, this.currentUser.id);
   }
 
   get savedPlans() {
-    return portalSavedPlans.filter(
-      (plan) =>
-        plan.organizationId === this.selectedOrganizationId &&
-        plan.ownerUserId === this.currentUser.id,
-    );
+    return this.dataSource.getSavedPlans(this.selectedOrganizationId, this.currentUser.id);
   }
 
   get sessionRows() {
@@ -162,21 +130,11 @@ export class CustomerPortalPageViewModel {
   }
 
   get validationRows() {
-    return [
-      { label: 'User role', value: `${this.currentUser.role} can manage quotes` },
-      {
-        label: 'Language',
-        value: `${this.getLanguageLabel(this.currentUser.preferences.languageId)} active`,
-      },
-      {
-        label: 'Currency',
-        value: `${this.currentUser.preferences.currencyId.toUpperCase()} allowed`,
-      },
-      {
-        label: 'Region',
-        value: `${this.getRegionLabel(this.currentUser.preferences.preferredRegionId)} available`,
-      },
-    ];
+    return this.dataSource.getReferenceChecks(
+      this.currentUser,
+      this.selectedOrganizationId,
+      this.savedPlans[0]?.plan,
+    );
   }
 
   get sectionOptions() {
@@ -195,32 +153,15 @@ export class CustomerPortalPageViewModel {
   }
 
   getOrganization(organizationId: string) {
-    const organization =
-      portalOrganizations.find((item) => item.id === organizationId) ?? portalOrganizations[0];
-
-    if (!organization) {
-      throw new Error('Customer portal mock organizations are empty');
-    }
-
-    return organization;
+    return this.dataSource.getOrganization(organizationId);
   }
 
   getQuote(quoteId: string | undefined) {
-    const quote = portalQuotes.find((item) => item.id === quoteId) ?? portalQuotes[0];
-
-    if (!quote) {
-      throw new Error('Customer portal mock quotes are empty');
-    }
-
-    return quote;
+    return this.dataSource.getQuote(quoteId);
   }
 
   getRelatedSavedPlans(quote: PortalQuote) {
-    return portalSavedPlans.filter(
-      (plan) =>
-        plan.organizationId === quote.organizationId &&
-        (plan.plan === quote.plan || plan.region === quote.region),
-    );
+    return this.dataSource.getRelatedSavedPlans(quote);
   }
 
   isFavorited(planId: string) {
@@ -240,29 +181,5 @@ export class CustomerPortalPageViewModel {
     this.favoritedPlanIds = this.favoritedPlanIds.includes(planId)
       ? this.favoritedPlanIds.filter((id) => id !== planId)
       : [...this.favoritedPlanIds, planId];
-  }
-
-  private getLanguageLabel(languageId: string) {
-    const labels: Record<string, string> = {
-      ar: 'Arabic',
-      en: 'English',
-      es: 'Spanish',
-      fr: 'French',
-      ru: 'Russian',
-      zh: 'Chinese',
-    };
-
-    return labels[languageId] ?? languageId;
-  }
-
-  private getRegionLabel(regionId: string) {
-    const labels: Record<string, string> = {
-      'de-fra': 'Frankfurt',
-      'nl-ams': 'Amsterdam',
-      'sg-sin': 'Singapore',
-      'us-nyc': 'New York',
-    };
-
-    return labels[regionId] ?? regionId;
   }
 }

@@ -25,6 +25,9 @@ that sets backend-owned cookies.
 - Before persisting runtime data, backend validates referenced dictionary/source
   IDs through Revisium: language, currency, region, plan, quote status, role,
   docs, and updates.
+- The console prototype shows these checks as customer-facing reference status,
+  not as source-layer internals: active language, allowed currency, available
+  region, active saved plan, and published docs/update targets.
 - Detail routes must enforce the same user scope as `/app`; opening another
   user's saved plan or quote shows an access state instead of customer data.
 - Mock action routes represent future backend mutations:
@@ -36,6 +39,8 @@ that sets backend-owned cookies.
 - switch between customer organizations;
 - show signed-in user context, organization metrics, quote follow-ups, saved
   plans, favorites, preferences, and audit events;
+- show reference checks for the current user and organization so backend
+  validation is visible without exposing source mechanics;
 - keep the console simple: it is a workspace for saved plans, quote follow-up,
   favorites, preferences, and recent activity, not a full admin application;
 - open `/app/quotes/:quoteId` for one authenticated quote timeline,

@@ -259,9 +259,21 @@ export const QuotePage = observer(function QuotePage() {
               Submit request
             </Button>
             {vm.submitted ? (
-              <Text color="successText" fontWeight="700">
-                Request captured. A HelioStack specialist will follow up with regional guidance.
-              </Text>
+              <Stack
+                bg="successBg"
+                borderColor="successBorder"
+                borderRadius="8px"
+                borderWidth="1px"
+                gap="3"
+                p="3"
+              >
+                <Text color="successText" fontWeight="700">
+                  Request captured. Continue in the customer console to review the account quote.
+                </Text>
+                <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
+                  <RouterLink to={vm.consoleHref}>Open console</RouterLink>
+                </Button>
+              </Stack>
             ) : null}
             {vm.submitError ? (
               <Text color="red.700" fontWeight="700">
@@ -393,6 +405,19 @@ export const QuotePage = observer(function QuotePage() {
                     </Stack>
                   </Grid>
                 ))}
+              </Stack>
+            </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>After submission</SectionEyebrow>
+              <Stack gap="3">
+                <Text color="ink.500" fontSize="sm">
+                  The authenticated console owns quote comments, saved plans, favorites, and user
+                  preferences.
+                </Text>
+                <Button asChild borderRadius="8px" size="sm" variant="outline">
+                  <RouterLink to={vm.consoleHref}>Open console</RouterLink>
+                </Button>
               </Stack>
             </FilterCard>
           </Stack>

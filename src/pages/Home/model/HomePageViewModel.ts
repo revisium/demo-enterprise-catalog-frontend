@@ -52,10 +52,6 @@ export class HomePageViewModel {
     return this.dataSource.getServerPlans();
   }
 
-  get updates() {
-    return this.dataSource.getUpdateItems();
-  }
-
   get selectedUseCase() {
     const useCase = this.useCases.find((item) => item.id === this.selectedUseCaseId);
 
@@ -217,6 +213,10 @@ export class HomePageViewModel {
 
   get includedItems() {
     return this.dataSource.getIncludedItems();
+  }
+
+  get journeySteps() {
+    return this.dataSource.getJourneySteps();
   }
 
   selectUseCase(useCaseId: UseCaseId) {
