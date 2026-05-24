@@ -1,6 +1,15 @@
 import { makeAutoObservable } from 'mobx';
 
-import type { CatalogProduct } from 'src/entities/catalog';
+import {
+  calculateCatalogReadinessScore,
+  calculatePriceEfficiencyScore,
+  createStockFilterOptions,
+  normalizeSupportWindowId,
+  supportWindowFilterOptions,
+  type CatalogFilterOption,
+  type CatalogProduct,
+  type CatalogRegionSummaryFields,
+} from 'src/entities/catalog';
 import { LocationsPageDataSource } from '../api/LocationsPageDataSource';
 
 type LocationSortId =
@@ -13,11 +22,6 @@ type LocationSortId =
 type ReadinessBandId = 'all' | 'high' | 'medium';
 type SupportWindowId = '24-7' | 'all' | 'business-hours';
 
-interface FilterOption {
-  readonly id: string;
-  readonly label: string;
-}
-
 interface LocationPlanRow {
   readonly dataCenterCode: string;
   readonly effectiveMonthlyPrice: number;
@@ -29,22 +33,12 @@ interface LocationPlanRow {
   readonly supportWindow: string;
 }
 
-interface LocationRow {
-  readonly dataCenterCodes: readonly string[];
-  readonly enterpriseCoveragePercent: number;
-  readonly fastestSetupHours: number;
-  readonly families: readonly string[];
-  readonly familyCoveragePercent: number;
+interface LocationRow extends CatalogRegionSummaryFields {
   readonly latestUpdatedAt: string;
   readonly plans: readonly LocationPlanRow[];
-  readonly readinessScore: number;
-  readonly regionId: string;
-  readonly regionLabel: string;
-  readonly supportWindows: readonly string[];
-  readonly totalStock: number;
 }
 
-const sortOptions: readonly FilterOption[] = [
+const sortOptions: readonly CatalogFilterOption[] = [
   { id: 'stock', label: 'Most stock' },
   { id: 'readiness-score', label: 'Best readiness score' },
   { id: 'fastest-setup', label: 'Fastest setup' },
@@ -53,24 +47,14 @@ const sortOptions: readonly FilterOption[] = [
   { id: 'region-name', label: 'Region name' },
 ];
 
-const readinessOptions: readonly FilterOption[] = [
+const readinessOptions: readonly CatalogFilterOption[] = [
   { id: 'all', label: 'Any readiness' },
   { id: 'medium', label: '70+ score' },
   { id: 'high', label: '85+ score' },
 ];
 
-const stockOptions: readonly FilterOption[] = [
-  { id: '0', label: 'Any stock' },
-  { id: '5', label: '5+ units' },
-  { id: '20', label: '20+ units' },
-  { id: '50', label: '50+ units' },
-];
-
-const supportOptions: readonly FilterOption[] = [
-  { id: 'all', label: 'Any support' },
-  { id: '24-7', label: '24/7 support' },
-  { id: 'business-hours', label: 'Business hours' },
-];
+const stockOptions = createStockFilterOptions([5, 20, 50]);
+const supportOptions = supportWindowFilterOptions;
 
 export class LocationsPageViewModel {
   private readonly dataSource = new LocationsPageDataSource();
@@ -103,7 +87,7 @@ export class LocationsPageViewModel {
           effectiveMonthlyPrice: plan.pricing.monthlyUsd,
           planHref: `/catalog/${plan.id}`,
           plan,
-          priceEfficiencyScore: this.calculatePriceEfficiencyScore(plan),
+          priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
           setupHours: availability.setupHours,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
@@ -128,7 +112,7 @@ export class LocationsPageViewModel {
       const enterpriseRows = plans.filter((row) => row.plan.supportTier === 'Enterprise').length;
       const enterpriseCoveragePercent =
         plans.length > 0 ? Math.round((enterpriseRows / plans.length) * 100) : 0;
-      const readinessScore = this.calculateReadinessScore({
+      const readinessScore = calculateCatalogReadinessScore({
         enterpriseCoveragePercent,
         familyCoveragePercent,
         fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
@@ -162,7 +146,7 @@ export class LocationsPageViewModel {
     );
   }
 
-  get families(): readonly FilterOption[] {
+  get families(): readonly CatalogFilterOption[] {
     return [...new Set(this.products.map((product) => product.family))].map((family) => ({
       id: family,
       label: family,
@@ -322,38 +306,10 @@ export class LocationsPageViewModel {
     const matchesSupport =
       this.selectedSupportWindowId === 'all' ||
       location.supportWindows.some(
-        (window) => this.normalizeSupportWindow(window) === this.selectedSupportWindowId,
+        (window) => normalizeSupportWindowId(window) === this.selectedSupportWindowId,
       );
 
     return matchesFamily && matchesStock && matchesReadiness && matchesSupport;
-  }
-
-  private calculateReadinessScore(input: {
-    readonly enterpriseCoveragePercent: number;
-    readonly familyCoveragePercent: number;
-    readonly fastestSetupHours: number;
-    readonly totalStock: number;
-  }) {
-    const stockScore = Math.min(input.totalStock, 120) / 120;
-    const setupScore = Math.max(0, 24 - input.fastestSetupHours) / 24;
-    const familyScore = input.familyCoveragePercent / 100;
-    const supportScore = input.enterpriseCoveragePercent / 100;
-
-    return Math.round(
-      (stockScore * 0.35 + setupScore * 0.25 + familyScore * 0.25 + supportScore * 0.15) * 100,
-    );
-  }
-
-  private calculatePriceEfficiencyScore(plan: CatalogProduct) {
-    if (plan.pricing.monthlyUsd <= 0) {
-      return 0;
-    }
-
-    return Math.round(
-      ((plan.hardware.cpuCores + plan.hardware.ramGb / 4 + plan.hardware.storageTb) /
-        plan.pricing.monthlyUsd) *
-        100,
-    );
   }
 
   private getReadinessThreshold() {
@@ -366,10 +322,6 @@ export class LocationsPageViewModel {
     }
 
     return 0;
-  }
-
-  private normalizeSupportWindow(value: string) {
-    return value === '24/7' ? '24-7' : 'business-hours';
   }
 
   private parseNonNegativeNumber(value: string) {

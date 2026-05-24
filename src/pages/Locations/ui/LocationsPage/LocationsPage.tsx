@@ -125,6 +125,9 @@ export const LocationsPage = observer(function LocationsPage() {
                   <Badge bg="successBg" borderRadius="8px" color="successText">
                     {location.readinessScore} readiness
                   </Badge>
+                  <Button asChild borderRadius="8px" size="xs" variant="outline">
+                    <Link to={`/locations/${location.regionId}`}>Open region</Link>
+                  </Button>
                 </Flex>
 
                 <Flex gap="2" wrap="wrap">

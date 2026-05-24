@@ -58,6 +58,10 @@ stable page order from the current grouped region list.
 Each location row shows related server plan rows with data-center code, monthly
 price, efficiency score, and a link to the server detail page.
 
+Each location row also links to Location Detail, where the selected region
+becomes an item page with related plan filters, computed-field sorting, and
+alternative region lists.
+
 ## Future Contract
 
 Candidate tables: `regions`, `data_centers`, `availability_current`,

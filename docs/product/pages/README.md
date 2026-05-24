@@ -9,6 +9,7 @@ clear.
 - [Product detail](./product-detail/README.md)
 - [Pricing](./pricing/README.md)
 - [Locations](./locations/README.md)
+- [Location detail](./location-detail/README.md)
 - [Compare](./compare/README.md)
 - [Resources](./resources/README.md)
 - [Releases](./releases/README.md)
