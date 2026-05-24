@@ -115,6 +115,11 @@ Backend rows should store stable source IDs and, where needed, source revision
 metadata. Backend must not copy catalog, CMS, or price dictionaries into runtime
 tables as editable truth.
 
+The current console prototype surfaces this boundary as user-facing reference
+checks: active language, allowed currency, available preferred region, active
+saved plan, and published docs/update targets. This keeps the backend validation
+story visible while the layout stays a normal customer console.
+
 ## Demo Value
 
 - `helio-cms` proves Revisium as CMS and dictionary service.

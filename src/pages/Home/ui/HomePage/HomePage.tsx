@@ -326,23 +326,31 @@ export const HomePage = observer(function HomePage() {
                   ))}
                 </InfoPanel>
 
-                <InfoPanel title="Updates">
-                  {vm.updates.map((item) => (
-                    <Box
+                <InfoPanel title="Demo path">
+                  {vm.journeySteps.map((step, index) => (
+                    <Grid
+                      alignItems="start"
                       bg="panelSubtleBg"
                       borderColor="surface.200"
                       borderRadius="8px"
                       borderWidth="1px"
-                      key={item.label}
+                      gap="3"
+                      key={step.label}
                       p="3"
+                      templateColumns="auto 1fr"
                     >
-                      <Text color="ink.900" fontWeight="760">
-                        {item.label}
-                      </Text>
-                      <Text color="ink.500" fontSize="sm">
-                        {item.summary}
-                      </Text>
-                    </Box>
+                      <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                        {index + 1}
+                      </Badge>
+                      <Stack gap="0.5">
+                        <Text color="ink.900" fontWeight="760">
+                          {step.label}
+                        </Text>
+                        <Text color="ink.500" fontSize="sm" lineHeight="1.35">
+                          {step.summary}
+                        </Text>
+                      </Stack>
+                    </Grid>
                   ))}
                 </InfoPanel>
               </Stack>

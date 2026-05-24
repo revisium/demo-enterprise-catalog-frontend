@@ -87,6 +87,7 @@ function getDefaultQuoteFormValues(
 export class QuotePageViewModel {
   private readonly dataSource: QuotePageDataSource;
 
+  readonly consoleHref = '/app';
   readonly form: ReturnType<typeof createQuoteForm>;
   selectedAddonIds: readonly string[] = [];
   submitted = false;
@@ -302,8 +303,14 @@ export class QuotePageViewModel {
       {
         description: 'Customer receives the final quote and can continue in the console.',
         id: 'approval',
-        status: 'next',
+        status: this.submitted ? 'current' : 'next',
         title: 'Customer approval',
+      },
+      {
+        description: 'Saved plans, comments, favorites, and preferences are handled there.',
+        id: 'console',
+        status: 'next',
+        title: 'Customer console',
       },
     ];
   }

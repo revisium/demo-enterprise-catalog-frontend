@@ -80,3 +80,13 @@ export interface PortalAuditEvent {
   readonly scope: string;
   readonly when: string;
 }
+
+export interface PortalReferenceCheck {
+  readonly id: string;
+  readonly label: string;
+  readonly organizationId: string;
+  readonly scope: string;
+  readonly status: 'Active' | 'Allowed' | 'Available' | 'Published';
+  readonly userId: string;
+  readonly value: string;
+}

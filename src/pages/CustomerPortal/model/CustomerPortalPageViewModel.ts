@@ -5,6 +5,7 @@ import {
   portalFavorites,
   portalOrganizations,
   portalQuotes,
+  portalReferenceChecks,
   portalSavedPlans,
   type PortalDemoSession,
   type PortalMetric,
@@ -162,21 +163,10 @@ export class CustomerPortalPageViewModel {
   }
 
   get validationRows() {
-    return [
-      { label: 'User role', value: `${this.currentUser.role} can manage quotes` },
-      {
-        label: 'Language',
-        value: `${this.getLanguageLabel(this.currentUser.preferences.languageId)} active`,
-      },
-      {
-        label: 'Currency',
-        value: `${this.currentUser.preferences.currencyId.toUpperCase()} allowed`,
-      },
-      {
-        label: 'Region',
-        value: `${this.getRegionLabel(this.currentUser.preferences.preferredRegionId)} available`,
-      },
-    ];
+    return portalReferenceChecks.filter(
+      (check) =>
+        check.organizationId === this.selectedOrganizationId && check.userId === this.currentUser.id,
+    );
   }
 
   get sectionOptions() {

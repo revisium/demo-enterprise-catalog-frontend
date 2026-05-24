@@ -3,6 +3,7 @@ export {
   portalFavorites,
   portalOrganizations,
   portalQuotes,
+  portalReferenceChecks,
   portalSavedPlans,
   portalUsers,
 } from './mocks/portalSnapshot';
@@ -14,6 +15,7 @@ export type {
   PortalMetric,
   PortalOrganization,
   PortalQuote,
+  PortalReferenceCheck,
   PortalSavedPlan,
   PortalUser,
   PortalUserPreference,

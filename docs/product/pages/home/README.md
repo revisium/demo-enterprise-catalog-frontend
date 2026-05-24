@@ -12,7 +12,8 @@ workflow and price result.
 
 ## Current Data Mode
 
-Typed mock server plans, regions, billing terms, and updates.
+Typed mock server plans, regions, billing terms, included service items, and a
+short demo journey.
 
 ## Current UX Scope
 
@@ -21,6 +22,8 @@ Typed mock server plans, regions, billing terms, and updates.
 - keep a compact selection summary visible for review;
 - route the selected plan into quote, detail, pricing, and compare flows;
 - preserve selected plan, region, and billing term in the quote URL.
+- show the intended demo path without turning the home page into an updates
+  feed or account workspace.
 
 ## Proof Layer
 

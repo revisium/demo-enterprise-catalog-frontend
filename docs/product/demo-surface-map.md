@@ -5,7 +5,7 @@ must have one primary customer job and one primary data/platform proof.
 
 | Route                   | Primary customer job                        | Primary demo proof                                      | Avoid duplicating                                      | Future owner                       |
 | ----------------------- | ------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------- |
-| `/`                     | Guided plan selection                       | Command-center handoff into quote/detail/price/compare  | Full catalog table, price-book table, account state    | `helio-price`, backend handoff     |
+| `/`                     | Guided plan selection                       | Command-center handoff into detail/quote/console path    | Full catalog table, price-book table, account state    | `helio-price`, backend handoff     |
 | `/catalog`              | Find a server plan in the full catalog      | AND/OR filters, nested fields, schema/system sorting    | Scenario ranking, quote lifecycle, region item detail  | `helio-price`                      |
 | `/catalog/:productId`   | Inspect one plan before quote review        | Specs, add-ons, documents, regional stock, related list | Full catalog discovery, price-book row analysis        | `helio-price`, `helio-cms` docs    |
 | `/pricing`              | Validate regional commercial rows           | Price-book filtering, computed savings/efficiency sorts | Plan storytelling, scenario ranking, customer comments | `helio-price`                      |
@@ -17,8 +17,8 @@ must have one primary customer job and one primary data/platform proof.
 | `/resources/:slug`      | Read one guide and choose the next action   | Article template, checklist, related guides             | Feed chronology, catalog table, quote comments         | `helio-cms`, backend preferences   |
 | `/releases`             | Track product, docs, price, and region news | CMS update feed, reactions, saved announcements         | Documentation library, server-plan comparison          | `helio-cms`, backend feedback      |
 | `/releases/:slug`       | Understand one customer-facing change       | Impact detail, affected paths, related updates          | Article checklist, full price-book exploration         | `helio-cms`, backend feedback      |
-| `/quote`                | Prepare a public quote draft                | Form validation, add-ons, estimate, readiness checklist | Authenticated comments, organization quote management  | backend runtime                    |
-| `/app`                  | Manage user-specific runtime work           | Session user, preferences, quotes, favorites, audit     | Public catalog discovery, public docs browsing         | backend runtime                    |
+| `/quote`                | Prepare a public quote draft                | Form validation, add-ons, estimate, console handoff     | Authenticated comments, organization quote management  | backend runtime                    |
+| `/app`                  | Manage user-specific runtime work           | Session user, reference checks, quotes, favorites, audit | Public catalog discovery, public docs browsing         | backend runtime                    |
 | `/app/plans/:planId`    | Review one saved server package             | Saved plan detail, related quotes, next actions         | Quote timeline, public pricing table                   | backend runtime                    |
 | `/app/quotes/:quoteId`  | Review one account quote                    | Quote timeline, customer comments, related saved plans  | Public quote form, source catalog editing              | backend runtime                    |
 
@@ -37,3 +37,5 @@ must have one primary customer job and one primary data/platform proof.
   locations, and compare, but should not become any of those pages.
 - Public pages must not expose Revisium project names, table names, row IDs,
   mock labels, or source-layer widgets.
+- The home page should show the demo path, not a news/update feed. Dated updates
+  belong to `/releases`.
