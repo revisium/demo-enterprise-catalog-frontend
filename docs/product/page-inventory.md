@@ -10,7 +10,7 @@
 | `/compare`            | Prototype  | Scenario-based server plan comparison                  | typed mock   | quote handoff validation         |
 | `/resources`          | Prototype  | Docs, roles, topics, saved reads, helpful feedback     | typed mock   | docs detail pattern              |
 | `/releases`           | Prototype  | Stock, docs, price-book updates, saved announcements   | typed mock   | announcement detail pattern      |
-| `/quote`              | Scaffolded | Runtime quote request form                             | mock form    | backend mutation contract        |
+| `/quote`              | Prototype  | Quote draft, readiness, add-ons, and review path       | mock form    | backend mutation contract        |
 | `/app`                | Prototype  | Organization quotes, saved plans, favorites, API keys  | backend mock | quote detail conversation        |
 
 ## Page Status Rules

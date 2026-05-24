@@ -94,6 +94,8 @@ widgets inside the public layout.
 | Pricing   | Price, efficiency, savings, stock, setup, RAM, display-order, updated sorts | Mixed schema, nested, computed, and system sort |
 | Compare   | Selected plans, region, support, required add-ons, billing term             | Explicit IDs plus nested and metadata filters   |
 | Compare   | Scenario ranking and fit score                                              | Computed comparison fields from catalog/price   |
+| Quote     | Plan, region, term, quantity, priority, selected add-ons                    | Runtime mutation shaped by catalog identifiers  |
+| Quote     | Readiness checklist, commercial estimate, and review path                   | Backend lifecycle over stable catalog inputs    |
 | Resources | Category, role, topic, and read-time controls                               | CMS article, author, category, and tag filters  |
 | Resources | Helpful votes and saved reads                                               | Backend-owned user feedback and preferences     |
 | Releases  | Type, audience, priority, and reaction sorts                                | CMS update feed with tags and customer impact   |
