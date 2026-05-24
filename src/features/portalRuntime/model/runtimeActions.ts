@@ -18,12 +18,12 @@ interface PortalActionResult {
 }
 
 const activeCurrencyIds = ['usd'] as const;
-const quoteStatuses: readonly PortalQuote['status'][] = [
+const quoteStatuses = new Set<PortalQuote['status']>([
   'Customer reply',
   'Draft',
   'Sales review',
   'Submitted',
-];
+]);
 
 export function handlePortalPreferenceAction({
   formData,
@@ -195,7 +195,7 @@ function validateOwnedSavedPlan(
 }
 
 function validateQuoteStatus(statusId: string): string {
-  return quoteStatuses.includes(statusId as PortalQuote['status'])
+  return quoteStatuses.has(statusId as PortalQuote['status'])
     ? `statusId ${statusId} allowed`
     : `rejected: unsupported statusId ${statusId}`;
 }
