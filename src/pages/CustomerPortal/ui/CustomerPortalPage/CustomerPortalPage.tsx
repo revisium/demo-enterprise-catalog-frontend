@@ -18,7 +18,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
           eyebrow="Customer portal"
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
-          summary="Manage organization-specific quotes, saved server plans, favorites, API access, and audit history."
+          summary="Manage organization-specific quotes, saved server plans, favorites, and audit history."
           title="Operate customer server workspaces."
         />
 
@@ -33,7 +33,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
               {activeOrganization.name}
             </Heading>
             <FieldHint>
-              Switch between customer organizations while keeping quotes, favorites, and API keys
+              Switch between customer organizations while keeping quotes, favorites, and saved plans
               scoped to the selected account.
             </FieldHint>
             <Flex gap="2" wrap="wrap">
@@ -158,7 +158,6 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
           ) : null}
 
           {vm.selectedSection === 'quotes' ? <QuotesPanel vm={vm} /> : null}
-          {vm.selectedSection === 'api' ? <ApiKeysPanel vm={vm} /> : null}
         </Grid>
       </Container>
     </Box>
@@ -201,7 +200,7 @@ function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
           gap="3"
           key={plan.id}
           p="3"
-          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 130px 112px' }}
+          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 130px 112px 112px' }}
         >
           <Stack gap="1">
             <Text color="ink.900" fontWeight="780">
@@ -214,6 +213,9 @@ function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
           <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
             {plan.status}
           </Badge>
+          <Button asChild borderRadius="8px" size="sm" variant="outline">
+            <Link to={`/app/plans/${plan.id}`}>Open plan</Link>
+          </Button>
           <Button
             aria-pressed={vm.isFavorited(plan.id)}
             borderRadius="8px"
@@ -300,49 +302,6 @@ function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
               <Link to={`/app/quotes/${quote.id}`}>Open quote</Link>
             </Button>
           </Stack>
-        </Grid>
-      ))}
-    </FilterCard>
-  );
-}
-
-function ApiKeysPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
-  return (
-    <FilterCard>
-      <PanelHeader
-        summary="Review scoped API access for partner quoting, finance exports, and availability checks."
-        title="Partner API keys"
-      />
-      {vm.apiKeys.map((apiKey) => (
-        <Grid
-          alignItems="center"
-          borderColor="surface.200"
-          borderRadius="8px"
-          borderWidth="1px"
-          gap="3"
-          key={apiKey.id}
-          p="3"
-          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 120px' }}
-        >
-          <Stack gap="1">
-            <Text color="ink.900" fontWeight="780">
-              {apiKey.name}
-            </Text>
-            <Text color="ink.500" fontSize="sm">
-              {apiKey.scopes.join(', ')} · last used {apiKey.lastUsed}
-            </Text>
-            <Text color="ink.500" fontSize="xs">
-              created by {apiKey.createdBy}
-            </Text>
-          </Stack>
-          <Badge
-            alignSelf="start"
-            bg={apiKey.status === 'Active' ? 'successBg' : 'amberBg'}
-            borderRadius="8px"
-            color={apiKey.status === 'Active' ? 'successText' : 'amberText'}
-          >
-            {apiKey.status}
-          </Badge>
         </Grid>
       ))}
     </FilterCard>

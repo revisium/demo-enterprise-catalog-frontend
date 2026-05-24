@@ -1,5 +1,4 @@
 export {
-  portalApiKeys,
   portalAuditEvents,
   portalFavorites,
   portalOrganizations,
@@ -7,7 +6,6 @@ export {
   portalSavedPlans,
 } from './mocks/portalSnapshot';
 export type {
-  PortalApiKey,
   PortalAuditEvent,
   PortalFavorite,
   PortalMetric,

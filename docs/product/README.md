@@ -5,7 +5,7 @@ This folder owns the frontend route and UX contract for the HelioStack demo.
 HelioStack is a cloud and dedicated server catalog with regional price books and
 an authorized customer portal. The public site helps visitors choose servers,
 compare prices, read docs, and request quotes. The private portal handles saved
-plans, quote lifecycle, favorites, API keys, and organization settings.
+plans, quote lifecycle, favorites, audit history, and organization settings.
 
 Read [`company.md`](./company.md) before adding major pages. It defines the
 company legend, buyer context, and source-data boundaries that keep the demo
@@ -34,11 +34,11 @@ the same interaction under different labels.
 | `/quote`                  | Public quote request flow                                   | backend runtime                                   |
 | `/app`                    | Authorized customer dashboard                               | backend runtime                                   |
 | `/app/plans`              | Saved server plans                                          | backend runtime                                   |
+| `/app/plans/[planId]`     | Saved server plan detail                                    | backend runtime                                   |
 | `/app/quotes`             | Quote requests and statuses                                 | backend runtime                                   |
 | `/app/quotes/[quoteId]`   | Quote details, comments, status history                     | backend runtime                                   |
 | `/app/favorites`          | Favorite servers, locations, docs                           | backend runtime                                   |
 | `/app/organization`       | Organization profile, users, billing profile                | backend runtime                                   |
-| `/app/api-keys`           | Customer/partner API keys                                   | backend runtime                                   |
 
 ## First Slice
 
@@ -62,7 +62,7 @@ Detailed source-layer proof should stay out of the public first slice.
   currencies, price books, price items, availability, add-ons, discounts, and
   SLA tiers.
 - Backend DB: users, organizations, saved plans, quote requests, comments,
-  favorites, likes/helpful votes, API keys, and audit trail.
+  favorites, likes/helpful votes, and audit trail.
 
 ## Page Expectations
 

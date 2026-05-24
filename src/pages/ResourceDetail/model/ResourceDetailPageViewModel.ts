@@ -56,11 +56,11 @@ const sectionCopy: Record<ResourceArticle['category'], readonly DetailSection[]>
   ],
   Security: [
     {
-      body: 'Review account members, API scopes, billing recipients, and quote approvers before every renewal or regional expansion.',
+      body: 'Review account members, billing recipients, and quote approvers before every renewal or regional expansion.',
       title: 'Access control',
     },
     {
-      body: 'Use audit history and saved account notes to explain who changed keys, quotes, favorites, and organization settings.',
+      body: 'Use audit history and saved account notes to explain who changed quotes, favorites, and organization settings.',
       title: 'Review evidence',
     },
   ],
@@ -83,7 +83,7 @@ const checklistCopy: Record<ResourceArticle['category'], readonly string[]> = {
     'Validate regional setup time',
   ],
   Operations: ['Choose backup retention', 'Assign restore owner', 'Confirm monitoring escalation'],
-  Security: ['Review members', 'Check API scopes', 'Confirm billing contact'],
+  Security: ['Review members', 'Check quote approvers', 'Confirm billing contact'],
 };
 
 export class ResourceDetailPageViewModel {
@@ -140,7 +140,7 @@ export class ResourceDetailPageViewModel {
       {
         href: '/app',
         label: 'Customer portal',
-        summary: 'Review saved plans, API keys, and account activity.',
+        summary: 'Review saved plans, quotes, and account activity.',
       },
     ];
   }

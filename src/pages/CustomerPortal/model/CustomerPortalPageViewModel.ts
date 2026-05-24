@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  portalApiKeys,
   portalAuditEvents,
   portalFavorites,
   portalOrganizations,
@@ -11,10 +10,9 @@ import {
   type PortalQuote,
 } from 'src/entities/portal';
 
-type PortalSection = 'api' | 'favorites' | 'plans' | 'quotes';
+type PortalSection = 'favorites' | 'plans' | 'quotes';
 
 const sectionLabels: Record<PortalSection, string> = {
-  api: 'API keys',
   favorites: 'Favorites',
   plans: 'Saved plans',
   quotes: 'Quotes',
@@ -39,10 +37,6 @@ export class CustomerPortalPageViewModel {
     }
 
     return organization;
-  }
-
-  get apiKeys() {
-    return portalApiKeys.filter((apiKey) => apiKey.organizationId === this.selectedOrganizationId);
   }
 
   get auditEvents() {
@@ -79,9 +73,9 @@ export class CustomerPortalPageViewModel {
         value: String(this.favoriteItems.length + this.favoritePlans.length),
       },
       {
-        label: 'API keys',
-        summary: 'Partner integrations with active scoped access.',
-        value: String(this.apiKeys.length),
+        label: 'Activity',
+        summary: 'Recent organization events in this workspace.',
+        value: String(this.auditEvents.length),
       },
     ];
   }

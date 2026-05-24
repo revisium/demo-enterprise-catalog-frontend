@@ -67,7 +67,6 @@ Revisium source data:
 - favorites;
 - docs helpful votes or update likes;
 - region/currency/language dictionaries;
-- customer and partner API keys.
 
 Runtime data must never overwrite catalog, CMS, or price source data.
 

@@ -44,16 +44,6 @@ export interface PortalFavorite {
   readonly type: 'Docs' | 'Region' | 'Server' | 'Update';
 }
 
-export interface PortalApiKey {
-  readonly createdBy: string;
-  readonly id: string;
-  readonly lastUsed: string;
-  readonly name: string;
-  readonly organizationId: string;
-  readonly scopes: readonly string[];
-  readonly status: 'Active' | 'Review';
-}
-
 export interface PortalAuditEvent {
   readonly actor: string;
   readonly event: string;
