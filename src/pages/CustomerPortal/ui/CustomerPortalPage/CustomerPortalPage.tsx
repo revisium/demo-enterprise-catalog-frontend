@@ -4,7 +4,14 @@ import { useState } from 'react';
 import { Link, useFetcher } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
-import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
+import {
+  FieldHint,
+  FilterButton,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
 
 interface PortalActionResponse {
@@ -30,13 +37,13 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           eyebrow="Customer console"
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
-          summary="Manage user-specific quotes, saved server plans, favorites, preferences, and activity."
-          title="Operate customer server workspaces."
+          summary="Saved plans, quotes, favorites, preferences, and activity for the signed-in user."
+          title="Customer console."
         />
 
         <Grid
-          gap="3"
-          my={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'repeat(4, minmax(0, 1fr))' }}
         >
           <FilterCard>
@@ -44,9 +51,6 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
             <Heading as="h2" color="ink.900" fontSize="2xl">
               {vm.currentUser.name}
             </Heading>
-            <FieldHint>
-              This workspace is opened from the current browser session and scoped to this user.
-            </FieldHint>
             <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               <AccountFact label="Email" value={vm.currentUser.email} />
               {vm.sessionRows.map((row) => (
@@ -60,10 +64,6 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
             <Heading as="h2" color="ink.900" fontSize="2xl">
               {activeOrganization.name}
             </Heading>
-            <FieldHint>
-              Switch between customer organizations while keeping quotes, favorites, and saved plans
-              scoped to the selected account.
-            </FieldHint>
             <Flex gap="2" wrap="wrap">
               {vm.organizationOptions.map((organization) => (
                 <FilterButton
@@ -125,9 +125,6 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
 
           <FilterCard>
             <SectionEyebrow>Preferences</SectionEyebrow>
-            <FieldHint>
-              User defaults are checked before saved plans, quotes, and feedback are stored.
-            </FieldHint>
             <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
               {vm.preferenceRows.map((row) => (
                 <AccountFact key={row.label} label={row.label} value={row.value} />
@@ -137,8 +134,8 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
         </Grid>
 
         <Grid
-          gap="3"
-          mb={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
+          mb={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }}
         >
           <FilterCard>
@@ -234,31 +231,29 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </FilterCard>
         </Grid>
 
-        <Grid gap="4" templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
-          <FilterCard alignSelf="start" position={{ lg: 'sticky' }} top="76px">
-            <Stack gap="1">
-              <SectionEyebrow>Workspace</SectionEyebrow>
-              <Heading as="h2" color="ink.900" fontSize="xl">
-                {vm.selectedSectionLabel}
-              </Heading>
-            </Stack>
-            <Flex gap="2" wrap="wrap">
-              {vm.sectionOptions.map((section) => (
-                <FilterButton
-                  key={section.id}
-                  onClick={() => vm.selectSection(section.id)}
-                  selected={vm.selectedSection === section.id}
-                  tone="neutral"
-                >
-                  {section.label}
-                </FilterButton>
-              ))}
-            </Flex>
-            <FieldHint>
-              These are private account actions: they reference catalog and price data but do not
-              edit the public catalog.
-            </FieldHint>
-          </FilterCard>
+        <Grid gap={{ base: '5', lg: '6' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
+          <StickyPanel as="aside" position={{ lg: 'sticky' }} top={{ lg: '84px' }}>
+            <FilterCard>
+              <Stack gap="1">
+                <SectionEyebrow>Workspace</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="xl">
+                  {vm.selectedSectionLabel}
+                </Heading>
+              </Stack>
+              <Flex gap="2" wrap="wrap">
+                {vm.sectionOptions.map((section) => (
+                  <FilterButton
+                    key={section.id}
+                    onClick={() => vm.selectSection(section.id)}
+                    selected={vm.selectedSection === section.id}
+                    tone="neutral"
+                  >
+                    {section.label}
+                  </FilterButton>
+                ))}
+              </Flex>
+            </FilterCard>
+          </StickyPanel>
 
           {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
             <PlansPanel vm={vm} />

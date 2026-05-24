@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Link, useFetcher, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
-import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
+import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow, StickyPanel } from 'src/shared/ui';
 import { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
 import { QuoteAccessState } from '../QuoteAccessState/QuoteAccessState';
 
@@ -146,7 +146,7 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
               </FilterCard>
             </Stack>
 
-            <Stack as="aside" gap="3">
+            <StickyPanel as="aside">
               <FilterCard>
                 <SectionEyebrow>Quote actions</SectionEyebrow>
                 <FieldHint>
@@ -200,7 +200,7 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
                   </Stack>
                 ))}
               </FilterCard>
-            </Stack>
+            </StickyPanel>
           </Grid>
         </Stack>
       </Container>

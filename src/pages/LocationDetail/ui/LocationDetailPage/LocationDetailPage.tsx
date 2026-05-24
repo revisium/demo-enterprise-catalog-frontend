@@ -13,6 +13,7 @@ import {
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from 'src/shared/ui';
 import { LocationDetailPageViewModel } from '../../model/LocationDetailPageViewModel';
 
@@ -194,7 +195,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
               ))}
             </Stack>
 
-            <Stack as="aside" gap="3">
+            <StickyPanel as="aside">
               <FilterCard>
                 <SectionEyebrow>Related regions</SectionEyebrow>
                 <FieldHint>
@@ -225,7 +226,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                   </Grid>
                 ))}
               </FilterCard>
-            </Stack>
+            </StickyPanel>
           </Grid>
         </Stack>
       </Container>

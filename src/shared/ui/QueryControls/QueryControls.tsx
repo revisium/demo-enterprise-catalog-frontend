@@ -45,6 +45,11 @@ interface FilterCardProps extends StackProps {
   readonly children: ReactNode;
 }
 
+interface StickyPanelProps extends StackProps {
+  readonly children: ReactNode;
+  readonly maxH?: StackProps['maxH'];
+}
+
 interface EmptyStateProps {
   readonly actionLabel?: string;
   readonly onAction?: () => void;
@@ -159,8 +164,8 @@ export function FilterCard({ children, ...props }: Readonly<FilterCardProps>) {
       borderColor="surface.200"
       borderRadius="8px"
       borderWidth="1px"
-      gap="4"
-      p="4"
+      gap={{ base: '4', md: '5' }}
+      p={{ base: '4', md: '5' }}
       {...props}
     >
       {children}
@@ -203,15 +208,22 @@ export function PageIntroGrid({
   return (
     <Grid
       alignItems="end"
-      gap={{ base: '4', md: '6' }}
-      templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 360px' }}
+      gap={{ base: '5', md: '8' }}
+      pb={{ base: '2', md: '3' }}
+      templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}
     >
-      <Stack as="header" gap="3">
+      <Stack as="header" gap={{ base: '3', md: '4' }}>
         <SectionEyebrow>{eyebrow}</SectionEyebrow>
-        <Heading as="h1" color="ink.900" fontSize={{ base: '4xl', md: '5xl' }} lineHeight="1">
+        <Heading
+          as="h1"
+          color="ink.900"
+          fontSize={{ base: '4xl', md: '6xl' }}
+          lineHeight="0.98"
+          maxW="820px"
+        >
           {title}
         </Heading>
-        <Text color="ink.500" fontSize="md" maxW="720px">
+        <Text color="ink.600" fontSize={{ base: 'sm', md: 'md' }} maxW="620px">
           {summary}
         </Text>
       </Stack>
@@ -251,7 +263,7 @@ export function QuerySummary({ rows }: QuerySummaryProps) {
 
 export function SectionEyebrow({ children }: { readonly children: ReactNode }) {
   return (
-    <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+    <Text color="brand.500" fontSize="xs" fontWeight="800" textTransform="uppercase">
       {children}
     </Text>
   );
@@ -259,9 +271,32 @@ export function SectionEyebrow({ children }: { readonly children: ReactNode }) {
 
 export function FieldHint({ children }: { readonly children: ReactNode }) {
   return (
-    <Text color="ink.500" fontSize="sm">
+    <Text color="ink.500" fontSize="sm" lineHeight="1.55">
       {children}
     </Text>
+  );
+}
+
+export function StickyPanel({
+  children,
+  maxH = 'calc(100dvh - 96px)',
+  ...props
+}: Readonly<StickyPanelProps>) {
+  return (
+    <Stack
+      alignSelf="start"
+      gap="3"
+      maxH={{ xl: maxH }}
+      overflowY={{ xl: 'auto' }}
+      overscrollBehavior="contain"
+      pb={{ xl: '1' }}
+      position={{ xl: 'sticky' }}
+      pr={{ xl: '1' }}
+      top={{ xl: '84px' }}
+      {...props}
+    >
+      {children}
+    </Stack>
   );
 }
 

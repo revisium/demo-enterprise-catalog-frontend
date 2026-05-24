@@ -4,7 +4,14 @@ import { useEffect, useMemo } from 'react';
 import { Link, useFetcher, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
-import { FieldHint, FilterCard, PageIntroGrid, ProductVisual, SectionEyebrow } from 'src/shared/ui';
+import {
+  FieldHint,
+  FilterCard,
+  PageIntroGrid,
+  ProductVisual,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { PortalSavedPlanDetailPageViewModel } from '../../model/PortalSavedPlanDetailPageViewModel';
 import { SavedPlanAccessState } from '../SavedPlanAccessState/SavedPlanAccessState';
 
@@ -159,7 +166,7 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
               </FilterCard>
             </Stack>
 
-            <Stack as="aside" gap="3">
+            <StickyPanel as="aside">
               <FilterCard>
                 <SectionEyebrow>Account context</SectionEyebrow>
                 <FieldHint>
@@ -213,7 +220,7 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                   </Grid>
                 ))}
               </FilterCard>
-            </Stack>
+            </StickyPanel>
           </Grid>
         </Stack>
       </Container>

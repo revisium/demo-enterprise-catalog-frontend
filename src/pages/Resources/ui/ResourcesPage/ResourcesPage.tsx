@@ -5,13 +5,13 @@ import { Link } from 'react-router';
 
 import {
   EmptyState,
-  FieldHint,
   FilterButton,
   FilterCard,
   PageIntroGrid,
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from 'src/shared/ui';
 import { ResourcesPageViewModel } from '../../model/ResourcesPageViewModel';
 
@@ -26,20 +26,17 @@ export const ResourcesPage = observer(function ResourcesPage() {
           eyebrow="Docs and guides"
           metrics={vm.summaryMetrics}
           metricsLabel="Resource summary"
-          summary="Read planning guides, networking rules, backup policies, security checklists, billing notes, and partner API documentation."
-          title="Find the operational answer before you buy."
+          summary="Guides for choosing, pricing, and operating HelioStack servers."
+          title="Knowledge base."
         />
 
         <Grid
-          gap="3"
-          my={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
         >
           <FilterCard>
             <SectionEyebrow>Library filters</SectionEyebrow>
-            <FieldHint>
-              Narrow the library by customer task, team role, topic tag, and reading preference.
-            </FieldHint>
             <Flex gap="2" wrap="wrap">
               {vm.categoryOptions.map((category) => (
                 <FilterButton
@@ -116,7 +113,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
         </Grid>
 
         <Grid gap="4" templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 320px' }}>
-          <Stack gap="3">
+          <Stack gap="4">
             <Flex align="end" justify="space-between" gap="3" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Articles</SectionEyebrow>
@@ -151,7 +148,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
                 borderWidth="1px"
                 gap="4"
                 key={article.id}
-                p="4"
+                p={{ base: '4', md: '5' }}
                 templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 190px' }}
               >
                 <Stack gap="3">
@@ -223,7 +220,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
             ))}
           </Stack>
 
-          <Stack gap="3">
+          <StickyPanel as="aside">
             <FilterCard>
               <SectionEyebrow>Topics</SectionEyebrow>
               <Flex gap="2" wrap="wrap">
@@ -293,7 +290,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
                 ))}
               </Grid>
             </FilterCard>
-          </Stack>
+          </StickyPanel>
         </Grid>
       </Container>
     </Box>

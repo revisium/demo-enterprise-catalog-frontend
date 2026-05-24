@@ -14,6 +14,7 @@ import {
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from 'src/shared/ui';
 import { PricingPageViewModel } from '../../model/PricingPageViewModel';
 
@@ -27,21 +28,17 @@ export const PricingPage = observer(function PricingPage() {
           eyebrow="Pricing"
           metrics={vm.summaryMetrics}
           metricsLabel="Pricing summary"
-          summary="Review monthly and yearly server prices across regions before building a quote."
-          title="Compare regional price rows."
+          summary="Compare monthly and yearly prices by server, region, and stock."
+          title="Regional pricing."
         />
 
         <Grid
-          gap="3"
-          my={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
         >
           <FilterCard>
             <SectionEyebrow>Commercial view</SectionEyebrow>
-            <FieldHint>
-              Choose the price term, keep available stock, and decide how selected add-ons should
-              match.
-            </FieldHint>
             <Flex gap="2" wrap="wrap">
               <FilterButton
                 onClick={() => vm.setBillingTerm('monthly')}
@@ -81,9 +78,6 @@ export const PricingPage = observer(function PricingPage() {
 
           <FilterCard>
             <SectionEyebrow>Server filters</SectionEyebrow>
-            <FieldHint>
-              Narrow by server family and memory while preserving multiple selected values.
-            </FieldHint>
             <ChipGroup
               label="Families"
               onToggle={(id) => vm.toggleFamily(id)}
@@ -100,10 +94,6 @@ export const PricingPage = observer(function PricingPage() {
 
           <FilterCard>
             <SectionEyebrow>Regional price rows</SectionEyebrow>
-            <FieldHint>
-              Filter by location, support window, setup time, and price; then choose the sort
-              policy.
-            </FieldHint>
             <ChipGroup
               label="Regions"
               onToggle={(id) => vm.toggleRegion(id)}
@@ -145,7 +135,7 @@ export const PricingPage = observer(function PricingPage() {
           gap="3"
           templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
         >
-          <Stack gap="2">
+          <Stack gap="4">
             <Flex align="end" justify="space-between" gap="3" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Price-book rows</SectionEyebrow>
@@ -182,7 +172,7 @@ export const PricingPage = observer(function PricingPage() {
                   borderWidth="1px"
                   gap="3"
                   key={`${row.id}-${vm.billingTermId}`}
-                  p="3"
+                  p={{ base: '4', md: '5' }}
                   templateColumns={{ base: '1fr', lg: 'minmax(0, 1.3fr) 120px 180px 130px 132px' }}
                 >
                   <Stack gap="0">
@@ -251,7 +241,7 @@ export const PricingPage = observer(function PricingPage() {
             })}
           </Stack>
 
-          <Stack as="aside" gap="3" position={{ xl: 'sticky' }} top="76px">
+          <StickyPanel as="aside">
             <FilterCard>
               <SectionEyebrow>Price books</SectionEyebrow>
               <FieldHint>
@@ -341,7 +331,7 @@ export const PricingPage = observer(function PricingPage() {
                 <RouterLink to={vm.quotePath}>Continue to quote</RouterLink>
               </Box>
             </FilterCard>
-          </Stack>
+          </StickyPanel>
         </Grid>
       </Container>
     </Box>

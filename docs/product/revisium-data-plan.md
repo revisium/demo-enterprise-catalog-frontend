@@ -67,6 +67,11 @@ These do not live in Revisium because they are user-specific or transactional:
 | Likes/helpful votes | docs/update feedback and dictionary-service demo hooks |
 | Audit trail         | runtime actions and compliance history                 |
 
+The first console slice intentionally keeps user-owned data small and concrete:
+saved plans, quote comments, favorites, preferences, content feedback, and audit
+events. Orders, invoices, multi-step approvals, and full account administration
+stay out of scope until the backend integration needs them.
+
 ## Backend Session And Dictionary Validation
 
 The demo frontend models automatic authorization as a backend-owned refresh
@@ -147,3 +152,15 @@ widgets inside the public layout.
 
 These controls are mock-backed now. The page ViewModels should remain the
 contract sketch for later Revisium GraphQL variables and backend API adapters.
+
+## UX Coverage
+
+The public site should demonstrate Revisium power through normal customer
+controls: sticky filters, scoped side panels, related item links, and concise
+page titles. The UI should not duplicate the same proof on multiple pages. Each
+section should own one clear job:
+
+- Catalog: server discovery with nested filters and mixed sorting.
+- Pricing: regional price rows, computed commercial fields, and quote handoff.
+- Resources and updates: CMS content plus backend-owned feedback.
+- Console: user-scoped runtime data validated against Revisium dictionaries.
