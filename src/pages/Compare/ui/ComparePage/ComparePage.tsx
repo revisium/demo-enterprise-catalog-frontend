@@ -240,7 +240,7 @@ export const ComparePage = observer(function ComparePage() {
             px="4"
             py="2.5"
           >
-            <RouterLink to="/quote">Request quote</RouterLink>
+            <RouterLink to={vm.quotePath}>Request quote</RouterLink>
           </Box>
         </Grid>
       </Container>

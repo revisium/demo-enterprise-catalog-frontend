@@ -217,7 +217,7 @@ export const PricingPage = observer(function PricingPage() {
               py="2.5"
               textAlign="center"
             >
-              <RouterLink to="/quote">Continue to quote</RouterLink>
+              <RouterLink to={vm.quotePath}>Continue to quote</RouterLink>
             </Box>
           </FilterCard>
         </Grid>

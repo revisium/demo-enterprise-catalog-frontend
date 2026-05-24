@@ -24,7 +24,7 @@ Prototype typed mock data from the shared catalog snapshot.
 - compare monthly and yearly effective prices without leaving the table;
 - select regional rows into a quote draft panel;
 - keep selected rows visible while the user adjusts billing term;
-- make the next step a quote flow, not a generic contact action.
+- make the next step a quote flow with selected row and billing term prefill.
 
 ## Future Contract
 

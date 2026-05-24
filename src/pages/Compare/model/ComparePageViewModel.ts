@@ -119,6 +119,22 @@ export class ComparePageViewModel {
     }));
   }
 
+  get quotePath() {
+    const params = new URLSearchParams();
+
+    if (this.recommendation) {
+      params.set('plan', this.recommendation.id);
+    }
+
+    if (this.selectedRegionId !== 'all') {
+      params.set('region', this.selectedRegionId);
+    }
+
+    const query = params.toString();
+
+    return query.length > 0 ? `/quote?${query}` : '/quote';
+  }
+
   get regionOptions(): readonly CompareOption[] {
     const regions = this.products.flatMap((product) => product.availabilityByRegion);
     const byId = new Map(regions.map((region) => [region.regionId, region.regionLabel]));

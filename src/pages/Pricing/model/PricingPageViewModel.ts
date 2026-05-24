@@ -117,6 +117,20 @@ export class PricingPageViewModel {
     ];
   }
 
+  get quotePath() {
+    const params = new URLSearchParams();
+    const [selectedRow] = this.selectedRows;
+
+    if (selectedRow) {
+      params.set('plan', selectedRow.plan.id);
+      params.set('region', selectedRow.region.regionId);
+    }
+
+    params.set('term', this.billingTermId);
+
+    return `/quote?${params.toString()}`;
+  }
+
   get summaryMetrics() {
     const lowestPrice =
       this.filteredRows.length === 0

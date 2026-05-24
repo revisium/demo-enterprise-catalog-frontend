@@ -13,6 +13,10 @@ export class ProductDetailPageViewModel {
     return this.dataSource.getProduct(this.productId);
   }
 
+  get quotePath() {
+    return `/quote?plan=${this.product.id}`;
+  }
+
   get fastestSetupHours() {
     const setupHours = this.product.availabilityByRegion.map((region) => region.setupHours);
 
