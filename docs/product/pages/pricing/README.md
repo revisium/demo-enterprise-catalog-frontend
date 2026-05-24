@@ -24,6 +24,8 @@ Prototype typed mock data from the shared catalog snapshot.
 ## UX Scope
 
 - filter and sort a regional price-book table;
+- open `/pricing/:priceBookId` to inspect one price book, its status, and its
+  active regional rows;
 - compare monthly and yearly effective prices without leaving the table;
 - inspect the active query summary in customer language;
 - select regional rows into a quote draft panel;
@@ -34,3 +36,7 @@ Prototype typed mock data from the shared catalog snapshot.
 
 Candidate tables: `price_books`, `price_items_compute`, `currencies`,
 `regions`, `data_centers`, `discount_rules`, `billing_terms`.
+
+The price-book detail route keeps computed price efficiency and yearly savings
+available as sort/filter inputs, while also allowing system-field sorting such
+as source revision and update time.

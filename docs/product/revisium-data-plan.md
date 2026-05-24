@@ -65,7 +65,6 @@ These do not live in Revisium because they are user-specific or transactional:
 | Quote comments      | authenticated conversation on quote details            |
 | Favorites           | saved servers, locations, docs, and updates            |
 | Likes/helpful votes | docs/update feedback and dictionary-service demo hooks |
-| API keys            | customer and partner API access                        |
 | Audit trail         | runtime actions and compliance history                 |
 
 ## Demo Value

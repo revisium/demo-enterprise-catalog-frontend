@@ -5,6 +5,7 @@ import {
   type CatalogProduct,
   type CatalogRegionAvailability,
 } from 'src/entities/catalog';
+import { priceBooks } from 'src/entities/pricing';
 import { PricingPageDataSource } from '../api/PricingPageDataSource';
 
 type AddonMatchMode = 'all' | 'any';
@@ -141,6 +142,13 @@ export class PricingPageViewModel {
 
   get priceOptions() {
     return priceOptions;
+  }
+
+  get priceBooks() {
+    return priceBooks.map((book) => ({
+      ...book,
+      href: `/pricing/${book.id}`,
+    }));
   }
 
   get queryRows() {

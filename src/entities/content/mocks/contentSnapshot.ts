@@ -64,7 +64,7 @@ export const resourceArticles: readonly ResourceArticle[] = [
     readTimeMinutes: 5,
     relatedTopic: 'Account access',
     role: 'Finance',
-    summary: 'Review members, API key scopes, billing contacts, and audit history before renewal.',
+    summary: 'Review members, quote approvers, billing contacts, and audit history before renewal.',
     tags: ['security', 'billing', 'audit'],
     title: 'Access review checklist',
     updatedAt: '2026-05-22',

@@ -1,5 +1,4 @@
 import type {
-  PortalApiKey,
   PortalAuditEvent,
   PortalFavorite,
   PortalOrganization,
@@ -119,36 +118,6 @@ export const portalFavorites: readonly PortalFavorite[] = [
   },
 ];
 
-export const portalApiKeys: readonly PortalApiKey[] = [
-  {
-    createdBy: 'Mira Chen',
-    id: 'key-partner-quote',
-    lastUsed: '2 hours ago',
-    name: 'Partner quoting API',
-    organizationId: 'northwind',
-    scopes: ['quotes:read', 'availability:read'],
-    status: 'Active',
-  },
-  {
-    createdBy: 'Noah Patel',
-    id: 'key-finance-export',
-    lastUsed: 'Yesterday',
-    name: 'Finance export',
-    organizationId: 'northwind',
-    scopes: ['prices:read', 'invoices:read'],
-    status: 'Review',
-  },
-  {
-    createdBy: 'Kai Tan',
-    id: 'key-apac-checkout',
-    lastUsed: '4 hours ago',
-    name: 'APAC checkout API',
-    organizationId: 'orbit',
-    scopes: ['quotes:write', 'availability:read'],
-    status: 'Active',
-  },
-];
-
 export const portalAuditEvents: readonly PortalAuditEvent[] = [
   {
     actor: 'Mira Chen',
@@ -160,10 +129,10 @@ export const portalAuditEvents: readonly PortalAuditEvent[] = [
   },
   {
     actor: 'Noah Patel',
-    event: 'Requested finance export key review',
+    event: 'Shared Analytics database plan with finance',
     id: 'audit-2',
     organizationId: 'northwind',
-    scope: 'API',
+    scope: 'Saved plan',
     when: 'Yesterday',
   },
   {
