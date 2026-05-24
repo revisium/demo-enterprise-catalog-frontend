@@ -144,6 +144,13 @@ export class CustomerPortalPageViewModel {
     ];
   }
 
+  get sourceFeedbackSample() {
+    return {
+      articleId: 'choose-production-server-plan',
+      updateId: 'singapore-storage-capacity-expanded',
+    };
+  }
+
   get validationRows() {
     return [
       { label: 'User role', value: `${this.currentUser.role} can manage quotes` },

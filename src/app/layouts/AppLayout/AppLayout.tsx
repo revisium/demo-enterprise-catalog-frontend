@@ -48,7 +48,7 @@ const footerGroups = [
   {
     label: 'Workspace',
     links: [
-      { label: 'Portal', to: '/app' },
+      { label: 'Console', to: '/app' },
       { label: 'Request quote', to: '/quote' },
     ],
   },
@@ -137,7 +137,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       py="1.5"
                       whiteSpace="nowrap"
                     >
-                      Portal
+                      Console
                     </Box>
                   )}
                 </NavLink>

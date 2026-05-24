@@ -1,33 +1,49 @@
-import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useFetcher, useParams } from 'react-router';
 
+import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
 
-export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage() {
+interface PortalActionResponse {
+  readonly message: string;
+  readonly status: 'accepted' | 'rejected';
+}
+
+export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
+  session,
+}: {
+  readonly session: PortalDemoSession;
+}) {
+  const commentFetcher = useFetcher<PortalActionResponse>();
   const params = useParams();
-  const [vm] = useState(() => new PortalQuoteDetailPageViewModel(params.quoteId));
+  const [vm] = useState(() => new PortalQuoteDetailPageViewModel(params.quoteId, session));
+  const quote = vm.quote;
 
   useEffect(() => {
     vm.setQuoteId(params.quoteId);
   }, [params.quoteId, vm]);
+
+  if (!vm.canViewQuote || !quote) {
+    return <QuoteAccessState vm={vm} />;
+  }
 
   return (
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to portal</Link>
+            <Link to="/app">Back to console</Link>
           </Button>
 
           <PageIntroGrid
             eyebrow={vm.organization.name}
             metrics={vm.metrics}
             metricsLabel="Quote summary"
-            summary={vm.quote.summary}
-            title={`${vm.quote.plan} in ${vm.quote.region}`}
+            summary={quote.summary}
+            title={`${quote.plan} in ${quote.region}`}
           />
 
           <Grid gap="4" templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}>
@@ -35,10 +51,10 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage() {
               <FilterCard>
                 <Flex align="center" gap="2" wrap="wrap">
                   <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                    {vm.quote.status}
+                    {quote.status}
                   </Badge>
                   <Badge bg="surface.100" borderRadius="8px" color="ink.700">
-                    updated {vm.quote.updatedAt}
+                    updated {quote.updatedAt}
                   </Badge>
                   <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
                     {vm.organization.supportPlan} support
@@ -140,10 +156,25 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage() {
                   <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
                     <Link to="/quote">Prepare public quote</Link>
                   </Button>
+                  <commentFetcher.Form action="/app/actions/quote-comments" method="post">
+                    <input name="quoteId" type="hidden" value={quote.id} />
+                    <input name="statusId" type="hidden" value={quote.status} />
+                    <Button borderRadius="8px" size="sm" type="submit" variant="outline">
+                      Add note
+                    </Button>
+                  </commentFetcher.Form>
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
                     <Link to="/pricing">Check price rows</Link>
                   </Button>
                 </Flex>
+                {commentFetcher.data ? (
+                  <Text
+                    color={commentFetcher.data.status === 'accepted' ? 'successText' : 'amberText'}
+                    fontSize="sm"
+                  >
+                    {commentFetcher.data.message}
+                  </Text>
+                ) : null}
               </FilterCard>
 
               <FilterCard>
@@ -176,3 +207,45 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage() {
     </Box>
   );
 });
+
+function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageViewModel }) {
+  return (
+    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+      <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <Stack gap="5">
+          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
+            <Link to="/app">Back to console</Link>
+          </Button>
+          <FilterCard>
+            <SectionEyebrow>Access check</SectionEyebrow>
+            <Heading as="h1" color="ink.900" fontSize="3xl">
+              Quote is not available for this user.
+            </Heading>
+            <FieldHint>
+              The backend mock resolved the current user from cookies and rejected this quote id
+              before showing customer conversation data.
+            </FieldHint>
+            <Grid gap="2" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
+              {vm.accessRows.map((row) => (
+                <QuoteFact key={row.label} label={row.label} value={row.value} />
+              ))}
+            </Grid>
+          </FilterCard>
+        </Stack>
+      </Container>
+    </Box>
+  );
+}
+
+function QuoteFact({ label, value }: { readonly label: string; readonly value: string }) {
+  return (
+    <Stack bg="panelGlassBg" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
+      <Text color="ink.500" fontSize="xs">
+        {label}
+      </Text>
+      <Text color="ink.900" fontSize="sm" fontWeight="760">
+        {value}
+      </Text>
+    </Stack>
+  );
+}

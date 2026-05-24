@@ -1,17 +1,23 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useFetcher } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
+
+interface PortalActionResponse {
+  readonly message: string;
+  readonly status: 'accepted' | 'rejected';
+}
 
 export const CustomerPortalPage = observer(function CustomerPortalPage({
   session,
 }: {
   readonly session: PortalDemoSession;
 }) {
+  const actionFetcher = useFetcher<PortalActionResponse>();
   const [vm] = useState(() => new CustomerPortalPageViewModel(session));
   const activeOrganization = vm.activeOrganization;
   const primaryQuote = vm.primaryQuote;
@@ -20,7 +26,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <PageIntroGrid
-          eyebrow="Customer portal"
+          eyebrow="Customer console"
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
           summary="Manage user-specific quotes, saved server plans, favorites, preferences, and activity."
@@ -129,7 +135,11 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </FilterCard>
         </Grid>
 
-        <Grid gap="3" mb={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
+        <Grid
+          gap="3"
+          mb={{ base: '5', md: '6' }}
+          templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }}
+        >
           <FilterCard>
             <SectionEyebrow>Workspace checks</SectionEyebrow>
             <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
@@ -137,6 +147,51 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                 <AccountFact key={row.label} label={row.label} value={row.value} />
               ))}
             </Grid>
+          </FilterCard>
+
+          <FilterCard>
+            <SectionEyebrow>Workspace actions</SectionEyebrow>
+            <FieldHint>
+              User actions are accepted only after the backend checks session, preferences, and
+              referenced content.
+            </FieldHint>
+            <Stack gap="2">
+              <actionFetcher.Form action="/app/actions/preferences" method="post">
+                <input
+                  name="languageId"
+                  type="hidden"
+                  value={vm.currentUser.preferences.languageId}
+                />
+                <input
+                  name="currencyId"
+                  type="hidden"
+                  value={vm.currentUser.preferences.currencyId}
+                />
+                <input
+                  name="regionId"
+                  type="hidden"
+                  value={vm.currentUser.preferences.preferredRegionId}
+                />
+                <Button borderRadius="8px" size="sm" type="submit" variant="outline">
+                  Save defaults
+                </Button>
+              </actionFetcher.Form>
+              <actionFetcher.Form action="/app/actions/content-feedback" method="post">
+                <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
+                <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
+                <Button borderRadius="8px" size="sm" type="submit" variant="outline">
+                  Save update
+                </Button>
+              </actionFetcher.Form>
+              {actionFetcher.data ? (
+                <Text
+                  color={actionFetcher.data.status === 'accepted' ? 'successText' : 'amberText'}
+                  fontSize="sm"
+                >
+                  {actionFetcher.data.message}
+                </Text>
+              ) : null}
+            </Stack>
           </FilterCard>
 
           <FilterCard>
