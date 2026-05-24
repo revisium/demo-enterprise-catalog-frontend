@@ -286,12 +286,12 @@ export function StickyPanel({
     <Stack
       alignSelf="start"
       gap="3"
-      maxH={{ xl: maxH }}
-      overflowY={{ xl: 'auto' }}
+      maxH={{ lg: maxH }}
+      overflowY={{ lg: 'auto' }}
       overscrollBehavior="contain"
-      pb={{ xl: '1' }}
+      pb={{ lg: '1' }}
       position={{ xl: 'sticky' }}
-      pr={{ xl: '1' }}
+      pr={{ lg: '1' }}
       top={{ xl: '84px' }}
       {...props}
     >
