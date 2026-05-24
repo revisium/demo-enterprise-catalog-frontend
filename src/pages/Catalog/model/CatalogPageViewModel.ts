@@ -55,7 +55,9 @@ export class CatalogPageViewModel {
 
   selectedAddonIds: readonly string[] = [];
   selectedFamilyIds: readonly string[] = [];
+  selectedLifecycleIds: readonly string[] = [];
   selectedRegionIds: readonly string[] = [];
+  selectedSupportTierIds: readonly string[] = [];
   filterMode: CatalogFilterMode = 'all';
   maxMonthlyPrice = 0;
   minRamGb = 0;
@@ -104,6 +106,20 @@ export class CatalogPageViewModel {
     return [...byId.entries()].map(([id, label]) => ({ id, label }));
   }
 
+  get lifecycles(): readonly FilterOption[] {
+    return [...new Set(this.products.map((product) => product.lifecycle))].map((lifecycle) => ({
+      id: lifecycle,
+      label: lifecycle,
+    }));
+  }
+
+  get supportTiers(): readonly FilterOption[] {
+    return [...new Set(this.products.map((product) => product.supportTier))].map((tier) => ({
+      id: tier,
+      label: tier,
+    }));
+  }
+
   get addons(): readonly FilterOption[] {
     return [...new Set(this.products.flatMap((product) => product.addons))]
       .sort((left, right) => left.localeCompare(right))
@@ -127,6 +143,8 @@ export class CatalogPageViewModel {
       this.selectedFamilyIds.length +
       this.selectedRegionIds.length +
       this.selectedAddonIds.length +
+      this.selectedLifecycleIds.length +
+      this.selectedSupportTierIds.length +
       (this.minRamGb > 0 ? 1 : 0) +
       (this.maxMonthlyPrice > 0 ? 1 : 0) +
       (this.stockOnly ? 1 : 0) +
@@ -151,6 +169,30 @@ export class CatalogPageViewModel {
     ];
   }
 
+  get queryRows() {
+    const groupModeLabel = this.filterMode === 'any' ? 'any selected group' : 'all selected groups';
+
+    return [
+      {
+        label: 'Group logic',
+        value: groupModeLabel,
+      },
+      {
+        label: 'Nested fields',
+        value: this.selectedRegionIds.length > 0 ? 'regional availability' : 'not constrained',
+      },
+      {
+        label: 'Schema fields',
+        value: this.getSelectedSchemaFieldLabels().join(', ') || 'not constrained',
+      },
+      {
+        label: 'System sort',
+        value:
+          this.sortId === 'display-order' || this.sortId === 'recently-updated' ? 'active' : 'none',
+      },
+    ];
+  }
+
   setFilterMode(mode: CatalogFilterMode) {
     this.filterMode = mode;
   }
@@ -158,7 +200,9 @@ export class CatalogPageViewModel {
   resetFilters() {
     this.selectedAddonIds = [];
     this.selectedFamilyIds = [];
+    this.selectedLifecycleIds = [];
     this.selectedRegionIds = [];
+    this.selectedSupportTierIds = [];
     this.filterMode = 'all';
     this.maxMonthlyPrice = 0;
     this.minRamGb = 0;
@@ -195,8 +239,16 @@ export class CatalogPageViewModel {
     this.selectedFamilyIds = this.toggleValue(this.selectedFamilyIds, familyId);
   }
 
+  toggleLifecycle(lifecycleId: string) {
+    this.selectedLifecycleIds = this.toggleValue(this.selectedLifecycleIds, lifecycleId);
+  }
+
   toggleRegion(regionId: string) {
     this.selectedRegionIds = this.toggleValue(this.selectedRegionIds, regionId);
+  }
+
+  toggleSupportTier(tierId: string) {
+    this.selectedSupportTierIds = this.toggleValue(this.selectedSupportTierIds, tierId);
   }
 
   private compareProducts(left: CatalogProductRow, right: CatalogProductRow) {
@@ -240,6 +292,8 @@ export class CatalogPageViewModel {
       this.selectedFamilyIds.length === 0 ? undefined : this.matchesFamily(product),
       this.selectedRegionIds.length === 0 ? undefined : this.matchesRegion(product),
       this.selectedAddonIds.length === 0 ? undefined : this.matchesAddon(product),
+      this.selectedLifecycleIds.length === 0 ? undefined : this.matchesLifecycle(product),
+      this.selectedSupportTierIds.length === 0 ? undefined : this.matchesSupportTier(product),
     ].filter((rule): rule is boolean => typeof rule === 'boolean');
 
     const constraintRules = [
@@ -275,6 +329,13 @@ export class CatalogPageViewModel {
     return this.selectedFamilyIds.length === 0 || this.selectedFamilyIds.includes(product.family);
   }
 
+  private matchesLifecycle(product: CatalogProductRow) {
+    return (
+      this.selectedLifecycleIds.length === 0 ||
+      this.selectedLifecycleIds.includes(product.lifecycle)
+    );
+  }
+
   private matchesPrice(product: CatalogProductRow) {
     return this.maxMonthlyPrice === 0 || product.pricing.monthlyUsd <= this.maxMonthlyPrice;
   }
@@ -295,6 +356,26 @@ export class CatalogPageViewModel {
 
   private matchesStock(product: CatalogProductRow) {
     return !this.stockOnly || product.totalStock > 0;
+  }
+
+  private matchesSupportTier(product: CatalogProductRow) {
+    return (
+      this.selectedSupportTierIds.length === 0 ||
+      this.selectedSupportTierIds.includes(product.supportTier)
+    );
+  }
+
+  private getSelectedSchemaFieldLabels() {
+    return [
+      this.selectedFamilyIds.length > 0 ? 'family' : undefined,
+      this.selectedAddonIds.length > 0 ? 'add-ons' : undefined,
+      this.selectedLifecycleIds.length > 0 ? 'lifecycle' : undefined,
+      this.selectedSupportTierIds.length > 0 ? 'support tier' : undefined,
+      this.minRamGb > 0 ? 'memory' : undefined,
+      this.maxMonthlyPrice > 0 ? 'monthly price' : undefined,
+      this.requireCompliance ? 'compliance' : undefined,
+      this.stockOnly ? 'stock' : undefined,
+    ].filter((label): label is string => typeof label === 'string');
   }
 
   private parseNonNegativeNumber(value: string) {

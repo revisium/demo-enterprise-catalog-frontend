@@ -83,6 +83,20 @@ export const CatalogPage = observer(function CatalogPage() {
               options={vm.addons}
               selectedIds={vm.selectedAddonIds}
             />
+            <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <ChipGroup
+                label="Lifecycle"
+                onToggle={(id) => vm.toggleLifecycle(id)}
+                options={vm.lifecycles}
+                selectedIds={vm.selectedLifecycleIds}
+              />
+              <ChipGroup
+                label="Support tier"
+                onToggle={(id) => vm.toggleSupportTier(id)}
+                options={vm.supportTiers}
+                selectedIds={vm.selectedSupportTierIds}
+              />
+            </Grid>
           </FilterCard>
 
           <FilterCard>
@@ -129,6 +143,29 @@ export const CatalogPage = observer(function CatalogPage() {
                 Compliance docs
               </FilterButton>
             </Flex>
+
+            <Stack
+              bg="panelGlassBg"
+              borderColor="surface.200"
+              borderRadius="8px"
+              borderWidth="1px"
+              gap="2"
+              p="3"
+            >
+              <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                Query summary
+              </Text>
+              {vm.queryRows.map((row) => (
+                <Flex gap="3" justify="space-between" key={row.label}>
+                  <Text color="ink.500" fontSize="sm">
+                    {row.label}
+                  </Text>
+                  <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                    {row.value}
+                  </Text>
+                </Flex>
+              ))}
+            </Stack>
           </FilterCard>
         </Grid>
 
