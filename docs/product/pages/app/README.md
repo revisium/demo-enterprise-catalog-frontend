@@ -7,7 +7,7 @@ organization-owned API keys, and account actions.
 
 ## Current Data Mode
 
-Typed backend mock data with local favorite state.
+Typed backend mock data with organization-scoped runtime state.
 
 ## Future Contract
 
@@ -17,9 +17,16 @@ Typed backend mock data with local favorite state.
   IDs but are not mutated by portal actions.
 - Portal actions must stay separate from public catalog source data.
 
+## UX Scope
+
+- switch between customer organizations;
+- show account-specific metrics, quote follow-ups, saved plans, favorites, API
+  keys, and audit events;
+- let a user favorite saved plans without mutating public catalog data;
+- keep API key scopes and audit history visible as account-level controls.
+
 ## Next UI Decisions
 
-- Auth shell and organization switcher.
 - Quote detail conversation pattern.
 - Saved-plan edit and share affordances.
 - API key creation, scope review, and audit history.
