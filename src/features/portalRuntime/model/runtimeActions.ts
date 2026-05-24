@@ -35,11 +35,12 @@ export function handlePortalPreferenceAction({
   const languageId = getFormValue(formData, 'languageId');
   const currencyId = getFormValue(formData, 'currencyId');
   const regionId = getFormValue(formData, 'regionId');
+  const organizationId = getFormValue(formData, 'organizationId');
   const checks = [
     validateLanguage(languageId),
     validateCurrency(currencyId),
     validateRegion(regionId),
-    validateUserOrganization(session, session.user.primaryOrganizationId),
+    validateUserOrganization(session, organizationId),
   ];
 
   return createActionResult({
@@ -103,8 +104,11 @@ export function handlePortalContentFeedbackAction({
 }): PortalActionResult {
   const articleId = getFormValue(formData, 'articleId');
   const updateId = getFormValue(formData, 'updateId');
+  const organizationId = getFormValue(formData, 'organizationId');
+  const hasTarget = articleId.length > 0 || updateId.length > 0;
   const checks = [
-    validateUserOrganization(session, session.user.primaryOrganizationId),
+    validateUserOrganization(session, organizationId),
+    hasTarget ? 'feedback target provided' : 'rejected: missing feedback target',
     articleId ? validateArticle(articleId) : 'articleId skipped',
     updateId ? validateUpdate(updateId) : 'updateId skipped',
   ];
@@ -169,11 +173,11 @@ function validateLanguage(languageId: string): string {
 
 function validateOwnedQuote(quote: PortalQuote | undefined, session: PortalDemoSession): string {
   if (!quote) {
-    return 'rejected: unknown quoteId';
+    return 'rejected: unauthorized quoteId';
   }
 
   if (quote.requesterUserId !== session.user.id) {
-    return `rejected: quote ${quote.id} belongs to another user`;
+    return 'rejected: unauthorized quoteId';
   }
 
   return `quoteId ${quote.id} owned by ${session.user.id}`;
@@ -184,11 +188,11 @@ function validateOwnedSavedPlan(
   session: PortalDemoSession,
 ): string {
   if (!savedPlan) {
-    return 'rejected: unknown planId';
+    return 'rejected: unauthorized planId';
   }
 
   if (savedPlan.ownerUserId !== session.user.id) {
-    return `rejected: planId ${savedPlan.id} belongs to another user`;
+    return 'rejected: unauthorized planId';
   }
 
   return `planId ${savedPlan.id} owned by ${session.user.id}`;
@@ -227,5 +231,5 @@ function validateUpdate(updateId: string): string {
 function validateUserOrganization(session: PortalDemoSession, organizationId: string): string {
   return session.user.organizationIds.includes(organizationId)
     ? `organizationId ${organizationId} available for ${session.user.id}`
-    : `rejected: organizationId ${organizationId} unavailable`;
+    : 'rejected: unauthorized organizationId';
 }

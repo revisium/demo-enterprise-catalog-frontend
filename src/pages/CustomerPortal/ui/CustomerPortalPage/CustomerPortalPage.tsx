@@ -161,18 +161,19 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                 <input
                   name="languageId"
                   type="hidden"
-                  value={vm.currentUser.preferences.languageId}
+                  value={vm.preferenceActionPayload.languageId}
                 />
                 <input
                   name="currencyId"
                   type="hidden"
-                  value={vm.currentUser.preferences.currencyId}
+                  value={vm.preferenceActionPayload.currencyId}
                 />
                 <input
-                  name="regionId"
+                  name="organizationId"
                   type="hidden"
-                  value={vm.currentUser.preferences.preferredRegionId}
+                  value={vm.preferenceActionPayload.organizationId}
                 />
+                <input name="regionId" type="hidden" value={vm.preferenceActionPayload.regionId} />
                 <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                   Save defaults
                 </Button>
@@ -180,6 +181,11 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
               {preferenceFetcher.data ? <ActionMessage response={preferenceFetcher.data} /> : null}
               <contentFeedbackFetcher.Form action="/app/actions/content-feedback" method="post">
                 <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
+                <input
+                  name="organizationId"
+                  type="hidden"
+                  value={vm.sourceFeedbackSample.organizationId}
+                />
                 <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
                 <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                   Save update

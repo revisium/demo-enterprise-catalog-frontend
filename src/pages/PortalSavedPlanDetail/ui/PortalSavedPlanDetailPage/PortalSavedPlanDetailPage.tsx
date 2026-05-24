@@ -1,11 +1,12 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useFetcher, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterCard, PageIntroGrid, ProductVisual, SectionEyebrow } from 'src/shared/ui';
 import { PortalSavedPlanDetailPageViewModel } from '../../model/PortalSavedPlanDetailPageViewModel';
+import { SavedPlanAccessState } from '../SavedPlanAccessState/SavedPlanAccessState';
 
 interface PortalActionResponse {
   readonly message: string;
@@ -19,12 +20,17 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
 }) {
   const favoriteFetcher = useFetcher<PortalActionResponse>();
   const params = useParams();
-  const [vm] = useState(() => new PortalSavedPlanDetailPageViewModel(params.planId, session));
+  const vm = useMemo(
+    () => new PortalSavedPlanDetailPageViewModel(params.planId, session),
+    [params.planId, session],
+  );
   const savedPlan = vm.savedPlan;
 
   useEffect(() => {
-    vm.setPlanId(params.planId);
-  }, [params.planId, vm]);
+    if (favoriteFetcher.data?.status === 'accepted') {
+      vm.toggleFavorite();
+    }
+  }, [favoriteFetcher.data, vm]);
 
   if (!vm.canViewSavedPlan || !savedPlan) {
     return <SavedPlanAccessState vm={vm} />;
@@ -86,7 +92,6 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                         <Button
                           aria-pressed={vm.isFavorited}
                           borderRadius="8px"
-                          onClick={() => vm.toggleFavorite()}
                           size="sm"
                           type="submit"
                           variant={vm.isFavorited ? 'solid' : 'outline'}
@@ -226,34 +231,5 @@ function PlanFact({ label, value }: { readonly label: string; readonly value: st
         {value}
       </Text>
     </Stack>
-  );
-}
-
-function SavedPlanAccessState({ vm }: { readonly vm: PortalSavedPlanDetailPageViewModel }) {
-  return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
-      <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap="5">
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to console</Link>
-          </Button>
-          <FilterCard>
-            <SectionEyebrow>Access check</SectionEyebrow>
-            <Heading as="h1" color="ink.900" fontSize="3xl">
-              Saved plan is not available for this user.
-            </Heading>
-            <FieldHint>
-              The backend mock resolved the current user from cookies and rejected this plan id
-              before showing customer data.
-            </FieldHint>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
-              {vm.accessRows.map((row) => (
-                <PlanFact key={row.label} label={row.label} value={row.value} />
-              ))}
-            </Grid>
-          </FilterCard>
-        </Stack>
-      </Container>
-    </Box>
   );
 }

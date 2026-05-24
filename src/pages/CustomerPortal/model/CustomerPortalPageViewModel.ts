@@ -99,6 +99,15 @@ export class CustomerPortalPageViewModel {
       }));
   }
 
+  get preferenceActionPayload() {
+    return {
+      currencyId: this.currentUser.preferences.currencyId,
+      languageId: this.currentUser.preferences.languageId,
+      organizationId: this.selectedOrganizationId,
+      regionId: this.currentUser.preferences.preferredRegionId,
+    };
+  }
+
   get preferenceRows() {
     return [
       { label: 'Language', value: this.getLanguageLabel(this.currentUser.preferences.languageId) },
@@ -147,6 +156,7 @@ export class CustomerPortalPageViewModel {
   get sourceFeedbackSample() {
     return {
       articleId: 'choose-production-server-plan',
+      organizationId: this.selectedOrganizationId,
       updateId: 'singapore-storage-capacity-expanded',
     };
   }

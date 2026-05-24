@@ -1,11 +1,12 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, useFetcher, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
+import { QuoteAccessState } from '../QuoteAccessState/QuoteAccessState';
 
 interface PortalActionResponse {
   readonly message: string;
@@ -19,12 +20,11 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
 }) {
   const commentFetcher = useFetcher<PortalActionResponse>();
   const params = useParams();
-  const [vm] = useState(() => new PortalQuoteDetailPageViewModel(params.quoteId, session));
+  const vm = useMemo(
+    () => new PortalQuoteDetailPageViewModel(params.quoteId, session),
+    [params.quoteId, session],
+  );
   const quote = vm.quote;
-
-  useEffect(() => {
-    vm.setQuoteId(params.quoteId);
-  }, [params.quoteId, vm]);
 
   if (!vm.canViewQuote || !quote) {
     return <QuoteAccessState vm={vm} />;
@@ -207,45 +207,3 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
     </Box>
   );
 });
-
-function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageViewModel }) {
-  return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
-      <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap="5">
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to console</Link>
-          </Button>
-          <FilterCard>
-            <SectionEyebrow>Access check</SectionEyebrow>
-            <Heading as="h1" color="ink.900" fontSize="3xl">
-              Quote is not available for this user.
-            </Heading>
-            <FieldHint>
-              The backend mock resolved the current user from cookies and rejected this quote id
-              before showing customer conversation data.
-            </FieldHint>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
-              {vm.accessRows.map((row) => (
-                <QuoteFact key={row.label} label={row.label} value={row.value} />
-              ))}
-            </Grid>
-          </FilterCard>
-        </Stack>
-      </Container>
-    </Box>
-  );
-}
-
-function QuoteFact({ label, value }: { readonly label: string; readonly value: string }) {
-  return (
-    <Stack bg="panelGlassBg" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
-      <Text color="ink.500" fontSize="xs">
-        {label}
-      </Text>
-      <Text color="ink.900" fontSize="sm" fontWeight="760">
-        {value}
-      </Text>
-    </Stack>
-  );
-}
