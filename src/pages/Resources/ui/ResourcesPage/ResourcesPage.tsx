@@ -1,6 +1,7 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import {
   EmptyState,
@@ -102,6 +103,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                     {featured.relatedTopic}
                   </Badge>
                 </Flex>
+                <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
+                  <Link to={`/resources/${featured.id}`}>Open guide</Link>
+                </Button>
               </Stack>
             ) : (
               <Text color="darkPanelText" fontSize="sm">
@@ -192,6 +196,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                     {vm.getHelpfulCount(article)} helpful votes
                   </Text>
                   <Flex gap="2" justify={{ base: 'start', lg: 'end' }} wrap="wrap">
+                    <Button asChild borderRadius="8px" size="sm" variant="outline">
+                      <Link to={`/resources/${article.id}`}>Open guide</Link>
+                    </Button>
                     <Button
                       aria-pressed={vm.isHelpful(article.id)}
                       borderRadius="8px"
@@ -250,6 +257,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                   <Text color="ink.500" fontSize="xs">
                     {article.category} · {article.readTimeMinutes} min
                   </Text>
+                  <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
+                    <Link to={`/resources/${article.id}`}>Open</Link>
+                  </Button>
                 </Stack>
               ))}
               {vm.savedArticles.length === 0 ? (

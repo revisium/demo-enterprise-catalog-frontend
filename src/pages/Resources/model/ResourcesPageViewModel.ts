@@ -1,98 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 
-type ResourceCategory = 'API' | 'Buying guide' | 'Networking' | 'Operations' | 'Security';
-type ResourceRole = 'Developers' | 'Finance' | 'Operations' | 'Procurement';
-type ResourceSortId = 'helpful' | 'recently-updated' | 'recommended' | 'shortest-read';
+import { resourceArticles, type ResourceArticle } from 'src/entities/content';
 
-interface ResourceArticle {
-  readonly author: string;
-  readonly category: ResourceCategory;
-  readonly helpfulCount: number;
-  readonly id: string;
-  readonly readTimeMinutes: number;
-  readonly relatedTopic: string;
-  readonly role: ResourceRole;
-  readonly summary: string;
-  readonly tags: readonly string[];
-  readonly title: string;
-  readonly updatedAt: string;
-}
+type ResourceSortId = 'helpful' | 'recently-updated' | 'recommended' | 'shortest-read';
 
 interface FilterOption {
   readonly id: string;
   readonly label: string;
 }
-
-const articles: readonly ResourceArticle[] = [
-  {
-    author: 'Maya Voss',
-    category: 'Buying guide',
-    helpfulCount: 42,
-    id: 'choose-production-server-plan',
-    readTimeMinutes: 7,
-    relatedTopic: 'Server plans',
-    role: 'Procurement',
-    summary: 'Map CPU, memory, storage, network, stock, and setup time to a practical shortlist.',
-    tags: ['planning', 'servers', 'quote'],
-    title: 'Choose a production server plan',
-    updatedAt: '2026-05-21',
-  },
-  {
-    author: 'Tomas Riedel',
-    category: 'Networking',
-    helpfulCount: 31,
-    id: 'network-options-by-region',
-    readTimeMinutes: 9,
-    relatedTopic: 'Regions',
-    role: 'Operations',
-    summary:
-      'Understand public IPv4, private VLAN, bandwidth, firewall, and regional support rules.',
-    tags: ['network', 'regions', 'security'],
-    title: 'Network options by region',
-    updatedAt: '2026-05-18',
-  },
-  {
-    author: 'Nora Chen',
-    category: 'Operations',
-    helpfulCount: 26,
-    id: 'backup-and-restore-policy',
-    readTimeMinutes: 6,
-    relatedTopic: 'Backups',
-    role: 'Operations',
-    summary:
-      'Retention windows, restore requests, monitoring add-ons, and customer responsibilities.',
-    tags: ['backup', 'sla', 'monitoring'],
-    title: 'Backup and restore policy',
-    updatedAt: '2026-05-14',
-  },
-  {
-    author: 'Eli Hart',
-    category: 'API',
-    helpfulCount: 19,
-    id: 'partner-api-overview',
-    readTimeMinutes: 8,
-    relatedTopic: 'Partner API',
-    role: 'Developers',
-    summary:
-      'Quote lookup, plan availability, price rows, saved plans, and organization access scopes.',
-    tags: ['api', 'partners', 'quotes'],
-    title: 'Partner API overview',
-    updatedAt: '2026-05-10',
-  },
-  {
-    author: 'Iris Novak',
-    category: 'Security',
-    helpfulCount: 23,
-    id: 'access-review-checklist',
-    readTimeMinutes: 5,
-    relatedTopic: 'Account access',
-    role: 'Finance',
-    summary: 'Review members, API key scopes, billing contacts, and audit history before renewal.',
-    tags: ['security', 'billing', 'audit'],
-    title: 'Access review checklist',
-    updatedAt: '2026-05-22',
-  },
-];
 
 const sortOptions: readonly FilterOption[] = [
   { id: 'recommended', label: 'Recommended' },
@@ -102,7 +17,7 @@ const sortOptions: readonly FilterOption[] = [
 ];
 
 export class ResourcesPageViewModel {
-  readonly articles = articles;
+  readonly articles = resourceArticles;
   helpfulArticleIds: readonly string[] = [];
   savedArticleIds: readonly string[] = ['choose-production-server-plan'];
   selectedCategory = 'All';
@@ -200,6 +115,35 @@ export class ResourcesPageViewModel {
     return article.helpfulCount + (this.isHelpful(article.id) ? 1 : 0);
   }
 
+  getArticle(articleId: string | undefined) {
+    const article = this.articles.find((item) => item.id === articleId) ?? this.articles[0];
+
+    if (!article) {
+      throw new Error('Resource article mocks are empty');
+    }
+
+    return article;
+  }
+
+  getRelatedArticles(articleId: string | undefined) {
+    const article = this.getArticle(articleId);
+
+    return this.articles
+      .filter((candidate) => candidate.id !== article.id)
+      .map((candidate) => ({
+        article: candidate,
+        score:
+          this.getSharedTagCount(article, candidate) +
+          Number(candidate.category === article.category),
+      }))
+      .sort(
+        (left, right) =>
+          right.score - left.score || left.article.title.localeCompare(right.article.title),
+      )
+      .slice(0, 3)
+      .map((candidate) => candidate.article);
+  }
+
   isHelpful(articleId: string) {
     return this.helpfulArticleIds.includes(articleId);
   }
@@ -259,6 +203,12 @@ export class ResourcesPageViewModel {
 
   private getOptionLabel(options: readonly FilterOption[], id: string) {
     return options.find((option) => option.id === id)?.label ?? id;
+  }
+
+  private getSharedTagCount(left: ResourceArticle, right: ResourceArticle) {
+    const rightTags = new Set(right.tags);
+
+    return left.tags.filter((tag) => rightTags.has(tag)).length;
   }
 
   private hasOption(options: readonly FilterOption[], id: string) {

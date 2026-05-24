@@ -30,6 +30,7 @@ the same interaction under different labels.
 | `/resources`              | Docs, SLA notes, billing rules, networking guides, API docs | `helio-cms`                                       |
 | `/resources/[slug]`       | Documentation article detail                                | `helio-cms`                                       |
 | `/updates` or `/releases` | Stock, docs, and price-book updates                         | `helio-cms` + `helio-price`                       |
+| `/releases/[slug]`        | Product update detail and affected workspaces               | `helio-cms` + `helio-price`                       |
 | `/quote`                  | Public quote request flow                                   | backend runtime                                   |
 | `/app`                    | Authorized customer dashboard                               | backend runtime                                   |
 | `/app/plans`              | Saved server plans                                          | backend runtime                                   |

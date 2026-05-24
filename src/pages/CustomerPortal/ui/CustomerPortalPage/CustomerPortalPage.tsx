@@ -1,6 +1,7 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
@@ -83,6 +84,9 @@ export const CustomerPortalPage = observer(function CustomerPortalPage() {
                     ${primaryQuote.monthlyUsd}/mo
                   </Badge>
                 </Flex>
+                <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
+                  <Link to={`/app/quotes/${primaryQuote.id}`}>Open quote</Link>
+                </Button>
               </Stack>
             ) : (
               <Text color="darkPanelText" fontSize="sm">
@@ -292,6 +296,9 @@ function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
             <Text color="ink.500" fontSize="xs">
               due {quote.due}
             </Text>
+            <Button asChild borderRadius="8px" size="sm" variant="outline">
+              <Link to={`/app/quotes/${quote.id}`}>Open quote</Link>
+            </Button>
           </Stack>
         </Grid>
       ))}

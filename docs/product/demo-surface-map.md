@@ -12,10 +12,13 @@ must have one primary customer job and one primary data/platform proof.
 | `/locations`           | Choose a region or data-center market       | Regional aggregation, readiness score, stock/setup sort | Product specs, quote form, docs feed                   | `helio-price`                      |
 | `/locations/:regionId` | Inspect one region's plan coverage          | Related plan rows, region alternatives, computed fields | Full catalog browsing, public quote form               | `helio-price`                      |
 | `/compare`             | Decide between a small set of plans         | Scenario fit, selected IDs, add-on/support constraints  | Full price-book exploration, region marketplace list   | `helio-price`, backend share links |
-| `/resources`           | Read and save customer documentation        | CMS article filters, roles, topics, helpful feedback    | News feed, price/stock updates, quote lifecycle        | `helio-cms`, backend preferences   |
+| `/resources`           | Find the right customer guide               | CMS article filters, roles, topics, helpful feedback    | News feed, price/stock updates, quote lifecycle        | `helio-cms`, backend preferences   |
+| `/resources/:slug`     | Read one guide and choose the next action   | Article template, checklist, related guides             | Feed chronology, catalog table, quote comments         | `helio-cms`, backend preferences   |
 | `/releases`            | Track product, docs, price, and region news | CMS update feed, reactions, saved announcements         | Documentation library, server-plan comparison          | `helio-cms`, backend feedback      |
+| `/releases/:slug`      | Understand one customer-facing change       | Impact detail, affected paths, related updates          | Article checklist, full price-book exploration         | `helio-cms`, backend feedback      |
 | `/quote`               | Prepare a public quote draft                | Form validation, add-ons, estimate, readiness checklist | Authenticated comments, organization quote management  | backend runtime                    |
 | `/app`                 | Manage organization-specific runtime work   | Quotes, saved plans, favorites, API keys, audit trail   | Public catalog discovery, public docs browsing         | backend runtime                    |
+| `/app/quotes/:quoteId` | Review one account quote                    | Quote timeline, customer comments, related saved plans  | Public quote form, source catalog editing              | backend runtime                    |
 
 ## Coverage Rules
 
@@ -24,7 +27,9 @@ must have one primary customer job and one primary data/platform proof.
 - Quote proof should be split: public quote draft in `/quote`, authenticated
   quote lifecycle in `/app`.
 - CMS proof should be split: evergreen docs in `/resources`, dated updates in
-  `/releases`.
+  `/releases`, and item-level reading in their detail routes.
+- Account runtime proof should be split: workspace overview in `/app`, and one
+  authenticated quote conversation in `/app/quotes/:quoteId`.
 - Product Detail is the item page for one plan. It can link to quote, pricing,
   locations, and compare, but should not become any of those pages.
 - Public pages must not expose Revisium project names, table names, row IDs,

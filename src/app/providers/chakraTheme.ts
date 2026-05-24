@@ -30,6 +30,7 @@ const config = defineConfig({
         },
         ink: {
           500: { value: '#667085' },
+          600: { value: '#5b6678' },
           700: { value: '#475467' },
           900: { value: '#101828' },
         },
