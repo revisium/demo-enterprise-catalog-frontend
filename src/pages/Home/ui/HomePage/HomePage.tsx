@@ -14,6 +14,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 
+import { QuerySummary } from 'src/shared/ui';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 
 export const HomePage = observer(function HomePage() {
@@ -38,14 +39,14 @@ export const HomePage = observer(function HomePage() {
           >
             <Stack gap="2">
               <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                HelioStack
+                Command center
               </Text>
               <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} lineHeight="0.98">
                 Cloud server catalog
               </Heading>
               <Text color="ink.500" fontSize="sm">
-                Select a use case, location, and contract. The catalog shows the best server plan
-                and price.
+                Select a use case, location, and contract. The workspace keeps the recommended
+                server, price, stock, and next actions in one place.
               </Text>
             </Stack>
 
@@ -192,7 +193,7 @@ export const HomePage = observer(function HomePage() {
                   borderRadius="8px"
                   color="ink.900"
                   disabled={!vm.canReserveServer}
-                  title="Reservation will be connected with the backend flow"
+                  title="Direct reservation will be available in the customer portal"
                 >
                   Reserve server
                 </Button>
@@ -203,7 +204,7 @@ export const HomePage = observer(function HomePage() {
                   color="white"
                   variant="outline"
                 >
-                  <NavLink to="/quote">Send quote</NavLink>
+                  <NavLink to={vm.quotePath}>Send quote</NavLink>
                 </Button>
               </Stack>
             </Grid>
@@ -282,6 +283,42 @@ export const HomePage = observer(function HomePage() {
               </Stack>
 
               <Stack gap={{ base: '5', md: '6' }}>
+                <QuerySummary rows={vm.selectionRows} />
+
+                <InfoPanel title="Next actions">
+                  {vm.nextActions.map((action) => (
+                    <Button
+                      asChild
+                      bg={action.tone === 'primary' ? 'ctaBg' : 'white'}
+                      borderColor={action.tone === 'primary' ? 'brand.600' : 'surface.200'}
+                      borderRadius="8px"
+                      borderWidth="1px"
+                      color={action.tone === 'primary' ? 'white' : 'ink.900'}
+                      h="auto"
+                      justifyContent="stretch"
+                      key={action.href}
+                      p="3"
+                      textAlign="left"
+                      variant="ghost"
+                      whiteSpace="normal"
+                      w="100%"
+                    >
+                      <NavLink to={action.href}>
+                        <Stack align="start" gap="0.5" minW="0">
+                          <Text fontWeight="760">{action.label}</Text>
+                          <Text
+                            color={action.tone === 'primary' ? 'darkPanelText' : 'ink.500'}
+                            fontSize="xs"
+                            lineHeight="1.25"
+                          >
+                            {action.summary}
+                          </Text>
+                        </Stack>
+                      </NavLink>
+                    </Button>
+                  ))}
+                </InfoPanel>
+
                 <InfoPanel title="Included">
                   {vm.includedItems.map((item) => (
                     <InfoRow key={item}>{item}</InfoRow>

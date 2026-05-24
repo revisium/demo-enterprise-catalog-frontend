@@ -30,6 +30,7 @@ export interface BillingTermOption {
 
 export interface ServerPlan {
   readonly id: ServerPlanId;
+  readonly catalogProductId: string;
   readonly name: string;
   readonly summary: string;
   readonly cpu: string;
@@ -87,6 +88,7 @@ const billingTermOptions: readonly BillingTermOption[] = [
 const serverPlans: readonly ServerPlan[] = [
   {
     id: 'starter-vps',
+    catalogProductId: 'starter-vps',
     name: 'Starter VPS',
     summary: 'Small virtual server for simple apps, test environments, and landing pages.',
     cpu: '2 vCPU',
@@ -102,6 +104,7 @@ const serverPlans: readonly ServerPlan[] = [
   },
   {
     id: 'business-vm',
+    catalogProductId: 'business-vm-8',
     name: 'Business VM',
     summary: 'Balanced virtual server for production apps and medium traffic APIs.',
     cpu: '8 vCPU',
@@ -117,6 +120,7 @@ const serverPlans: readonly ServerPlan[] = [
   },
   {
     id: 'dedicated-r2',
+    catalogProductId: 'dedicated-r2',
     name: 'Dedicated R2',
     summary: 'Physical server for steady production workloads and predictable performance.',
     cpu: '16 cores',
@@ -132,6 +136,7 @@ const serverPlans: readonly ServerPlan[] = [
   },
   {
     id: 'database-d4',
+    catalogProductId: 'database-d4',
     name: 'Database D4',
     summary: 'High-memory server for Postgres, analytics, and critical stateful systems.',
     cpu: '24 cores',
@@ -147,6 +152,7 @@ const serverPlans: readonly ServerPlan[] = [
   },
   {
     id: 'storage-s3',
+    catalogProductId: 'storage-s3',
     name: 'Storage S3',
     summary: 'Large storage server for backups, media, and internal file platforms.',
     cpu: '12 cores',
