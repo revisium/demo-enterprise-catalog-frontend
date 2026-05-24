@@ -153,8 +153,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                       <Link to={row.rowHref}>{row.plan.name}</Link>
                     </Box>
                     <Text color="ink.500" fontSize="sm">
-                      {row.family} · {row.region.regionLabel} · updated{' '}
-                      {row.plan.system.updatedAt.slice(0, 10)}
+                      {row.family} · {row.region.regionLabel} · updated {row.updatedAtDisplay}
                     </Text>
                     <Flex gap="1.5" wrap="wrap">
                       <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">

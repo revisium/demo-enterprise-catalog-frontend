@@ -18,7 +18,7 @@ interface PackageRow {
 }
 
 export class PortalSavedPlanDetailPageViewModel {
-  favoritedPlanIds: readonly string[] = ['plan-dedicated-r2-fra'];
+  favoritedPlanIds: readonly string[] = [];
   planId: string | undefined;
   readonly pricingPath = '/pricing';
 
@@ -115,11 +115,14 @@ export class PortalSavedPlanDetailPageViewModel {
   }
 
   get savedPlan(): PortalSavedPlan {
-    const savedPlan =
-      portalSavedPlans.find((item) => item.id === this.planId) ?? portalSavedPlans[0];
+    const savedPlan = portalSavedPlans.find((item) => item.id === this.planId);
 
     if (!savedPlan) {
-      throw new Error('Customer portal mock saved plans are empty');
+      throw new Error(
+        this.planId
+          ? `Saved plan not found: ${this.planId}`
+          : 'Customer portal mock saved plans are empty',
+      );
     }
 
     return savedPlan;

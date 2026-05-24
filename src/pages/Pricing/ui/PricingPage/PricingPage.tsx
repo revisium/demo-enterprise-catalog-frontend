@@ -273,7 +273,7 @@ export const PricingPage = observer(function PricingPage() {
                         {book.title}
                       </Text>
                       <Text color="ink.500" fontSize="xs">
-                        {book.rowCount} rows · effective {book.effectiveFrom}
+                        {book.status} · effective {book.effectiveFrom}
                       </Text>
                     </Stack>
                     <Button asChild borderRadius="8px" size="xs" variant="outline">

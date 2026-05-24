@@ -148,7 +148,6 @@ export class PricingPageViewModel {
     return priceBooks.map((book) => ({
       ...book,
       href: `/pricing/${book.id}`,
-      rowCount: this.rows.length,
     }));
   }
 

@@ -2,11 +2,11 @@ import { makeAutoObservable } from 'mobx';
 
 import {
   calculatePriceEfficiencyScore,
-  catalogSnapshot,
   type CatalogProduct,
   type CatalogRegionAvailability,
 } from 'src/entities/catalog';
-import { priceBooks, type PriceBook } from 'src/entities/pricing';
+import type { PriceBook } from 'src/entities/pricing';
+import { PricingDetailPageDataSource } from '../api/PricingDetailPageDataSource';
 
 type BillingTermId = 'monthly' | 'yearly';
 type PriceBookSortId =
@@ -33,6 +33,7 @@ interface PriceBookRow {
   readonly region: CatalogRegionAvailability;
   readonly rowHref: string;
   readonly sourceRevision: number;
+  readonly updatedAtDisplay: string;
   readonly yearlySavingsUsd: number;
 }
 
@@ -54,6 +55,8 @@ const sortOptions: readonly FilterOption[] = [
 ];
 
 export class PricingDetailPageViewModel {
+  private readonly dataSource = new PricingDetailPageDataSource();
+
   priceBookId: string | undefined;
   selectedFamilyIds: readonly string[] = [];
   selectedRegionIds: readonly string[] = [];
@@ -68,10 +71,17 @@ export class PricingDetailPageViewModel {
   }
 
   get book(): PriceBook {
-    const book = priceBooks.find((item) => item.id === this.priceBookId) ?? priceBooks[0];
+    const book =
+      this.priceBookId === undefined
+        ? this.priceBooks[0]
+        : this.priceBooks.find((item) => item.id === this.priceBookId);
 
     if (!book) {
-      throw new Error('Price book mock data is empty');
+      throw new Error(
+        this.priceBookId === undefined
+          ? 'Price book mock data is empty'
+          : `Price book not found: ${this.priceBookId}`,
+      );
     }
 
     return book;
@@ -98,18 +108,21 @@ export class PricingDetailPageViewModel {
   }
 
   get metrics() {
-    const lowestPrice =
-      this.filteredRows.length === 0
-        ? 0
-        : Math.min(...this.filteredRows.map((row) => row.effectiveMonthlyUsd));
-    const bestEfficiency =
-      this.filteredRows.length === 0
-        ? 0
-        : Math.max(...this.filteredRows.map((row) => row.priceEfficiencyScore));
+    const lowestPrice = this.filteredRows.reduce(
+      (lowest, row) => Math.min(lowest, row.effectiveMonthlyUsd),
+      Number.POSITIVE_INFINITY,
+    );
+    const bestEfficiency = this.filteredRows.reduce(
+      (highest, row) => Math.max(highest, row.priceEfficiencyScore),
+      0,
+    );
 
     return [
       { label: 'Rows', value: String(this.filteredRows.length) },
-      { label: 'Lowest', value: `$${lowestPrice}` },
+      {
+        label: 'Lowest',
+        value: lowestPrice === Number.POSITIVE_INFINITY ? '$0' : `$${lowestPrice}`,
+      },
       { label: 'Best score', value: String(bestEfficiency) },
       { label: 'Status', value: this.book.status },
     ];
@@ -146,13 +159,13 @@ export class PricingDetailPageViewModel {
   }
 
   get relatedBooks() {
-    return priceBooks
+    return this.priceBooks
       .filter((book) => book.id !== this.book.id)
       .map((book) => ({ ...book, href: `/pricing/${book.id}` }));
   }
 
   get rows(): readonly PriceBookRow[] {
-    return catalogSnapshot.products.flatMap((plan) =>
+    return this.products.flatMap((plan) =>
       plan.availabilityByRegion.map((region) => this.toPriceBookRow(plan, region)),
     );
   }
@@ -243,6 +256,14 @@ export class PricingDetailPageViewModel {
     return sortOptions.some((option) => option.id === value);
   }
 
+  private get priceBooks() {
+    return this.dataSource.getPriceBooks();
+  }
+
+  private get products() {
+    return this.dataSource.getProducts();
+  }
+
   private matchesRow(row: PriceBookRow) {
     const matchesFamily =
       this.selectedFamilyIds.length === 0 || this.selectedFamilyIds.includes(row.family);
@@ -270,6 +291,7 @@ export class PricingDetailPageViewModel {
       region,
       rowHref: `/catalog/${plan.id}`,
       sourceRevision: plan.system.revision,
+      updatedAtDisplay: plan.system.updatedAt.slice(0, 10),
       yearlySavingsUsd: (plan.pricing.monthlyUsd - plan.pricing.yearlyMonthlyUsd) * 12,
     };
   }
