@@ -8,8 +8,8 @@
 | `/pricing`            | Prototype  | Price rows by plan, region, add-ons, support, and term | typed mock   | quote handoff validation         |
 | `/locations`          | Prototype  | Data-center stock and support windows                  | typed mock   | location card/table pattern      |
 | `/compare`            | Prototype  | Server plan comparison                                 | typed mock   | comparison row model             |
-| `/resources`          | Prototype  | Docs, SLA, networking, billing, API docs               | typed mock   | docs index pattern               |
-| `/releases`           | Prototype  | Stock, docs, and price-book updates                    | typed mock   | update timeline pattern          |
+| `/resources`          | Prototype  | Docs, roles, topics, saved reads, helpful feedback     | typed mock   | docs detail pattern              |
+| `/releases`           | Prototype  | Stock, docs, price-book updates, saved announcements   | typed mock   | announcement detail pattern      |
 | `/quote`              | Scaffolded | Runtime quote request form                             | mock form    | backend mutation contract        |
 | `/app`                | Prototype  | Organization quotes, saved plans, favorites, API keys  | backend mock | quote detail conversation        |
 

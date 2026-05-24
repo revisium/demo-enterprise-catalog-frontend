@@ -92,6 +92,10 @@ widgets inside the public layout.
 | Pricing   | Term, family, region, add-on, support, stock, max price                     | Price-item filtering with joined plan metadata  |
 | Pricing   | RAM and setup controls                                                      | Nested plan and regional availability fields    |
 | Pricing   | Price, efficiency, savings, stock, setup, RAM, display-order, updated sorts | Mixed schema, nested, computed, and system sort |
+| Resources | Category, role, topic, and read-time controls                               | CMS article, author, category, and tag filters  |
+| Resources | Helpful votes and saved reads                                               | Backend-owned user feedback and preferences     |
+| Releases  | Type, audience, priority, and reaction sorts                                | CMS update feed with tags and customer impact   |
+| Releases  | Likes and saved announcements                                               | Backend-owned user feedback and preferences     |
 | Locations | Family, support window, stock filters                                       | Nested availability rows grouped by region      |
 | Locations | Setup, plan count, stock, updated sorts                                     | Aggregated fields plus related system metadata  |
 
