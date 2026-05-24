@@ -175,6 +175,13 @@ function AccountFact({ label, value }: { readonly label: string; readonly value:
 }
 
 function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+  const hasNoVisibleItems =
+    vm.selectedSection === 'favorites'
+      ? vm.visiblePlans.length === 0 && vm.favoriteItems.length === 0
+      : vm.visiblePlans.length === 0;
+  const emptyMessage =
+    vm.selectedSection === 'favorites' ? 'No favorites yet.' : 'No saved plans yet.';
+
   return (
     <FilterCard>
       <PanelHeader
@@ -236,9 +243,9 @@ function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
             </Stack>
           ))
         : null}
-      {vm.visiblePlans.length === 0 && vm.favoriteItems.length === 0 ? (
+      {hasNoVisibleItems ? (
         <Text color="ink.500" fontSize="sm">
-          No favorites yet.
+          {emptyMessage}
         </Text>
       ) : null}
     </FilterCard>
