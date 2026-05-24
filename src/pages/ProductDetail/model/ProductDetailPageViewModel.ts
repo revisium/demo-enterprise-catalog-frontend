@@ -19,6 +19,7 @@ interface FilterOption {
 
 interface ProductRegionRow extends CatalogRegionAvailability {
   readonly locationHref: string;
+  readonly quoteHref: string;
   readonly readinessScore: number;
 }
 
@@ -29,6 +30,7 @@ interface AlternativeProductRow {
   readonly plan: CatalogProduct;
   readonly priceDeltaLabel: string;
   readonly priceEfficiencyScore: number;
+  readonly quoteHref: string;
   readonly totalStock: number;
 }
 
@@ -36,6 +38,20 @@ interface AlternativeCandidate {
   readonly overlapRegionCount: number;
   readonly plan: CatalogProduct;
 }
+
+interface AddOnRow {
+  readonly id: string;
+  readonly label: string;
+}
+
+const addonLabels = new Map([
+  ['backup', 'Managed backups'],
+  ['ipv4', 'Public IPv4'],
+  ['lifecycle-rules', 'Lifecycle rules'],
+  ['monitoring', 'Monitoring'],
+  ['private-vlan', 'Private VLAN'],
+  ['support', 'Priority support'],
+]);
 
 const regionSortOptions: readonly FilterOption[] = [
   { id: 'readiness', label: 'Best readiness' },
@@ -78,7 +94,11 @@ export class ProductDetailPageViewModel {
   }
 
   get quotePath() {
-    return `/quote?plan=${this.product.id}`;
+    return this.createQuotePath(this.product.id, this.defaultQuoteRegionId);
+  }
+
+  get defaultQuoteRegionId() {
+    return this.visibleRegionRows[0]?.regionId ?? this.regionRows[0]?.regionId ?? '';
   }
 
   get fastestSetupHours() {
@@ -108,12 +128,29 @@ export class ProductDetailPageViewModel {
     return `$${this.product.pricing.yearlyMonthlyUsd}/mo on yearly term · $${this.product.pricing.setupUsd} setup fee.`;
   }
 
+  get addOnRows(): readonly AddOnRow[] {
+    return this.product.addons.map((addonId) => ({
+      id: addonId,
+      label: addonLabels.get(addonId) ?? addonId,
+    }));
+  }
+
+  get packageRows() {
+    return [
+      { label: 'Support tier', value: this.product.supportTier },
+      { label: 'Billing terms', value: this.product.billingTerms.join(', ') },
+      { label: 'Compliance', value: this.product.compliance.join(', ') || 'standard terms' },
+      { label: 'Documents', value: `${this.product.documents.length} files` },
+    ];
+  }
+
   get regionRows(): readonly ProductRegionRow[] {
     const enterpriseCoveragePercent = this.product.supportTier === 'Enterprise' ? 100 : 0;
 
     return this.product.availabilityByRegion.map((region) => ({
       ...region,
       locationHref: `/locations/${region.regionId}`,
+      quoteHref: this.createQuotePath(this.product.id, region.regionId),
       readinessScore: calculateCatalogReadinessScore({
         enterpriseCoveragePercent,
         familyCoveragePercent: 100,
@@ -197,6 +234,19 @@ export class ProductDetailPageViewModel {
     ];
   }
 
+  createQuotePath(planId: string, regionId: string) {
+    const params = new URLSearchParams({
+      plan: planId,
+      term: 'monthly',
+    });
+
+    if (regionId) {
+      params.set('region', regionId);
+    }
+
+    return `/quote?${params.toString()}`;
+  }
+
   formatDate(value: string) {
     return ProductDetailPageViewModel.dateFormat.format(new Date(value));
   }
@@ -271,6 +321,10 @@ export class ProductDetailPageViewModel {
       plan: candidate.plan,
       priceDeltaLabel: this.formatPriceDelta(priceDelta),
       priceEfficiencyScore: calculatePriceEfficiencyScore(candidate.plan),
+      quoteHref: this.createQuotePath(
+        candidate.plan.id,
+        candidate.plan.availabilityByRegion[0]?.regionId ?? '',
+      ),
       totalStock: this.getTotalStock(candidate.plan),
     };
   }
