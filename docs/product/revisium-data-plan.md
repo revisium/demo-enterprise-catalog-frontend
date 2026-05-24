@@ -67,6 +67,39 @@ These do not live in Revisium because they are user-specific or transactional:
 | Likes/helpful votes | docs/update feedback and dictionary-service demo hooks |
 | Audit trail         | runtime actions and compliance history                 |
 
+## Backend Session And Dictionary Validation
+
+The demo frontend models automatic authorization as a backend-owned refresh
+step. On page entry, the server route performs a demo session refresh and sets
+`HttpOnly` cookies such as `helio_session` and `helio_demo_fingerprint`. The
+refresh response is not a user-profile API for browser JavaScript and does not
+carry a readable identity body. Later page loads and mutations send cookies
+automatically, and backend handlers resolve the current user server-side before
+returning authenticated page data or accepting writes.
+
+The prototype also exposes `/auth/demo/refresh` as the future refresh endpoint
+shape. It returns no user payload; it only refreshes cookies. The real backend
+can replace this route with a signed JWT/session-cookie implementation without
+changing the portal contract.
+
+Runtime mutations store backend-owned data only after checking referenced IDs
+against Revisium dictionaries and source rows:
+
+| Runtime input | Revisium validation before persistence             |
+| ------------- | -------------------------------------------------- |
+| `languageId`  | active language and localized label set            |
+| `currencyId`  | active currency allowed for the organization       |
+| `regionId`    | active commercial region and availability window   |
+| `planId`      | active server plan, lifecycle, and regional access |
+| `statusId`    | allowed quote status and transition                |
+| `roleId`      | active role allowed to perform the action          |
+| `docId`       | published article before helpful/save feedback     |
+| `updateId`    | published update before like/save feedback         |
+
+Backend rows should store stable source IDs and, where needed, source revision
+metadata. Backend must not copy catalog, CMS, or price dictionaries into runtime
+tables as editable truth.
+
 ## Demo Value
 
 - `helio-cms` proves Revisium as CMS and dictionary service.

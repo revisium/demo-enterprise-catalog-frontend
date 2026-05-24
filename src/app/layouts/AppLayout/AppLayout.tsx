@@ -24,7 +24,7 @@ const navItems = [
   { label: 'Pricing', to: '/pricing' },
   { label: 'Locations', to: '/locations' },
   { label: 'Compare', to: '/compare' },
-  { label: 'Docs', to: '/resources' },
+  { label: 'Resources', to: '/resources' },
   { label: 'Updates', to: '/releases' },
 ] as const;
 
@@ -41,14 +41,14 @@ const footerGroups = [
   {
     label: 'Resources',
     links: [
-      { label: 'Docs', to: '/resources' },
+      { label: 'Guides', to: '/resources' },
       { label: 'Updates', to: '/releases' },
     ],
   },
   {
-    label: 'Account',
+    label: 'Workspace',
     links: [
-      { label: 'Customer portal', to: '/app' },
+      { label: 'Portal', to: '/app' },
       { label: 'Request quote', to: '/quote' },
     ],
   },

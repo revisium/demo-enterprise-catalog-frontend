@@ -14,7 +14,7 @@
 | `/releases`             | Prototype | Product/news updates, reactions, saved announcements    | typed mock   | feed density approval          |
 | `/releases/:slug`       | Prototype | One update: impact, affected paths, related updates     | typed mock   | update template approval       |
 | `/quote`                | Prototype | Public quote draft, readiness, add-ons, review path     | mock form    | backend mutation contract      |
-| `/app`                  | Prototype | Organization quotes, saved plans, favorites, audit      | backend mock | saved-plan edit pattern        |
+| `/app`                  | Prototype | User session, preferences, quotes, favorites, audit     | backend mock | saved-plan edit pattern        |
 | `/app/plans/:planId`    | Prototype | One saved plan: package, related quotes, next actions   | backend mock | edit/share actions             |
 | `/app/quotes/:quoteId`  | Prototype | One quote: timeline, comments, related saved plans      | backend mock | conversation actions           |
 
