@@ -8,7 +8,8 @@ iteration, not to freeze a brand too early.
 - Premium Apple-like B2B palette: white surfaces, soft blue-tinted page
   background, restrained cyan/blue accents, dark graphite text, and occasional
   dark contrast panels for price or purchase actions. Chakra theme tokens encode
-  this as blue `brand`, graphite `ink`, and cool neutral `surface` scales.
+  this as blue `brand`, graphite `ink` (`500`, `600`, `700`, `900`), and cool
+  neutral `surface` scales.
 - Layout should feel spacious and product-grade, not like an infrastructure
   terminal. Use fewer panels with more breathing room before adding density.
 - Cards use `0.5rem` radius or less.

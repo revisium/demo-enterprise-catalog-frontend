@@ -1,90 +1,18 @@
 import { makeAutoObservable } from 'mobx';
 
-type UpdateAudience = 'Developers' | 'Finance' | 'Operations' | 'Procurement' | 'Sales';
-type UpdatePriority = 'Advisory' | 'Important' | 'Routine';
-type UpdateSortId = 'latest' | 'most-reacted' | 'priority';
-type UpdateType = 'Catalog' | 'Docs' | 'Pricing' | 'Region';
+import {
+  releaseUpdates,
+  type ReleaseUpdate,
+  type UpdatePriority,
+  type UpdateType,
+} from 'src/entities/content';
 
-interface ReleaseUpdate {
-  readonly audience: UpdateAudience;
-  readonly date: string;
-  readonly id: string;
-  readonly impact: string;
-  readonly likedCount: number;
-  readonly priority: UpdatePriority;
-  readonly summary: string;
-  readonly tags: readonly string[];
-  readonly title: string;
-  readonly type: UpdateType;
-}
+type UpdateSortId = 'latest' | 'most-reacted' | 'priority';
 
 interface FilterOption {
   readonly id: string;
   readonly label: string;
 }
-
-const updates: readonly ReleaseUpdate[] = [
-  {
-    audience: 'Operations',
-    date: '2026-05-23',
-    id: 'singapore-storage-capacity-expanded',
-    impact: 'New backup and media workloads can be quoted in APAC.',
-    likedCount: 18,
-    priority: 'Important',
-    summary: 'Storage S3 availability increased in SIN-1 with updated setup windows.',
-    tags: ['storage', 'apac', 'availability'],
-    title: 'Singapore storage capacity expanded',
-    type: 'Region',
-  },
-  {
-    audience: 'Finance',
-    date: '2026-05-21',
-    id: 'q3-price-book-draft-opened',
-    impact: 'Sales can compare current and upcoming commercial terms before renewal calls.',
-    likedCount: 12,
-    priority: 'Important',
-    summary: 'Yearly contract discounts and reserved dedicated server terms are ready for review.',
-    tags: ['pricing', 'renewal', 'contracts'],
-    title: 'Q3 price-book draft opened',
-    type: 'Pricing',
-  },
-  {
-    audience: 'Sales',
-    date: '2026-05-20',
-    id: 'gpu-edge-a2-preview-stock-published',
-    impact: 'Customers can request quote review for acceleration projects.',
-    likedCount: 9,
-    priority: 'Advisory',
-    summary: 'Limited GPU server capacity is visible in Amsterdam and Singapore.',
-    tags: ['gpu', 'preview', 'stock'],
-    title: 'GPU Edge A2 preview stock published',
-    type: 'Catalog',
-  },
-  {
-    audience: 'Developers',
-    date: '2026-05-18',
-    id: 'partner-api-guide-refreshed',
-    impact: 'Partner integration teams get a clearer onboarding path.',
-    likedCount: 21,
-    priority: 'Routine',
-    summary: 'Availability, price row, and quote lookup examples now share the same terminology.',
-    tags: ['api', 'partners', 'docs'],
-    title: 'Partner API guide refreshed',
-    type: 'Docs',
-  },
-  {
-    audience: 'Procurement',
-    date: '2026-05-17',
-    id: 'dedicated-server-sla-note-updated',
-    impact: 'Procurement teams can attach clearer support terms to quote approvals.',
-    likedCount: 14,
-    priority: 'Routine',
-    summary: 'Dedicated server SLA language now separates replacement targets from setup windows.',
-    tags: ['sla', 'dedicated', 'support'],
-    title: 'Dedicated server SLA note updated',
-    type: 'Docs',
-  },
-];
 
 const priorityRank: Record<UpdatePriority, number> = {
   Important: 3,
@@ -99,7 +27,7 @@ const sortOptions: readonly FilterOption[] = [
 ];
 
 export class ReleasesPageViewModel {
-  readonly updates = updates;
+  readonly updates = releaseUpdates;
   likedUpdateIds: readonly string[] = [];
   savedUpdateIds: readonly string[] = ['q3-price-book-draft-opened'];
   selectedAudience = 'All';
@@ -176,6 +104,33 @@ export class ReleasesPageViewModel {
     return update.likedCount + (this.isLiked(update.id) ? 1 : 0);
   }
 
+  getRelatedUpdates(updateId: string | undefined) {
+    const update = this.getUpdate(updateId);
+
+    return this.updates
+      .filter((candidate) => candidate.id !== update.id)
+      .map((candidate) => ({
+        score: this.getSharedTagCount(update, candidate) + Number(candidate.type === update.type),
+        update: candidate,
+      }))
+      .sort(
+        (left, right) =>
+          right.score - left.score || Date.parse(right.update.date) - Date.parse(left.update.date),
+      )
+      .slice(0, 3)
+      .map((candidate) => candidate.update);
+  }
+
+  getUpdate(updateId: string | undefined) {
+    const update = this.updates.find((item) => item.id === updateId) ?? this.updates[0];
+
+    if (!update) {
+      throw new Error('Release update mocks are empty');
+    }
+
+    return update;
+  }
+
   isLiked(updateId: string) {
     return this.likedUpdateIds.includes(updateId);
   }
@@ -244,6 +199,12 @@ export class ReleasesPageViewModel {
 
   private getOptionLabel(options: readonly FilterOption[], id: string) {
     return options.find((option) => option.id === id)?.label ?? id;
+  }
+
+  private getSharedTagCount(left: ReleaseUpdate, right: ReleaseUpdate) {
+    const rightTags = new Set(right.tags);
+
+    return left.tags.filter((tag) => rightTags.has(tag)).length;
   }
 
   private hasOption(options: readonly FilterOption[], id: string) {

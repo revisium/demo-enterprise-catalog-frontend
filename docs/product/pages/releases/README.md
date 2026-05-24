@@ -22,6 +22,8 @@ Typed mock CMS update data plus local saved/like state.
 - filter announcements by change area, audience, and priority;
 - sort by latest, priority, or reactions;
 - show customer impact next to every update;
+- open `/releases/:slug` for one update with impact detail, affected customer
+  workspaces, reactions, and related updates;
 - keep saved announcements for follow-up planning.
 
 ## Future Contract

@@ -1,6 +1,7 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import {
   EmptyState,
@@ -103,6 +104,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                     {latest.audience}
                   </Badge>
                 </Flex>
+                <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
+                  <Link to={`/releases/${latest.id}`}>Open update</Link>
+                </Button>
               </Stack>
             ) : (
               <Text color="darkPanelText" fontSize="sm">
@@ -209,6 +213,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                     >
                       Save
                     </Button>
+                    <Button asChild borderRadius="8px" size="sm" variant="outline">
+                      <Link to={`/releases/${update.id}`}>Open update</Link>
+                    </Button>
                   </Flex>
                 </Stack>
 
@@ -242,6 +249,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   <Text color="ink.500" fontSize="xs">
                     {update.type} · {update.priority}
                   </Text>
+                  <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
+                    <Link to={`/releases/${update.id}`}>Open</Link>
+                  </Button>
                 </Stack>
               ))}
               {vm.savedUpdates.length === 0 ? (

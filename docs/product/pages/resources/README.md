@@ -21,6 +21,8 @@ Typed mock CMS article data plus local saved/helpful state.
 - filter docs by customer task, team role, and topic;
 - sort by recommendation, freshness, helpfulness, or read time;
 - keep a saved-read sidebar;
+- open `/resources/:slug` for one article with body sections, a practical
+  checklist, actions, and related guides;
 - show helpful feedback without exposing source-layer mechanics.
 
 ## Future Contract

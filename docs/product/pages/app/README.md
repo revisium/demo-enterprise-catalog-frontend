@@ -22,11 +22,14 @@ Typed backend mock data with organization-scoped runtime state.
 - switch between customer organizations;
 - show account-specific metrics, quote follow-ups, saved plans, favorites, API
   keys, and audit events;
+- open `/app/quotes/:quoteId` for one authenticated quote timeline,
+  conversation, organization context, and related saved plans;
 - let a user favorite saved plans without mutating public catalog data;
 - keep API key scopes and audit history visible as account-level controls.
 
 ## Next UI Decisions
 
-- Quote detail conversation pattern.
 - Saved-plan edit and share affordances.
 - API key creation, scope review, and audit history.
+- Quote conversation actions: reply, approve, request change, and attachment
+  preview.
