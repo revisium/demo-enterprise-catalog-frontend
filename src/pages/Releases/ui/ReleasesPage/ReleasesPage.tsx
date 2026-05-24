@@ -5,13 +5,13 @@ import { Link } from 'react-router';
 
 import {
   EmptyState,
-  FieldHint,
   FilterButton,
   FilterCard,
   PageIntroGrid,
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from 'src/shared/ui';
 import { ReleasesPageViewModel } from '../../model/ReleasesPageViewModel';
 
@@ -26,21 +26,17 @@ export const ReleasesPage = observer(function ReleasesPage() {
           eyebrow="Product updates"
           metrics={vm.summaryMetrics}
           metricsLabel="Update summary"
-          summary="Follow the changes that affect server selection, quote timing, regional availability, billing terms, and customer documentation."
-          title="Track catalog, region, docs, and price changes."
+          summary="Catalog, region, pricing, and documentation changes in one feed."
+          title="Product updates."
         />
 
         <Grid
-          gap="3"
-          my={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
         >
           <FilterCard>
             <SectionEyebrow>Feed filters</SectionEyebrow>
-            <FieldHint>
-              Filter updates by change area, team audience, and priority before forwarding them to a
-              quote or planning thread.
-            </FieldHint>
             <Flex gap="2" wrap="wrap">
               {vm.typeOptions.map((type) => (
                 <FilterButton
@@ -117,7 +113,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
         </Grid>
 
         <Grid gap="4" templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 320px' }}>
-          <Stack gap="3">
+          <Stack gap="4">
             <Flex align="end" gap="3" justify="space-between" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Update feed</SectionEyebrow>
@@ -152,7 +148,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 borderWidth="1px"
                 gap="4"
                 key={update.id}
-                p="4"
+                p={{ base: '4', md: '5' }}
                 templateColumns={{ base: '1fr', lg: '136px minmax(0, 1fr) 230px' }}
               >
                 <Stack gap="2">
@@ -231,7 +227,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
             ))}
           </Stack>
 
-          <Stack gap="3">
+          <StickyPanel as="aside">
             <FilterCard>
               <SectionEyebrow>Saved updates</SectionEyebrow>
               {vm.savedUpdates.map((update) => (
@@ -285,7 +281,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 ))}
               </Grid>
             </FilterCard>
-          </Stack>
+          </StickyPanel>
         </Grid>
       </Container>
     </Box>

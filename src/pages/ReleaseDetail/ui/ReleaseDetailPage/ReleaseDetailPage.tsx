@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
-import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
+import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow, StickyPanel } from 'src/shared/ui';
 import { ReleaseDetailPageViewModel } from '../../model/ReleaseDetailPageViewModel';
 
 export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
@@ -101,7 +101,7 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
               </FilterCard>
             </Stack>
 
-            <Stack as="aside" gap="3">
+            <StickyPanel as="aside">
               <FilterCard>
                 <SectionEyebrow>Update actions</SectionEyebrow>
                 <FieldHint>
@@ -152,7 +152,7 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
                   </Stack>
                 ))}
               </FilterCard>
-            </Stack>
+            </StickyPanel>
           </Grid>
         </Stack>
       </Container>

@@ -13,6 +13,7 @@ import {
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from 'src/shared/ui';
 import { PricingDetailPageViewModel } from '../../model/PricingDetailPageViewModel';
 
@@ -195,7 +196,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
               ))}
             </Stack>
 
-            <Stack as="aside" gap="3">
+            <StickyPanel as="aside">
               <FilterCard>
                 <SectionEyebrow>Related books</SectionEyebrow>
                 {vm.relatedBooks.map((book) => (
@@ -239,7 +240,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                   </Button>
                 </Flex>
               </FilterCard>
-            </Stack>
+            </StickyPanel>
           </Grid>
         </Stack>
       </Container>

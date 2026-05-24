@@ -14,7 +14,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 
-import { QuerySummary } from 'src/shared/ui';
+import { QuerySummary, StickyPanel } from 'src/shared/ui';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 
 export const HomePage = observer(function HomePage() {
@@ -28,25 +28,26 @@ export const HomePage = observer(function HomePage() {
           gap={{ base: '5', md: '6' }}
           templateColumns={{ base: '1fr', lg: '344px minmax(0, 1fr)' }}
         >
-          <Stack
+          <StickyPanel
             bg="panelGlassBg"
             borderColor="surface.200"
             borderRadius="8px"
             borderWidth="1px"
             boxShadow="0 24px 70px rgba(16, 24, 40, 0.08)"
             gap="5"
+            position={{ lg: 'sticky' }}
             p={{ base: '4', md: '5' }}
+            top={{ lg: '84px' }}
           >
             <Stack gap="2">
               <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
                 Command center
               </Text>
               <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} lineHeight="0.98">
-                Cloud server catalog
+                Find a server.
               </Heading>
               <Text color="ink.500" fontSize="sm">
-                Select a use case, location, and contract. The workspace keeps the recommended
-                server, price, stock, and next actions in one place.
+                Pick a need, data center, and contract.
               </Text>
             </Stack>
 
@@ -126,7 +127,7 @@ export const HomePage = observer(function HomePage() {
                 ))}
               </SimpleGrid>
             </Stack>
-          </Stack>
+          </StickyPanel>
 
           <Stack gap={{ base: '5', md: '6' }}>
             <Grid

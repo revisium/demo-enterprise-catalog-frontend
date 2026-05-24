@@ -75,6 +75,10 @@ Detailed source-layer proof should stay out of the public first slice.
   source-layer widgets, project names, table names, row IDs, or implementation
   proof panels in customer-facing layout.
 - Home should stay a working selector, not a marketing landing page.
+- Page headers should be short and prominent. Keep body copy compact because it
+  will later move through CMS localization for UN languages.
+- Dense tools should prefer sticky control rails and independently scrollable
+  side panels over repeated full-width filter blocks.
 - Product detail should show nested technical specs, regions, add-ons, SLA, and
   pricing availability.
 - Pricing pages should show price books, contract terms, currencies, regions,

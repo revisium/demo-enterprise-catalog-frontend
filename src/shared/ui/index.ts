@@ -12,4 +12,5 @@ export {
   QuerySummary,
   SectionEyebrow,
   SelectField,
+  StickyPanel,
 } from './QueryControls/QueryControls';

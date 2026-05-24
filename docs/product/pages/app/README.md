@@ -36,6 +36,8 @@ that sets backend-owned cookies.
 - switch between customer organizations;
 - show signed-in user context, organization metrics, quote follow-ups, saved
   plans, favorites, preferences, and audit events;
+- keep the console simple: it is a workspace for saved plans, quote follow-up,
+  favorites, preferences, and recent activity, not a full admin application;
 - open `/app/quotes/:quoteId` for one authenticated quote timeline,
   conversation, organization context, and related saved plans;
 - open `/app/plans/:planId` for one saved server package, related quotes, and
@@ -43,6 +45,15 @@ that sets backend-owned cookies.
 - let a user favorite saved plans, save defaults, save updates, and add quote
   notes without mutating public catalog data;
 - keep audit history visible as account-level context.
+
+## Layout Contract
+
+- Use the visible label `Console` for the customer workspace.
+- Prefer short page copy and prominent page titles.
+- Keep navigation panels sticky on desktop when they control a dense list or
+  workspace section.
+- Runtime actions should feel like normal customer actions. Do not expose
+  Revisium project/table mechanics in the console layout.
 
 ## Next UI Decisions
 
