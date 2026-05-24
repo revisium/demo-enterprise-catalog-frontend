@@ -103,11 +103,7 @@ export class LocationsPageViewModel {
           effectiveMonthlyPrice: plan.pricing.monthlyUsd,
           planHref: `/catalog/${plan.id}`,
           plan,
-          priceEfficiencyScore: Math.round(
-            ((plan.hardware.cpuCores + plan.hardware.ramGb / 4 + plan.hardware.storageTb) /
-              plan.pricing.monthlyUsd) *
-              100,
-          ),
+          priceEfficiencyScore: this.calculatePriceEfficiencyScore(plan),
           setupHours: availability.setupHours,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
@@ -126,9 +122,12 @@ export class LocationsPageViewModel {
         left.localeCompare(right),
       );
       const totalStock = plans.reduce((total, row) => total + row.stock, 0);
-      const familyCoveragePercent = Math.round((families.length / this.families.length) * 100);
+      const familyCount = this.families.length;
+      const familyCoveragePercent =
+        familyCount > 0 ? Math.round((families.length / familyCount) * 100) : 0;
       const enterpriseRows = plans.filter((row) => row.plan.supportTier === 'Enterprise').length;
-      const enterpriseCoveragePercent = Math.round((enterpriseRows / plans.length) * 100);
+      const enterpriseCoveragePercent =
+        plans.length > 0 ? Math.round((enterpriseRows / plans.length) * 100) : 0;
       const readinessScore = this.calculateReadinessScore({
         enterpriseCoveragePercent,
         familyCoveragePercent,
@@ -342,6 +341,18 @@ export class LocationsPageViewModel {
 
     return Math.round(
       (stockScore * 0.35 + setupScore * 0.25 + familyScore * 0.25 + supportScore * 0.15) * 100,
+    );
+  }
+
+  private calculatePriceEfficiencyScore(plan: CatalogProduct) {
+    if (plan.pricing.monthlyUsd <= 0) {
+      return 0;
+    }
+
+    return Math.round(
+      ((plan.hardware.cpuCores + plan.hardware.ramGb / 4 + plan.hardware.storageTb) /
+        plan.pricing.monthlyUsd) *
+        100,
     );
   }
 
