@@ -1,268 +1,356 @@
-import { Badge, Button, Flex, Grid, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
-import { FilterButton, PrototypePage, SectionEyebrow } from 'src/shared/ui';
+import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
 
 export const CustomerPortalPage = observer(function CustomerPortalPage() {
   const [vm] = useState(() => new CustomerPortalPageViewModel());
-  const primaryAction = vm.primaryAction;
-  const displayedPlans = vm.selectedSection === 'favorites' ? vm.favoritePlans : vm.savedPlans;
+  const activeOrganization = vm.activeOrganization;
+  const primaryQuote = vm.primaryQuote;
 
   return (
-    <PrototypePage
-      asideSummary={primaryAction?.summary ?? ''}
-      asideTitle={primaryAction?.title}
-      eyebrow="Customer portal"
-      summary="Authorized users will manage organization-specific work around stable server catalog, region, document, and price data."
-      title="Manage saved plans, quotes, favorites, and API access."
-    >
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap="3" mt={{ base: '5', md: '6' }}>
-        {vm.metrics.map((metric) => (
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="1"
-            key={metric.label}
-            p="4"
-          >
-            <Text color="ink.900" fontSize="3xl" fontWeight="800" lineHeight="1">
-              {metric.value}
-            </Text>
-            <Text color="ink.800" fontWeight="760">
-              {metric.label}
-            </Text>
-            <Text color="ink.500" fontSize="sm">
-              {metric.summary}
-            </Text>
-          </Stack>
-        ))}
-      </SimpleGrid>
+    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+      <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <PageIntroGrid
+          eyebrow="Customer portal"
+          metrics={vm.metrics}
+          metricsLabel="Workspace summary"
+          summary="Manage organization-specific quotes, saved server plans, favorites, API access, and audit history."
+          title="Operate customer server workspaces."
+        />
 
-      <Grid gap="4" mt={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
-        <Stack
-          bg="white"
+        <Grid
+          gap="3"
+          my={{ base: '5', md: '6' }}
+          templateColumns={{ base: '1fr', xl: '1fr 1fr 1fr' }}
+        >
+          <FilterCard>
+            <SectionEyebrow>Organization</SectionEyebrow>
+            <Heading as="h2" color="ink.900" fontSize="2xl">
+              {activeOrganization.name}
+            </Heading>
+            <FieldHint>
+              Switch between customer organizations while keeping quotes, favorites, and API keys
+              scoped to the selected account.
+            </FieldHint>
+            <Flex gap="2" wrap="wrap">
+              {vm.organizationOptions.map((organization) => (
+                <FilterButton
+                  key={organization.id}
+                  onClick={() => vm.selectOrganization(organization.id)}
+                  selected={vm.selectedOrganizationId === organization.id}
+                  tone="neutral"
+                >
+                  {organization.label}
+                </FilterButton>
+              ))}
+            </Flex>
+            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <AccountFact label="Support" value={activeOrganization.supportPlan} />
+              <AccountFact label="Home region" value={activeOrganization.homeRegion} />
+              <AccountFact label="Members" value={String(activeOrganization.memberCount)} />
+              <AccountFact label="Billing" value={activeOrganization.billingContact} />
+            </Grid>
+          </FilterCard>
+
+          <FilterCard bg="surface.900" color="white">
+            <Text
+              color="darkPanelMutedText"
+              fontSize="xs"
+              fontWeight="760"
+              textTransform="uppercase"
+            >
+              Next quote
+            </Text>
+            {primaryQuote ? (
+              <Stack gap="3">
+                <Heading as="h2" fontSize="2xl">
+                  {primaryQuote.plan} in {primaryQuote.region}
+                </Heading>
+                <Text color="darkPanelText" fontSize="sm">
+                  {primaryQuote.summary}
+                </Text>
+                <Flex gap="2" wrap="wrap">
+                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                    {primaryQuote.status}
+                  </Badge>
+                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                    {primaryQuote.commentCount} comments
+                  </Badge>
+                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                    ${primaryQuote.monthlyUsd}/mo
+                  </Badge>
+                </Flex>
+              </Stack>
+            ) : (
+              <Text color="darkPanelText" fontSize="sm">
+                No open quote for this organization.
+              </Text>
+            )}
+          </FilterCard>
+
+          <FilterCard>
+            <SectionEyebrow>Recent activity</SectionEyebrow>
+            <Stack gap="2">
+              {vm.auditEvents.map((event) => (
+                <Stack
+                  borderColor="surface.200"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  gap="1"
+                  key={event.id}
+                  p="3"
+                >
+                  <Flex gap="2" justify="space-between" wrap="wrap">
+                    <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
+                      {event.scope}
+                    </Badge>
+                    <Text color="ink.500" fontSize="xs">
+                      {event.when}
+                    </Text>
+                  </Flex>
+                  <Text color="ink.900" fontSize="sm" fontWeight="760">
+                    {event.event}
+                  </Text>
+                  <Text color="ink.500" fontSize="xs">
+                    {event.actor}
+                  </Text>
+                </Stack>
+              ))}
+            </Stack>
+          </FilterCard>
+        </Grid>
+
+        <Grid gap="4" templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
+          <FilterCard alignSelf="start" position={{ lg: 'sticky' }} top="76px">
+            <Stack gap="1">
+              <SectionEyebrow>Workspace</SectionEyebrow>
+              <Heading as="h2" color="ink.900" fontSize="xl">
+                {vm.selectedSectionLabel}
+              </Heading>
+            </Stack>
+            <Flex gap="2" wrap="wrap">
+              {vm.sectionOptions.map((section) => (
+                <FilterButton
+                  key={section.id}
+                  onClick={() => vm.selectSection(section.id)}
+                  selected={vm.selectedSection === section.id}
+                  tone="neutral"
+                >
+                  {section.label}
+                </FilterButton>
+              ))}
+            </Flex>
+            <FieldHint>
+              These are private account actions: they reference catalog and price data but do not
+              edit the public catalog.
+            </FieldHint>
+          </FilterCard>
+
+          {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
+            <PlansPanel vm={vm} />
+          ) : null}
+
+          {vm.selectedSection === 'quotes' ? <QuotesPanel vm={vm} /> : null}
+          {vm.selectedSection === 'api' ? <ApiKeysPanel vm={vm} /> : null}
+        </Grid>
+      </Container>
+    </Box>
+  );
+});
+
+function AccountFact({ label, value }: { readonly label: string; readonly value: string }) {
+  return (
+    <Box bg="panelGlassBg" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
+      <Text color="ink.500" fontSize="xs">
+        {label}
+      </Text>
+      <Text color="ink.900" fontSize="sm" fontWeight="760">
+        {value}
+      </Text>
+    </Box>
+  );
+}
+
+function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+  const hasNoVisibleItems =
+    vm.selectedSection === 'favorites'
+      ? vm.visiblePlans.length === 0 && vm.favoriteItems.length === 0
+      : vm.visiblePlans.length === 0;
+  const emptyMessage =
+    vm.selectedSection === 'favorites' ? 'No favorites yet.' : 'No saved plans yet.';
+
+  return (
+    <FilterCard>
+      <PanelHeader
+        summary="Save reusable server configurations, mark important plans, and carry a selected plan into the quote flow later."
+        title={vm.selectedSection === 'favorites' ? 'Favorite saved plans' : 'Saved server plans'}
+      />
+      {vm.visiblePlans.map((plan) => (
+        <Grid
+          alignItems="center"
           borderColor="surface.200"
           borderRadius="8px"
           borderWidth="1px"
           gap="3"
-          p="4"
+          key={plan.id}
+          p="3"
+          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 130px 112px' }}
         >
-          <Heading as="h2" color="ink.900" fontSize="2xl">
-            Active work
-          </Heading>
-          {vm.actions.map((action) => (
+          <Stack gap="1">
+            <Text color="ink.900" fontWeight="780">
+              {plan.name}
+            </Text>
+            <Text color="ink.500" fontSize="sm">
+              {plan.plan} · {plan.region} · ${plan.monthlyUsd}/mo
+            </Text>
+          </Stack>
+          <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
+            {plan.status}
+          </Badge>
+          <Button
+            aria-pressed={vm.isFavorited(plan.id)}
+            borderRadius="8px"
+            onClick={() => vm.toggleFavorite(plan.id)}
+            size="sm"
+            variant={vm.isFavorited(plan.id) ? 'solid' : 'outline'}
+          >
+            Favorite
+          </Button>
+        </Grid>
+      ))}
+      {vm.selectedSection === 'favorites'
+        ? vm.favoriteItems.map((favorite) => (
             <Stack
               borderColor="surface.200"
               borderRadius="8px"
               borderWidth="1px"
-              gap="2"
-              key={action.title}
+              gap="1"
+              key={favorite.id}
               p="3"
             >
-              <Flex align="center" gap="2" justify="space-between" wrap="wrap">
-                <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
-                  {action.status}
-                </Badge>
-                <Text color="ink.500" fontSize="sm">
-                  {action.due}
-                </Text>
-              </Flex>
+              <Badge alignSelf="start" bg="panelGlassBg" borderRadius="8px" color="ink.700">
+                {favorite.type}
+              </Badge>
               <Text color="ink.900" fontWeight="780">
-                {action.title}
+                {favorite.title}
               </Text>
-              <Text color="ink.600" fontSize="sm">
-                {action.summary}
+              <Text color="ink.500" fontSize="sm">
+                {favorite.summary}
               </Text>
             </Stack>
-          ))}
-        </Stack>
+          ))
+        : null}
+      {hasNoVisibleItems ? (
+        <Text color="ink.500" fontSize="sm">
+          {emptyMessage}
+        </Text>
+      ) : null}
+    </FilterCard>
+  );
+}
 
-        <Stack
-          bg="surface.900"
-          borderRadius="8px"
-          boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
-          color="white"
-          gap="4"
-          p="4"
-        >
-          <Heading as="h2" fontSize="2xl">
-            Backend-owned interactions
-          </Heading>
-          {[
-            'Quote lifecycle and comments',
-            'Per-user favorites and saved plans',
-            'Organization members and billing profile',
-            'Partner API keys and audit trail',
-          ].map((item) => (
-            <Text
-              borderBottomColor="rgba(255,255,255,0.12)"
-              borderBottomWidth="1px"
-              color="darkPanelText"
-              key={item}
-              pb="3"
-            >
-              {item}
-            </Text>
-          ))}
-        </Stack>
-      </Grid>
-
-      <Grid gap="4" mt={{ base: '5', md: '6' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
-        <Stack
-          bg="white"
+function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+  return (
+    <FilterCard>
+      <PanelHeader
+        summary="Track customer and sales replies, quote status, monthly totals, and follow-up timing."
+        title="Quote lifecycle"
+      />
+      {vm.quotes.map((quote) => (
+        <Grid
           borderColor="surface.200"
           borderRadius="8px"
           borderWidth="1px"
-          gap="4"
-          p="4"
+          gap="3"
+          key={quote.id}
+          p="3"
+          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 150px' }}
         >
           <Stack gap="1">
-            <SectionEyebrow>Workspace</SectionEyebrow>
-            <Heading as="h2" color="ink.900" fontSize="xl">
-              {vm.selectedSectionLabel}
-            </Heading>
-          </Stack>
-          <Flex gap="2" wrap="wrap">
-            {vm.sectionOptions.map((section) => (
-              <FilterButton
-                key={section.id}
-                onClick={() => vm.selectSection(section.id)}
-                selected={vm.selectedSection === section.id}
-                tone="neutral"
-              >
-                {section.label}
-              </FilterButton>
-            ))}
-          </Flex>
-          <Text color="ink.500" fontSize="sm">
-            Organization data, user preferences, and API access are private workspace actions.
-          </Text>
-        </Stack>
-
-        {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="3"
-            p="4"
-          >
-            {displayedPlans.map((plan) => (
-              <Grid
-                alignItems="center"
-                borderColor="surface.200"
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="3"
-                key={plan.id}
-                p="3"
-                templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 130px 112px' }}
-              >
-                <Stack gap="1">
-                  <Text color="ink.900" fontWeight="780">
-                    {plan.name}
-                  </Text>
-                  <Text color="ink.500" fontSize="sm">
-                    {plan.plan} · {plan.region} · ${plan.monthlyUsd}/mo
-                  </Text>
-                </Stack>
-                <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
-                  {plan.status}
-                </Badge>
-                <Button
-                  aria-pressed={vm.isFavorited(plan.id)}
-                  borderRadius="8px"
-                  onClick={() => vm.toggleFavorite(plan.id)}
-                  size="sm"
-                  variant={vm.isFavorited(plan.id) ? 'solid' : 'outline'}
-                >
-                  Favorite
-                </Button>
-              </Grid>
-            ))}
-            {displayedPlans.length === 0 ? (
-              <Text color="ink.500" fontSize="sm">
-                No favorite plans yet.
+            <Flex align="center" gap="2" justify="space-between" wrap="wrap">
+              <Text color="ink.900" fontWeight="780">
+                {quote.plan} · {quote.region}
               </Text>
-            ) : null}
+              <Badge bg="surface.100" borderRadius="8px" color="ink.700">
+                {quote.status}
+              </Badge>
+            </Flex>
+            <Text color="ink.600" fontSize="sm">
+              {quote.summary}
+            </Text>
+            <Text color="ink.500" fontSize="xs">
+              {quote.commentCount} comments · updated {quote.updatedAt}
+            </Text>
           </Stack>
-        ) : null}
-
-        {vm.selectedSection === 'quotes' ? (
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="3"
-            p="4"
-          >
-            {vm.actions.map((action) => (
-              <Stack
-                borderColor="surface.200"
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="2"
-                key={action.title}
-                p="3"
-              >
-                <Flex align="center" gap="2" justify="space-between" wrap="wrap">
-                  <Text color="ink.900" fontWeight="780">
-                    {action.title}
-                  </Text>
-                  <Badge bg="surface.100" borderRadius="8px" color="ink.700">
-                    {action.status}
-                  </Badge>
-                </Flex>
-                <Text color="ink.600" fontSize="sm">
-                  {action.summary}
-                </Text>
-              </Stack>
-            ))}
+          <Stack align={{ base: 'start', md: 'end' }} gap="1">
+            <Text color="ink.900" fontWeight="780">
+              ${quote.monthlyUsd}/mo
+            </Text>
+            <Text color="ink.500" fontSize="xs">
+              due {quote.due}
+            </Text>
           </Stack>
-        ) : null}
-
-        {vm.selectedSection === 'api' ? (
-          <Stack
-            bg="white"
-            borderColor="surface.200"
-            borderRadius="8px"
-            borderWidth="1px"
-            gap="3"
-            p="4"
-          >
-            {vm.apiKeys.map((apiKey) => (
-              <Grid
-                alignItems="center"
-                borderColor="surface.200"
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="3"
-                key={apiKey.name}
-                p="3"
-                templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 120px' }}
-              >
-                <Stack gap="1">
-                  <Text color="ink.900" fontWeight="780">
-                    {apiKey.name}
-                  </Text>
-                  <Text color="ink.500" fontSize="sm">
-                    {apiKey.scope} · last used {apiKey.lastUsed}
-                  </Text>
-                </Stack>
-                <Badge alignSelf="start" bg="successBg" borderRadius="8px" color="successText">
-                  {apiKey.status}
-                </Badge>
-              </Grid>
-            ))}
-          </Stack>
-        ) : null}
-      </Grid>
-    </PrototypePage>
+        </Grid>
+      ))}
+    </FilterCard>
   );
-});
+}
+
+function ApiKeysPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+  return (
+    <FilterCard>
+      <PanelHeader
+        summary="Review scoped API access for partner quoting, finance exports, and availability checks."
+        title="Partner API keys"
+      />
+      {vm.apiKeys.map((apiKey) => (
+        <Grid
+          alignItems="center"
+          borderColor="surface.200"
+          borderRadius="8px"
+          borderWidth="1px"
+          gap="3"
+          key={apiKey.id}
+          p="3"
+          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 120px' }}
+        >
+          <Stack gap="1">
+            <Text color="ink.900" fontWeight="780">
+              {apiKey.name}
+            </Text>
+            <Text color="ink.500" fontSize="sm">
+              {apiKey.scopes.join(', ')} · last used {apiKey.lastUsed}
+            </Text>
+            <Text color="ink.500" fontSize="xs">
+              created by {apiKey.createdBy}
+            </Text>
+          </Stack>
+          <Badge
+            alignSelf="start"
+            bg={apiKey.status === 'Active' ? 'successBg' : 'amberBg'}
+            borderRadius="8px"
+            color={apiKey.status === 'Active' ? 'successText' : 'amberText'}
+          >
+            {apiKey.status}
+          </Badge>
+        </Grid>
+      ))}
+    </FilterCard>
+  );
+}
+
+function PanelHeader({ summary, title }: { readonly summary: string; readonly title: string }) {
+  return (
+    <Stack gap="1">
+      <Heading as="h2" color="ink.900" fontSize="2xl">
+        {title}
+      </Heading>
+      <Text color="ink.500" fontSize="sm">
+        {summary}
+      </Text>
+    </Stack>
+  );
+}

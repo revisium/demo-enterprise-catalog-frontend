@@ -11,7 +11,7 @@
 | `/resources`          | Prototype  | Docs, SLA, networking, billing, API docs               | typed mock   | docs index pattern               |
 | `/releases`           | Prototype  | Stock, docs, and price-book updates                    | typed mock   | update timeline pattern          |
 | `/quote`              | Scaffolded | Runtime quote request form                             | mock form    | backend mutation contract        |
-| `/app`                | Prototype  | Authorized customer portal dashboard                   | backend mock | auth shell and dashboard widgets |
+| `/app`                | Prototype  | Organization quotes, saved plans, favorites, API keys  | backend mock | quote detail conversation        |
 
 ## Page Status Rules
 
