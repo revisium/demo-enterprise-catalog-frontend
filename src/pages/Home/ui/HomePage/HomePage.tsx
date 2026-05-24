@@ -335,7 +335,7 @@ export const HomePage = observer(function HomePage() {
                       borderRadius="8px"
                       borderWidth="1px"
                       gap="3"
-                      key={step.label}
+                      key={step.id}
                       p="3"
                       templateColumns="auto 1fr"
                     >

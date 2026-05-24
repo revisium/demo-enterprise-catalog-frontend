@@ -77,6 +77,6 @@ export interface PortalAuditEvent {
   readonly id: string;
   readonly organizationId: string;
   readonly userId: string;
-  readonly scope: string;
+  readonly scope: 'Quote' | 'Saved plan';
   readonly when: string;
 }

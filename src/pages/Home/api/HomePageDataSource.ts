@@ -46,6 +46,7 @@ export interface ServerPlan {
 }
 
 export interface JourneyStep {
+  readonly id: string;
   readonly label: string;
   readonly summary: string;
 }
@@ -177,18 +178,22 @@ const includedItems = [
 
 const journeySteps: readonly JourneyStep[] = [
   {
+    id: 'pick-capacity',
     label: 'Pick capacity',
     summary: 'Choose a need, data center, and contract term.',
   },
   {
+    id: 'review-plan',
     label: 'Review the plan',
     summary: 'Open specs, documents, stock, and similar plans.',
   },
   {
+    id: 'prepare-quote',
     label: 'Prepare quote',
     summary: 'Send the selected plan into the public quote request.',
   },
   {
+    id: 'continue-console',
     label: 'Continue in console',
     summary: 'Track saved plans, quote comments, favorites, and preferences.',
   },

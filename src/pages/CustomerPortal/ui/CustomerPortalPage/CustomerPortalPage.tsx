@@ -141,6 +141,19 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           <FilterCard>
             <SectionEyebrow>Reference checks</SectionEyebrow>
             <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              {vm.validationRows.length === 0 ? (
+                <Box
+                  bg="panelGlassBg"
+                  borderColor="surface.200"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  p="3"
+                >
+                  <Text color="ink.500" fontSize="sm">
+                    No reference checks for this user and organization.
+                  </Text>
+                </Box>
+              ) : null}
               {vm.validationRows.map((row) => (
                 <Box
                   bg="panelGlassBg"
