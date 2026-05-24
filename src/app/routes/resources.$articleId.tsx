@@ -1,3 +1,1 @@
-import { ResourceDetailPage } from 'src/pages/ResourceDetail';
-
-export default ResourceDetailPage;
+export { ResourceDetailPage as default } from 'src/pages/ResourceDetail';

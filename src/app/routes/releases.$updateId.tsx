@@ -1,3 +1,1 @@
-import { ReleaseDetailPage } from 'src/pages/ReleaseDetail';
-
-export default ReleaseDetailPage;
+export { ReleaseDetailPage as default } from 'src/pages/ReleaseDetail';

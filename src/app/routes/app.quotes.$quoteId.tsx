@@ -1,3 +1,1 @@
-import { PortalQuoteDetailPage } from 'src/pages/PortalQuoteDetail';
-
-export default PortalQuoteDetailPage;
+export { PortalQuoteDetailPage as default } from 'src/pages/PortalQuoteDetail';
