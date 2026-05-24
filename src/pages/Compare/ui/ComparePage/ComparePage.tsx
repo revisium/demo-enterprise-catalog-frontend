@@ -1,4 +1,4 @@
-import { Badge, Box, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router';
@@ -10,6 +10,7 @@ import {
   FilterButton,
   FilterCard,
   PageIntroGrid,
+  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from 'src/shared/ui';
@@ -46,13 +47,48 @@ export const ComparePage = observer(function ComparePage() {
               options={vm.productOptions}
               selectedIds={vm.selectedProductIds}
             />
-            <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr auto auto' }}>
+            <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
               <SelectField
                 label="Region"
                 onChange={(value) => vm.setRegion(value)}
                 options={vm.regionOptions}
                 value={vm.selectedRegionId}
               />
+              <SelectField
+                label="Scenario"
+                onChange={(value) => vm.setScenario(value)}
+                options={vm.scenarioOptions}
+                value={vm.selectedScenarioId}
+              />
+              <SelectField
+                label="Support"
+                onChange={(value) => vm.setSupportTier(value)}
+                options={vm.supportTierOptions}
+                value={vm.selectedSupportTier}
+              />
+            </Grid>
+            <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr auto auto' }}>
+              <Stack gap="1.5">
+                <Text color="ink.700" fontWeight="650">
+                  Billing term
+                </Text>
+                <Flex gap="2" wrap="wrap">
+                  <FilterButton
+                    onClick={() => vm.setBillingTerm('monthly')}
+                    selected={vm.billingTermId === 'monthly'}
+                    tone="neutral"
+                  >
+                    Monthly
+                  </FilterButton>
+                  <FilterButton
+                    onClick={() => vm.setBillingTerm('yearly')}
+                    selected={vm.billingTermId === 'yearly'}
+                    tone="neutral"
+                  >
+                    Yearly
+                  </FilterButton>
+                </Flex>
+              </Stack>
               <Stack gap="1.5">
                 <Text color="ink.700" fontWeight="650">
                   Availability
@@ -74,6 +110,13 @@ export const ComparePage = observer(function ComparePage() {
                 </FilterButton>
               </Stack>
             </Grid>
+            <ChipGroup
+              label="Required add-ons"
+              onToggle={(id) => vm.toggleAddon(id)}
+              options={vm.addonOptions}
+              selectedIds={vm.requiredAddonIds}
+            />
+            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
 
           <FilterCard>
@@ -103,6 +146,9 @@ export const ComparePage = observer(function ComparePage() {
                   <Badge bg="successBg" borderRadius="8px" color="successText">
                     {recommendation.supportTier}
                   </Badge>
+                  <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
+                    score {vm.bestFitRows[0]?.fitScore ?? 0}
+                  </Badge>
                 </Flex>
               ) : null}
             </Stack>
@@ -125,6 +171,25 @@ export const ComparePage = observer(function ComparePage() {
             gap="0"
             overflow="hidden"
           >
+            <Flex
+              align="center"
+              borderBottomColor="surface.200"
+              borderBottomWidth="1px"
+              gap="3"
+              justify="space-between"
+              p="4"
+              wrap="wrap"
+            >
+              <Stack gap="1">
+                <SectionEyebrow>Comparison matrix</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  Plan differences
+                </Heading>
+              </Stack>
+              <Text color="ink.500" fontSize="sm">
+                Ranked by {vm.selectedScenarioLabel.toLowerCase()}
+              </Text>
+            </Flex>
             <Grid
               bg="surface.50"
               borderBottomColor="surface.200"
@@ -149,9 +214,14 @@ export const ComparePage = observer(function ComparePage() {
                   <Text color="ink.900" fontWeight="780">
                     {product.name}
                   </Text>
-                  <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
-                    {product.family}
-                  </Badge>
+                  <Flex gap="2" wrap="wrap">
+                    <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
+                      {product.family}
+                    </Badge>
+                    <Box asChild color="brand.500" fontSize="sm" fontWeight="760">
+                      <RouterLink to={`/catalog/${product.id}`}>Open plan</RouterLink>
+                    </Box>
+                  </Flex>
                 </Stack>
               ))}
             </Grid>
@@ -209,21 +279,24 @@ export const ComparePage = observer(function ComparePage() {
                 gap="3"
                 key={row.id}
                 p="3"
-                templateColumns={{ base: '1fr', md: '1fr 140px 120px' }}
+                templateColumns={{ base: '1fr', md: '1fr 120px 140px 120px' }}
               >
                 <Stack gap="0">
-                  <Text color="ink.900" fontWeight="760">
-                    {row.label}
-                  </Text>
+                  <Box asChild color="ink.900" fontWeight="760">
+                    <RouterLink to={row.detailHref}>{row.label}</RouterLink>
+                  </Box>
                   <Text color="ink.500" fontSize="sm">
-                    Best region: {row.region}
+                    Best region: {row.bestRegionLabel}
                   </Text>
                 </Stack>
+                <Text color="ink.900" fontSize="sm" fontWeight="760">
+                  score {row.fitScore}
+                </Text>
                 <Text color="ink.700" fontSize="sm" fontWeight="650">
-                  {row.stock}
+                  {row.stockLabel}
                 </Text>
                 <Text color="ink.500" fontSize="sm">
-                  {row.setup}
+                  {row.setupLabel} · {row.monthlyPriceLabel}
                 </Text>
               </Grid>
             ))}
