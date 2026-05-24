@@ -4,6 +4,7 @@ import {
   portalOrganizations,
   portalQuotes,
   portalSavedPlans,
+  type PortalDemoSession,
   type PortalQuote,
 } from 'src/entities/portal';
 
@@ -123,27 +124,47 @@ const timelineByStatus: Record<PortalQuote['status'], readonly TimelineItem[]> =
 export class PortalQuoteDetailPageViewModel {
   quoteId: string | undefined;
 
-  constructor(quoteId: string | undefined) {
+  constructor(
+    quoteId: string | undefined,
+    readonly session: PortalDemoSession,
+  ) {
     this.quoteId = quoteId;
     makeAutoObservable(this);
   }
 
+  get accessRows() {
+    return [
+      { label: 'Signed-in user', value: this.session.user.name },
+      { label: 'Allowed organizations', value: this.session.user.organizationIds.join(', ') },
+      { label: 'Requested quote', value: this.quoteId ?? 'none' },
+    ];
+  }
+
+  get canViewQuote() {
+    const quote = this.quote;
+
+    return Boolean(
+      quote?.requesterUserId === this.session.user.id &&
+      this.session.user.organizationIds.includes(quote.organizationId),
+    );
+  }
+
   get comments() {
-    return commentsByQuoteId[this.quote.id] ?? [];
+    return commentsByQuoteId[this.activeQuote.id] ?? [];
   }
 
   get metrics() {
     return [
-      { label: 'Status', value: this.quote.status },
-      { label: 'Monthly', value: `$${this.quote.monthlyUsd}` },
-      { label: 'Due', value: this.quote.due },
-      { label: 'Comments', value: String(this.quote.commentCount) },
+      { label: 'Status', value: this.activeQuote.status },
+      { label: 'Monthly', value: `$${this.activeQuote.monthlyUsd}` },
+      { label: 'Due', value: this.activeQuote.due },
+      { label: 'Comments', value: String(this.activeQuote.commentCount) },
     ];
   }
 
   get organization() {
     const organization =
-      portalOrganizations.find((item) => item.id === this.quote.organizationId) ??
+      portalOrganizations.find((item) => item.id === this.activeQuote.organizationId) ??
       portalOrganizations[0];
 
     if (!organization) {
@@ -154,28 +175,33 @@ export class PortalQuoteDetailPageViewModel {
   }
 
   get quote() {
-    const quote = portalQuotes.find((item) => item.id === this.quoteId) ?? portalQuotes[0];
-
-    if (!quote) {
-      throw new Error('Customer portal mock quotes are empty');
-    }
-
-    return quote;
+    return this.quoteId === undefined
+      ? portalQuotes.find((item) => item.requesterUserId === this.session.user.id)
+      : portalQuotes.find((item) => item.id === this.quoteId);
   }
 
   get relatedPlans() {
     return portalSavedPlans.filter(
       (plan) =>
-        plan.organizationId === this.quote.organizationId &&
-        (plan.plan === this.quote.plan || plan.region === this.quote.region),
+        plan.organizationId === this.activeQuote.organizationId &&
+        plan.ownerUserId === this.session.user.id &&
+        (plan.plan === this.activeQuote.plan || plan.region === this.activeQuote.region),
     );
   }
 
   get timeline() {
-    return timelineByStatus[this.quote.status];
+    return timelineByStatus[this.activeQuote.status];
   }
 
   setQuoteId(quoteId: string | undefined) {
     this.quoteId = quoteId;
+  }
+
+  private get activeQuote(): PortalQuote {
+    if (!this.quote || !this.canViewQuote) {
+      throw new Error(`Quote unavailable for current user: ${this.quoteId ?? 'none'}`);
+    }
+
+    return this.quote;
   }
 }

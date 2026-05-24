@@ -16,6 +16,10 @@ export default [
   route('quote', 'app/routes/quote.tsx'),
   route('auth/demo/refresh', 'app/routes/auth.demo.refresh.tsx'),
   route('app', 'app/routes/app.tsx'),
+  route('app/actions/content-feedback', 'app/routes/app.actions.content-feedback.tsx'),
+  route('app/actions/favorites', 'app/routes/app.actions.favorites.tsx'),
+  route('app/actions/preferences', 'app/routes/app.actions.preferences.tsx'),
+  route('app/actions/quote-comments', 'app/routes/app.actions.quote-comments.tsx'),
   route('app/plans/:planId', 'app/routes/app.plans.$planId.tsx'),
   route('app/quotes/:quoteId', 'app/routes/app.quotes.$quoteId.tsx'),
 ] satisfies RouteConfig;

@@ -300,7 +300,7 @@ export class QuotePageViewModel {
         title: 'Sales review',
       },
       {
-        description: 'Customer receives the final quote and can continue in the portal.',
+        description: 'Customer receives the final quote and can continue in the console.',
         id: 'approval',
         status: 'next',
         title: 'Customer approval',

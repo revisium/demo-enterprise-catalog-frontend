@@ -3,8 +3,8 @@
 This folder owns the frontend route and UX contract for the HelioStack demo.
 
 HelioStack is a cloud and dedicated server catalog with regional price books and
-an authorized customer portal. The public site helps visitors choose servers,
-compare prices, read docs, and request quotes. The private portal handles saved
+an authorized customer console. The public site helps visitors choose servers,
+compare prices, read docs, and request quotes. The private console handles saved
 plans, quote lifecycle, favorites, preferences, audit history, and organization
 settings.
 

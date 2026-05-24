@@ -82,6 +82,16 @@ shape. It returns no user payload; it only refreshes cookies. The real backend
 can replace this route with a signed JWT/session-cookie implementation without
 changing the portal contract.
 
+The customer console also exposes mock mutation routes that already follow the
+future backend boundary:
+
+| Route                           | Runtime write modeled                  |
+| ------------------------------- | -------------------------------------- |
+| `/app/actions/preferences`      | user language/currency/region defaults |
+| `/app/actions/favorites`        | user saved-plan favorite               |
+| `/app/actions/quote-comments`   | quote conversation note                |
+| `/app/actions/content-feedback` | saved/helpful docs or update feedback  |
+
 Runtime mutations store backend-owned data only after checking referenced IDs
 against Revisium dictionaries and source rows:
 

@@ -1,8 +1,8 @@
-# Customer Portal
+# Customer Console
 
 ## Purpose
 
-Prototype the authorized workspace for user-specific saved plans, quote
+Prototype the authorized customer console for user-specific saved plans, quote
 lifecycle, favorites, preferences, and account actions.
 
 ## Current Data Mode
@@ -16,7 +16,7 @@ that sets backend-owned cookies.
   favorites, and audit trail.
 - Revisium-owned catalog, price, docs, and update rows are referenced by stable
   IDs but are not mutated by portal actions.
-- Portal actions must stay separate from public catalog source data.
+- Console actions must stay separate from public catalog source data.
 - Demo session refresh sets `HttpOnly` cookies. The frontend must not read a
   refresh payload for identity; browser requests carry cookies automatically.
 - Backend resolves the current user from the session cookie before returning
@@ -25,6 +25,11 @@ that sets backend-owned cookies.
 - Before persisting runtime data, backend validates referenced dictionary/source
   IDs through Revisium: language, currency, region, plan, quote status, role,
   docs, and updates.
+- Detail routes must enforce the same user scope as `/app`; opening another
+  user's saved plan or quote shows an access state instead of customer data.
+- Mock action routes represent future backend mutations:
+  `/app/actions/preferences`, `/app/actions/favorites`,
+  `/app/actions/quote-comments`, and `/app/actions/content-feedback`.
 
 ## UX Scope
 
@@ -35,7 +40,8 @@ that sets backend-owned cookies.
   conversation, organization context, and related saved plans;
 - open `/app/plans/:planId` for one saved server package, related quotes, and
   next actions;
-- let a user favorite saved plans without mutating public catalog data;
+- let a user favorite saved plans, save defaults, save updates, and add quote
+  notes without mutating public catalog data;
 - keep audit history visible as account-level context.
 
 ## Next UI Decisions

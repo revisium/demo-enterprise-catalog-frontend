@@ -1,33 +1,55 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useEffect, useMemo } from 'react';
+import { Link, useFetcher, useParams } from 'react-router';
 
+import type { PortalDemoSession } from 'src/entities/portal';
 import { FieldHint, FilterCard, PageIntroGrid, ProductVisual, SectionEyebrow } from 'src/shared/ui';
 import { PortalSavedPlanDetailPageViewModel } from '../../model/PortalSavedPlanDetailPageViewModel';
+import { SavedPlanAccessState } from '../SavedPlanAccessState/SavedPlanAccessState';
 
-export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetailPage() {
+interface PortalActionResponse {
+  readonly message: string;
+  readonly status: 'accepted' | 'rejected';
+}
+
+export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetailPage({
+  session,
+}: {
+  readonly session: PortalDemoSession;
+}) {
+  const favoriteFetcher = useFetcher<PortalActionResponse>();
   const params = useParams();
-  const [vm] = useState(() => new PortalSavedPlanDetailPageViewModel(params.planId));
+  const vm = useMemo(
+    () => new PortalSavedPlanDetailPageViewModel(params.planId, session),
+    [params.planId, session],
+  );
+  const savedPlan = vm.savedPlan;
 
   useEffect(() => {
-    vm.setPlanId(params.planId);
-  }, [params.planId, vm]);
+    if (favoriteFetcher.data?.status === 'accepted') {
+      vm.toggleFavorite();
+    }
+  }, [favoriteFetcher.data, vm]);
+
+  if (!vm.canViewSavedPlan || !savedPlan) {
+    return <SavedPlanAccessState vm={vm} />;
+  }
 
   return (
     <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to portal</Link>
+            <Link to="/app">Back to console</Link>
           </Button>
 
           <PageIntroGrid
             eyebrow={vm.organization.name}
             metrics={vm.metrics}
             metricsLabel="Saved plan summary"
-            summary={`${vm.savedPlan.plan} in ${vm.savedPlan.region} is prepared for quote work and customer review.`}
-            title={vm.savedPlan.name}
+            summary={`${savedPlan.plan} in ${savedPlan.region} is prepared for quote work and customer review.`}
+            title={savedPlan.name}
           />
 
           <Grid gap="4" templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}>
@@ -43,17 +65,17 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                   <Stack gap="3">
                     <Flex align="center" gap="2" wrap="wrap">
                       <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                        {vm.savedPlan.status}
+                        {savedPlan.status}
                       </Badge>
                       <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
                         {vm.product.supportTier} support
                       </Badge>
                       <Badge bg="successBg" borderRadius="8px" color="successText">
-                        ${vm.savedPlan.monthlyUsd}/mo
+                        ${savedPlan.monthlyUsd}/mo
                       </Badge>
                     </Flex>
                     <Heading as="h2" color="ink.900" fontSize="2xl">
-                      {vm.savedPlan.plan}
+                      {savedPlan.plan}
                     </Heading>
                     <Text color="ink.500" fontSize="sm">
                       {vm.product.summary}
@@ -65,16 +87,29 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                       <Button asChild borderRadius="8px" size="sm" variant="outline">
                         <Link to={vm.productPath}>Open server</Link>
                       </Button>
-                      <Button
-                        aria-pressed={vm.isFavorited}
-                        borderRadius="8px"
-                        onClick={() => vm.toggleFavorite()}
-                        size="sm"
-                        variant={vm.isFavorited ? 'solid' : 'outline'}
-                      >
-                        {vm.isFavorited ? 'Favorited' : 'Favorite'}
-                      </Button>
+                      <favoriteFetcher.Form action="/app/actions/favorites" method="post">
+                        <input name="planId" type="hidden" value={savedPlan.id} />
+                        <Button
+                          aria-pressed={vm.isFavorited}
+                          borderRadius="8px"
+                          size="sm"
+                          type="submit"
+                          variant={vm.isFavorited ? 'solid' : 'outline'}
+                        >
+                          {vm.isFavorited ? 'Favorited' : 'Favorite'}
+                        </Button>
+                      </favoriteFetcher.Form>
                     </Flex>
+                    {favoriteFetcher.data ? (
+                      <Text
+                        color={
+                          favoriteFetcher.data.status === 'accepted' ? 'successText' : 'amberText'
+                        }
+                        fontSize="sm"
+                      >
+                        {favoriteFetcher.data.message}
+                      </Text>
+                    ) : null}
                   </Stack>
                 </Grid>
               </FilterCard>

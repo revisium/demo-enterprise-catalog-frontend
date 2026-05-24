@@ -24,7 +24,7 @@ const affectedPathsByType: Record<ReleaseUpdate['type'], readonly AffectedPath[]
   ],
   Docs: [
     { href: '/resources', label: 'Resources', summary: 'Open the customer documentation library.' },
-    { href: '/app', label: 'Portal', summary: 'Save the update for an account workspace.' },
+    { href: '/app', label: 'Console', summary: 'Save the update for an account workspace.' },
   ],
   Pricing: [
     {

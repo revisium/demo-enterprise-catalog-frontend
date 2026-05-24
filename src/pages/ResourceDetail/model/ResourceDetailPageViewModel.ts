@@ -139,7 +139,7 @@ export class ResourceDetailPageViewModel {
       },
       {
         href: '/app',
-        label: 'Customer portal',
+        label: 'Customer console',
         summary: 'Review saved plans, quotes, and account activity.',
       },
     ];

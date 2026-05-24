@@ -193,7 +193,7 @@ export const HomePage = observer(function HomePage() {
                   borderRadius="8px"
                   color="ink.900"
                   disabled={!vm.canReserveServer}
-                  title="Direct reservation will be available in the customer portal"
+                  title="Direct reservation will be available in the customer console"
                 >
                   Reserve server
                 </Button>

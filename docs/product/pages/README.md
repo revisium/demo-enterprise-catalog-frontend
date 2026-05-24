@@ -14,4 +14,4 @@ clear.
 - [Resources](./resources/README.md)
 - [Releases](./releases/README.md)
 - [Quote](./quote/README.md)
-- [Customer portal](./app/README.md)
+- [Customer console](./app/README.md)
