@@ -1,7 +1,7 @@
-import { catalogSnapshot } from 'src/entities/catalog';
+import { catalogSnapshot, type CatalogProduct } from 'src/entities/catalog';
 
 export class PricingPageDataSource {
-  getProducts() {
-    return catalogSnapshot.products;
+  getProducts(): readonly CatalogProduct[] {
+    return [...catalogSnapshot.products];
   }
 }
