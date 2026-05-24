@@ -147,7 +147,7 @@ export const ComparePage = observer(function ComparePage() {
                     {recommendation.supportTier}
                   </Badge>
                   <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-                    score {recommendation ? vm.bestFitRows[0]?.fitScore : 0}
+                    score {vm.bestFitRows[0]?.fitScore ?? 0}
                   </Badge>
                 </Flex>
               ) : null}
