@@ -1,9 +1,9 @@
 import { Badge, Box, Button, Container, Flex, Grid, Stack, Text, chakra } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link as RouterLink, useSearchParams } from 'react-router';
 
-import { FieldHint, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
+import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
 import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 
 export const QuotePage = observer(function QuotePage() {
@@ -28,7 +28,7 @@ export const QuotePage = observer(function QuotePage() {
           eyebrow="Quote request"
           metrics={vm.quoteMetrics}
           metricsLabel="Quote estimate"
-          summary="Turn a selected server plan, region, quantity, and billing term into a review-ready request before the backend submission exists."
+          summary="Turn a selected server plan, region, quantity, billing term, and service options into a review-ready request."
           title="Prepare a server quote request."
         />
 
@@ -229,8 +229,31 @@ export const QuotePage = observer(function QuotePage() {
                     </Badge>
                   ))}
                 </Flex>
+                <Box asChild alignSelf="start" color="brand.500" fontSize="sm" fontWeight="760">
+                  <RouterLink to={vm.quoteDetailHref}>Open plan detail</RouterLink>
+                </Box>
               </Stack>
             ) : null}
+
+            <Stack gap="2">
+              <Text color="ink.700" fontWeight="650">
+                Service options
+              </Text>
+              <Flex gap="2" wrap="wrap">
+                {vm.addonOptions.map((option) => (
+                  <FilterButton
+                    key={option.id}
+                    onClick={() => vm.toggleAddon(option.id)}
+                    selected={vm.selectedAddonIds.includes(option.id)}
+                  >
+                    {option.label}
+                  </FilterButton>
+                ))}
+              </Flex>
+              <FieldHint>
+                Options are added to the estimate so the request can be reviewed before approval.
+              </FieldHint>
+            </Stack>
 
             <Button alignSelf="start" bg="ctaBg" borderRadius="8px" color="white" type="submit">
               Submit request
@@ -247,15 +270,49 @@ export const QuotePage = observer(function QuotePage() {
             ) : null}
           </Stack>
 
-          <Stack gap="3">
-            <Stack
-              bg="white"
-              borderColor="surface.200"
-              borderRadius="8px"
-              borderWidth="1px"
-              gap="4"
-              p="4"
-            >
+          <Stack gap="4">
+            <FilterCard>
+              <SectionEyebrow>Commercial review</SectionEyebrow>
+              <Stack gap="2">
+                {vm.commercialRows.map((row) => (
+                  <Flex gap="3" justify="space-between" key={row.label}>
+                    <Text color="ink.500" fontSize="sm">
+                      {row.label}
+                    </Text>
+                    <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                      {row.value}
+                    </Text>
+                  </Flex>
+                ))}
+              </Stack>
+            </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>Ready to submit</SectionEyebrow>
+              <Stack gap="2">
+                {vm.readinessRows.map((row) => (
+                  <Grid alignItems="start" gap="3" key={row.label} templateColumns="auto 1fr">
+                    <Badge
+                      bg={row.ready ? 'successBg' : 'surface.100'}
+                      borderRadius="8px"
+                      color={row.ready ? 'successText' : 'ink.500'}
+                    >
+                      {row.ready ? 'Ready' : 'Open'}
+                    </Badge>
+                    <Stack gap="0">
+                      <Text color="ink.900" fontSize="sm" fontWeight="760">
+                        {row.label}
+                      </Text>
+                      <Text color="ink.500" fontSize="sm">
+                        {row.value}
+                      </Text>
+                    </Stack>
+                  </Grid>
+                ))}
+              </Stack>
+            </FilterCard>
+
+            <FilterCard>
               <SectionEyebrow>Regional fit</SectionEyebrow>
               <Stack gap="2">
                 {vm.fulfillmentRows.map((row) => (
@@ -284,7 +341,7 @@ export const QuotePage = observer(function QuotePage() {
                   </Grid>
                 ))}
               </Stack>
-            </Stack>
+            </FilterCard>
 
             <Stack
               bg="surface.900"
@@ -313,6 +370,31 @@ export const QuotePage = observer(function QuotePage() {
                 </Flex>
               ))}
             </Stack>
+
+            <FilterCard>
+              <SectionEyebrow>Review path</SectionEyebrow>
+              <Stack gap="3">
+                {vm.reviewSteps.map((step) => (
+                  <Grid gap="3" key={step.id} templateColumns="auto 1fr">
+                    <Badge
+                      bg={step.status === 'complete' ? 'successBg' : 'brand.50'}
+                      borderRadius="8px"
+                      color={step.status === 'next' ? 'ink.500' : 'brand.500'}
+                    >
+                      {step.status}
+                    </Badge>
+                    <Stack gap="0">
+                      <Text color="ink.900" fontSize="sm" fontWeight="760">
+                        {step.title}
+                      </Text>
+                      <Text color="ink.500" fontSize="sm">
+                        {step.description}
+                      </Text>
+                    </Stack>
+                  </Grid>
+                ))}
+              </Stack>
+            </FilterCard>
           </Stack>
         </Grid>
       </Container>
