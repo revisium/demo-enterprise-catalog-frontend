@@ -7,7 +7,22 @@ runtime reaction affordances.
 
 ## Current Data Mode
 
-Typed mock CMS update data plus local like state.
+Typed mock CMS update data plus local saved/like state.
+
+## Query Shape
+
+- update type chips model feed filtering by catalog, pricing, docs, or region;
+- audience, priority, and sort controls model customer-facing announcement
+  queries;
+- saved updates and likes model user-owned runtime feedback;
+- update tags can later share the same dictionary service as docs and UI labels.
+
+## UX Scope
+
+- filter announcements by change area, audience, and priority;
+- sort by latest, priority, or reactions;
+- show customer impact next to every update;
+- keep saved announcements for follow-up planning.
 
 ## Future Contract
 

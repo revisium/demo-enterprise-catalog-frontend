@@ -7,7 +7,21 @@ feedback affordances.
 
 ## Current Data Mode
 
-Typed mock CMS article data plus local helpful state.
+Typed mock CMS article data plus local saved/helpful state.
+
+## Query Shape
+
+- category chips model section filtering;
+- role, topic, and sort controls model CMS article list queries;
+- topic tags model dictionary-style terms shared across docs and updates;
+- helpful and saved actions model user-owned runtime feedback.
+
+## UX Scope
+
+- filter docs by customer task, team role, and topic;
+- sort by recommendation, freshness, helpfulness, or read time;
+- keep a saved-read sidebar;
+- show helpful feedback without exposing source-layer mechanics.
 
 ## Future Contract
 
