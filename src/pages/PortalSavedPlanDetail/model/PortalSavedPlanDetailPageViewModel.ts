@@ -115,7 +115,10 @@ export class PortalSavedPlanDetailPageViewModel {
   }
 
   get savedPlan(): PortalSavedPlan {
-    const savedPlan = portalSavedPlans.find((item) => item.id === this.planId);
+    const savedPlan =
+      this.planId === undefined
+        ? portalSavedPlans[0]
+        : portalSavedPlans.find((item) => item.id === this.planId);
 
     if (!savedPlan) {
       throw new Error(
