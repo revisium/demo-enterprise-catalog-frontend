@@ -1,6 +1,7 @@
-import { Badge, Box, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import {
   ChipGroup,
@@ -8,6 +9,7 @@ import {
   FieldHint,
   FilterCard,
   PageIntroGrid,
+  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from 'src/shared/ui';
@@ -58,6 +60,14 @@ export const LocationsPage = observer(function LocationsPage() {
                 value={String(vm.minStock)}
               />
               <SelectField
+                label="Readiness"
+                onChange={(value) => vm.setReadinessBand(value)}
+                options={vm.readinessOptions}
+                value={vm.selectedReadinessBandId}
+              />
+            </Grid>
+            <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <SelectField
                 label="Support"
                 onChange={(value) => vm.setSupportWindow(value)}
                 options={vm.supportOptions}
@@ -71,6 +81,8 @@ export const LocationsPage = observer(function LocationsPage() {
               options={vm.sortOptions}
               value={vm.sortId}
             />
+
+            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
         </Grid>
 
@@ -110,6 +122,9 @@ export const LocationsPage = observer(function LocationsPage() {
                   <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
                     {location.plans.length} plan rows
                   </Badge>
+                  <Badge bg="successBg" borderRadius="8px" color="successText">
+                    {location.readinessScore} readiness
+                  </Badge>
                 </Flex>
 
                 <Flex gap="2" wrap="wrap">
@@ -119,6 +134,35 @@ export const LocationsPage = observer(function LocationsPage() {
                     </Badge>
                   ))}
                 </Flex>
+
+                <Grid gap="2" templateColumns={{ base: '1fr', md: 'repeat(2, minmax(0, 1fr))' }}>
+                  {location.plans.slice(0, 4).map((row) => (
+                    <Grid
+                      alignItems="center"
+                      bg="panelGlassBg"
+                      borderColor="surface.200"
+                      borderRadius="8px"
+                      borderWidth="1px"
+                      gap="2"
+                      key={`${location.regionId}-${row.plan.id}`}
+                      p="3"
+                      templateColumns="1fr auto"
+                    >
+                      <Stack gap="0">
+                        <Text color="ink.900" fontSize="sm" fontWeight="760">
+                          {row.plan.name}
+                        </Text>
+                        <Text color="ink.500" fontSize="xs">
+                          {row.dataCenterCode} · ${row.effectiveMonthlyPrice}/mo · efficiency{' '}
+                          {row.priceEfficiencyScore}
+                        </Text>
+                      </Stack>
+                      <Button asChild borderRadius="8px" size="xs" variant="outline">
+                        <Link to={row.planHref}>Open</Link>
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
               </Stack>
 
               <Stack gap="1">
@@ -132,10 +176,13 @@ export const LocationsPage = observer(function LocationsPage() {
 
               <Stack gap="1">
                 <Text color="ink.900" fontSize="2xl" fontWeight="780" lineHeight="1">
-                  {location.fastestSetupHours}h
+                  {location.familyCoveragePercent}%
                 </Text>
                 <Text color="ink.500" fontSize="sm">
-                  fastest setup · {location.supportWindows.join(', ')}
+                  family coverage · {location.enterpriseCoveragePercent}% enterprise support
+                </Text>
+                <Text color="ink.500" fontSize="sm">
+                  {location.fastestSetupHours}h fastest setup · {location.supportWindows.join(', ')}
                 </Text>
               </Stack>
             </Grid>

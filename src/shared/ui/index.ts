@@ -9,6 +9,7 @@ export {
   FilterCard,
   MetricGrid,
   PageIntroGrid,
+  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from './QueryControls/QueryControls';

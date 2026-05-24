@@ -11,6 +11,7 @@ import {
   FilterCard,
   PageIntroGrid,
   ProductVisual,
+  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from 'src/shared/ui';
@@ -144,28 +145,7 @@ export const CatalogPage = observer(function CatalogPage() {
               </FilterButton>
             </Flex>
 
-            <Stack
-              bg="panelGlassBg"
-              borderColor="surface.200"
-              borderRadius="8px"
-              borderWidth="1px"
-              gap="2"
-              p="3"
-            >
-              <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                Query summary
-              </Text>
-              {vm.queryRows.map((row) => (
-                <Flex gap="3" justify="space-between" key={row.label}>
-                  <Text color="ink.500" fontSize="sm">
-                    {row.label}
-                  </Text>
-                  <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
-                    {row.value}
-                  </Text>
-                </Flex>
-              ))}
-            </Stack>
+            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
         </Grid>
 
