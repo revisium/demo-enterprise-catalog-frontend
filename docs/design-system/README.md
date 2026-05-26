@@ -35,6 +35,9 @@ iteration, not to freeze a brand too early.
 - Public sections use the same page shell: `pagePremiumBg`, `1240px`
   constrained content, `8px` panels, `surface.200` borders, and blue
   `brand.50`/`brand.500` badges.
+- Public route intro blocks align their eyebrow and H1 from the same top rail
+  across navigation tabs; route changes reset document scroll to avoid
+  preserved-position title jumps.
 - Product, catalog, quote, and planned pages use `recommendationBg` for the main
   intro panel and `surface.900` for compact dark status/action panels.
 - Footer: constrained product summary plus grouped links for explore,
