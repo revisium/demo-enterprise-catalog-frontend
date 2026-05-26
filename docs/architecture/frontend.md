@@ -23,8 +23,15 @@ local verification command.
 - `@revisium/forms-core` is the default for non-trivial forms. Use the alpha
   package until the GitHub source package includes built `dist` artifacts.
 - Generated files under `src/__generated__/` are never hand-edited.
-- Localization metadata lives under `src/shared/i18n`; page-level translations
-  should come from CMS/price data later, not ad hoc React maps.
+- Localization metadata and the temporary frontend translation harness live
+  under `src/shared/i18n`. The active language selector stores the selected
+  locale in browser storage, updates document `lang`/`dir`, and runs a visual
+  DOM translation pass across public and portal routes. The visual pass exists
+  to stress responsive layouts while mock data is still English-first. Reloads
+  use the locale cookie and a small boot script so non-English routes do not
+  flash English content before hydration. Brand and product names can opt out
+  with `data-i18n-skip`; durable page-level translations should still come from
+  CMS/price data later, once contracts are stable enough to preserve.
 
 ## UI System
 

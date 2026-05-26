@@ -11,55 +11,70 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import type { ChangeEvent } from 'react';
 import { NavLink } from 'react-router';
 
-import { defaultLocale, supportedLocales } from 'src/shared/i18n';
+import { isLocaleCode, supportedLocales, useI18n, type TranslationKey } from 'src/shared/i18n';
 
 interface AppLayoutProps {
   readonly children: React.ReactNode;
 }
 
 const navItems = [
-  { label: 'Servers', to: '/catalog' },
-  { label: 'Pricing', to: '/pricing' },
-  { label: 'Locations', to: '/locations' },
-  { label: 'Compare', to: '/compare' },
-  { label: 'Resources', to: '/resources' },
-  { label: 'Updates', to: '/releases' },
-] as const;
+  { labelKey: 'nav.servers', to: '/catalog' },
+  { labelKey: 'nav.pricing', to: '/pricing' },
+  { labelKey: 'nav.locations', to: '/locations' },
+  { labelKey: 'nav.compare', to: '/compare' },
+  { labelKey: 'nav.resources', to: '/resources' },
+  { labelKey: 'nav.updates', to: '/releases' },
+] as const satisfies readonly { readonly labelKey: TranslationKey; readonly to: string }[];
 
 const footerGroups = [
   {
-    label: 'Explore',
+    labelKey: 'footer.explore',
     links: [
-      { label: 'Servers', to: '/catalog' },
-      { label: 'Pricing', to: '/pricing' },
-      { label: 'Compare', to: '/compare' },
-      { label: 'Locations', to: '/locations' },
+      { labelKey: 'nav.servers', to: '/catalog' },
+      { labelKey: 'nav.pricing', to: '/pricing' },
+      { labelKey: 'nav.compare', to: '/compare' },
+      { labelKey: 'nav.locations', to: '/locations' },
     ],
   },
   {
-    label: 'Resources',
+    labelKey: 'footer.resources',
     links: [
-      { label: 'Guides', to: '/resources' },
-      { label: 'Updates', to: '/releases' },
+      { labelKey: 'footer.guides', to: '/resources' },
+      { labelKey: 'footer.updates', to: '/releases' },
     ],
   },
   {
-    label: 'Workspace',
+    labelKey: 'footer.workspace',
     links: [
-      { label: 'Console', to: '/app' },
-      { label: 'Request quote', to: '/quote' },
+      { labelKey: 'app.console', to: '/app' },
+      { labelKey: 'footer.requestQuote', to: '/quote' },
     ],
   },
-] as const;
+] as const satisfies readonly {
+  readonly labelKey: TranslationKey;
+  readonly links: readonly { readonly labelKey: TranslationKey; readonly to: string }[];
+}[];
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { direction, locale, setLocale, t } = useI18n();
+
+  const handleLocaleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const nextLocale = event.currentTarget.value;
+
+    if (isLocaleCode(nextLocale)) {
+      setLocale(nextLocale);
+    }
+  };
+
   return (
-    <Box minH="100dvh" bg="surface.50">
-      <SkipNavLink>Skip to content</SkipNavLink>
+    <Box bg="surface.50" dir={direction} minH="100dvh">
+      <SkipNavLink data-i18n-skip>{t('app.skipContent')}</SkipNavLink>
       <Box
         as="header"
+        data-i18n-skip
         position="sticky"
         top="0"
         zIndex="5"
@@ -80,8 +95,17 @@ export function AppLayout({ children }: AppLayoutProps) {
               lg: 'auto minmax(0, 1fr) auto',
             }}
           >
-            <ChakraLink asChild color="ink.900" flexShrink="0" fontWeight="750">
-              <NavLink to="/">
+            <ChakraLink
+              asChild
+              color="ink.900"
+              flexShrink="0"
+              fontWeight="750"
+              textDecoration="none"
+              _focus={{ textDecoration: 'none' }}
+              _focusVisible={{ textDecoration: 'none' }}
+              _hover={{ textDecoration: 'none' }}
+            >
+              <NavLink data-i18n-skip style={{ textDecoration: 'none' }} to="/">
                 <HStack gap="3">
                   <Flex
                     align="center"
@@ -96,9 +120,11 @@ export function AppLayout({ children }: AppLayoutProps) {
                   >
                     HS
                   </Flex>
-                  <Box>
-                    <Text lineHeight="1">HelioStack</Text>
-                    <Text color="ink.500" fontSize="xs" lineHeight="1.1">
+                  <Box textDecoration="none">
+                    <Text lineHeight="1" textDecoration="none">
+                      HelioStack
+                    </Text>
+                    <Text color="ink.500" fontSize="xs" lineHeight="1.1" textDecoration="none">
                       Cloud servers
                     </Text>
                   </Box>
@@ -117,7 +143,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               py="0.5"
             >
               {navItems.map((item) => (
-                <HeaderLink item={item} key={item.to} />
+                <HeaderLink item={item} key={item.to} label={t(item.labelKey)} />
               ))}
             </Flex>
 
@@ -136,8 +162,14 @@ export function AppLayout({ children }: AppLayoutProps) {
                       px={{ base: '2', md: '2.5' }}
                       py="1.5"
                       whiteSpace="nowrap"
+                      _hover={{
+                        bg: isActive ? 'brand.50' : 'surface.50',
+                        borderColor: isActive ? 'activeBorder' : 'brandBorderMuted',
+                        boxShadow: '0 8px 18px rgba(16, 24, 40, 0.08)',
+                        transform: 'translateY(-1px)',
+                      }}
                     >
-                      Console
+                      {t('app.console')}
                     </Box>
                   )}
                 </NavLink>
@@ -157,40 +189,60 @@ export function AppLayout({ children }: AppLayoutProps) {
                       px={{ base: '2', md: '2.5' }}
                       py="1.5"
                       whiteSpace="nowrap"
+                      _hover={{
+                        borderColor: 'brand.500',
+                        boxShadow: '0 12px 28px rgba(21, 94, 239, 0.3)',
+                        transform: 'translateY(-1px)',
+                      }}
                     >
-                      Get quote
+                      {t('app.getQuote')}
                     </Box>
                   )}
                 </NavLink>
               </ChakraLink>
-              <NativeSelect.Root disabled flexShrink="0" w="82px" size="sm">
-                <NativeSelect.Field
-                  aria-label="Language switching coming soon"
-                  bg="white"
-                  borderColor="surface.200"
-                  borderRadius="control"
-                  color="ink.500"
-                  defaultValue={defaultLocale}
-                  h="8"
-                  minH="8"
-                  px="2"
-                  title="Language switching coming soon"
-                >
-                  {supportedLocales.map((locale) => (
-                    <option key={locale.code} value={locale.code}>
-                      {locale.nativeLabel}
-                    </option>
-                  ))}
-                </NativeSelect.Field>
-                <NativeSelect.Indicator />
-              </NativeSelect.Root>
+              <Box
+                className="group"
+                flexShrink="0"
+                role="group"
+                transition="transform 160ms ease"
+                w={{ base: '96px', sm: '112px' }}
+                _hover={{ transform: 'translateY(-1px)' }}
+              >
+                <NativeSelect.Root size="sm" w="100%">
+                  <NativeSelect.Field
+                    aria-label={t('language.selectLabel')}
+                    bg="white"
+                    borderColor="surface.200"
+                    borderRadius="control"
+                    color="ink.700"
+                    h="8"
+                    minH="8"
+                    onChange={handleLocaleChange}
+                    px="2"
+                    title={t('language.selectTitle')}
+                    value={locale}
+                    _groupHover={{
+                      bg: 'surface.50',
+                      borderColor: 'brandBorderMuted',
+                      boxShadow: '0 8px 18px rgba(16, 24, 40, 0.08)',
+                    }}
+                  >
+                    {supportedLocales.map((supportedLocale) => (
+                      <option key={supportedLocale.code} value={supportedLocale.code}>
+                        {supportedLocale.nativeLabel}
+                      </option>
+                    ))}
+                  </NativeSelect.Field>
+                  <NativeSelect.Indicator />
+                </NativeSelect.Root>
+              </Box>
             </Flex>
           </Grid>
         </Container>
       </Box>
       <SkipNavContent />
       <Box id="app-content">{children}</Box>
-      <Box as="footer" borderColor="surface.200" borderTopWidth="1px" bg="white">
+      <Box as="footer" borderColor="surface.200" borderTopWidth="1px" bg="white" data-i18n-skip>
         <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '7' }}>
           <Grid
             alignItems="start"
@@ -202,19 +254,18 @@ export function AppLayout({ children }: AppLayoutProps) {
                 HelioStack
               </Text>
               <Text color="ink.500" fontSize="sm">
-                Cloud and dedicated server catalog with regional prices, stock, docs, and customer
-                quote workflows.
+                {t('footer.summary')}
               </Text>
             </Stack>
             {footerGroups.map((group) => (
-              <Stack gap="2.5" key={group.label} minW={{ md: '120px' }}>
+              <Stack gap="2.5" key={group.labelKey} minW={{ md: '120px' }}>
                 <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                  {group.label}
+                  {t(group.labelKey)}
                 </Text>
                 <Stack gap="1.5">
                   {group.links.map((link) => (
                     <FooterLink key={link.to} to={link.to}>
-                      {link.label}
+                      {t(link.labelKey)}
                     </FooterLink>
                   ))}
                 </Stack>
@@ -227,24 +278,36 @@ export function AppLayout({ children }: AppLayoutProps) {
   );
 }
 
-function HeaderLink({ item }: { readonly item: (typeof navItems)[number] }) {
+function HeaderLink({
+  item,
+  label,
+}: {
+  readonly item: (typeof navItems)[number];
+  readonly label: string;
+}) {
   return (
     <ChakraLink asChild>
       <NavLink to={item.to}>
         {({ isActive }) => (
           <Box
-            borderWidth="1px"
+            bg={isActive ? 'brand.50' : 'white'}
             borderColor={isActive ? 'brand.100' : 'surface.200'}
             borderRadius="control"
+            borderWidth="1px"
             color={isActive ? 'brand.500' : 'ink.700'}
             fontSize="xs"
             fontWeight="700"
             px={{ base: '2', md: '2.5' }}
             py="1.5"
             whiteSpace="nowrap"
-            bg={isActive ? 'brand.50' : 'white'}
+            _hover={{
+              bg: isActive ? 'brand.50' : 'surface.50',
+              borderColor: isActive ? 'activeBorder' : 'brandBorderMuted',
+              boxShadow: '0 8px 18px rgba(16, 24, 40, 0.08)',
+              transform: 'translateY(-1px)',
+            }}
           >
-            {item.label}
+            {label}
           </Box>
         )}
       </NavLink>
@@ -254,7 +317,13 @@ function HeaderLink({ item }: { readonly item: (typeof navItems)[number] }) {
 
 function FooterLink({ children, to }: { readonly children: React.ReactNode; readonly to: string }) {
   return (
-    <ChakraLink asChild color="ink.700" fontSize="sm" fontWeight="650">
+    <ChakraLink
+      asChild
+      color="ink.700"
+      fontSize="sm"
+      fontWeight="650"
+      _hover={{ color: 'brand.500' }}
+    >
       <NavLink to={to}>{children}</NavLink>
     </ChakraLink>
   );

@@ -37,6 +37,17 @@ iteration, not to freeze a brand too early.
   resources, and account actions.
 - Text inside buttons must wrap inside the control. Use stable min-heights for
   option cards so descriptions cannot visually escape their parent.
+- Buttons, link-buttons, filter chips, and select controls use pointer cursors
+  when enabled, not-allowed cursors when disabled, and subtle hover states with
+  border, shadow, and lift feedback.
+- Pointer clicks must not leave a gray focus frame on buttons or navigation
+  links. Keyboard navigation still gets a visible brand-colored focus outline
+  through `:focus-visible`.
+- Language switching is an adaptive-layout stress tool during the mock-first
+  stage. The app-shell, home selector, and route-level mock pages must tolerate
+  longer Russian/French/Spanish labels, compact Chinese labels, and Arabic RTL
+  direction without overlap. Brand marks and product names remain literal unless
+  a page contract explicitly localizes them.
 
 ## Chakra Ownership
 

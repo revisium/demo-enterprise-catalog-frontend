@@ -17,3 +17,13 @@ export const supportedLocales: readonly SupportedLocale[] = [
   { code: 'ru', direction: 'ltr', englishName: 'Russian', nativeLabel: 'Русский' },
   { code: 'es', direction: 'ltr', englishName: 'Spanish', nativeLabel: 'Español' },
 ];
+
+export function isLocaleCode(value: string): value is LocaleCode {
+  return supportedLocales.some((locale) => locale.code === value);
+}
+
+export function getSupportedLocale(code: LocaleCode): SupportedLocale {
+  const locale = supportedLocales.find((supportedLocale) => supportedLocale.code === code);
+
+  return locale ?? supportedLocales.find((supportedLocale) => supportedLocale.code === defaultLocale)!;
+}
