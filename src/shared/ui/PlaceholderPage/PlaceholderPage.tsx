@@ -7,7 +7,7 @@ interface PlaceholderPageProps {
 
 export function PlaceholderPage({ title, summary }: PlaceholderPageProps) {
   return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Grid
           alignItems="stretch"

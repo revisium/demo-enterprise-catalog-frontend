@@ -12,18 +12,23 @@ workflow and price result.
 
 ## Current Data Mode
 
-Typed mock server plans, regions, billing terms, included service items, and a
-short demo journey.
+Typed mock server plans, regions, and billing terms. The home page owns
+explicit localized display copy for those mock records instead of relying on
+the visual text translator fallback.
 
 ## Current UX Scope
 
 - keep the plan selector as the first screen;
-- show the recommended plan, price, stock, and setup window immediately;
+- show the recommended plan, price, stock, and setup window immediately, with
+  hardware specs in a separate framed block below the recommendation card;
 - keep a compact selection summary visible for review;
-- route the selected plan into quote, detail, pricing, and compare flows;
+- show only a short set of selectable matching-plan suggestions, with the full
+  catalog kept on `/catalog`;
+- on desktop, keep the selector rail and recommendation content in the same
+  document scroll flow;
+- route the selected plan into the quote flow while keeping full catalog access
+  nearby;
 - preserve selected plan, region, and billing term in the quote URL.
-- show the intended demo path without turning the home page into an updates
-  feed or account workspace.
 
 ## Proof Layer
 

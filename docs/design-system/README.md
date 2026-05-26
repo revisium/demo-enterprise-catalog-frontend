@@ -24,10 +24,14 @@ iteration, not to freeze a brand too early.
 - Header: glass-like sticky bar, constrained content, compact brand mark,
   horizontally scrollable public navigation, portal entry, quote CTA, and
   language control. Desktop uses a three-column grid so navigation stays inside
-  the same `1240px` content rail as the pages.
+  the same `1240px` content rail as the pages. Phone and tablet widths keep only
+  brand, language, and burger in the header; account and quote actions move into
+  the full-screen menu.
 - Main page spacing: `24-36px` vertical page padding and `20-24px` gaps between
   major widgets.
-- Home layout: left configurator, right recommendation and plan list.
+- Home layout: left configurator and right recommendation column scroll
+  together in the document flow, with compact selection summary, short
+  matching-plan suggestions, and concise next-step links.
 - Public sections use the same page shell: `pagePremiumBg`, `1240px`
   constrained content, `8px` panels, `surface.200` borders, and blue
   `brand.50`/`brand.500` badges.
@@ -40,14 +44,16 @@ iteration, not to freeze a brand too early.
 - Buttons, link-buttons, filter chips, and select controls use pointer cursors
   when enabled, not-allowed cursors when disabled, and subtle hover states with
   border, shadow, and lift feedback.
-- Pointer clicks must not leave a gray focus frame on buttons or navigation
-  links. Keyboard navigation still gets a visible brand-colored focus outline
-  through `:focus-visible`.
+- Pointer clicks and browser-tab restoration must not leave a focus frame on
+  buttons or navigation links. Keyboard navigation still gets a visible
+  brand-colored focus outline through `:focus-visible`.
 - Language switching is an adaptive-layout stress tool during the mock-first
   stage. The app-shell, home selector, and route-level mock pages must tolerate
   longer Russian/French/Spanish labels, compact Chinese labels, and Arabic RTL
   direction without overlap. Brand marks and product names remain literal unless
-  a page contract explicitly localizes them.
+  a page contract explicitly localizes them. Dense first-screen experiences
+  should use explicit translation keys instead of relying on DOM-level visual
+  translation.
 
 ## Chakra Ownership
 

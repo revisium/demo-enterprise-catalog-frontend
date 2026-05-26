@@ -6,7 +6,7 @@ import type { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDeta
 
 export function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageViewModel }) {
   return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap="5">
           <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">

@@ -21,7 +21,7 @@ export const ComparePage = observer(function ComparePage() {
   const recommendation = vm.recommendation;
 
   return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <PageIntroGrid
           eyebrow="Server comparison"

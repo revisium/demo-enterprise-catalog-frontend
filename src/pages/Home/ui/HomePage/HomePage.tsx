@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Button,
   Container,
@@ -14,15 +13,20 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 
-import { QuerySummary, StickyPanel } from 'src/shared/ui';
+import { useI18n } from 'src/shared/i18n';
+import { StickyPanel } from 'src/shared/ui';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
+import { CompactQuerySummary } from '../CompactQuerySummary/CompactQuerySummary';
 
 export const HomePage = observer(function HomePage() {
   const [vm] = useState(() => new HomePageViewModel());
-  const selectedPlan = vm.selectedPlan;
+  const { t } = useI18n();
+  const selectedPlanCopy = vm.getSelectedPlanCopy(t);
+  const selectionRows = vm.getSelectionRows(t);
+  const metricRows = vm.getMetricRows(t);
 
   return (
-    <Box bg="pagePremiumBg" color="ink.900" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" color="ink.900" data-i18n-skip flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Grid
           gap={{ base: '5', md: '6' }}
@@ -34,28 +38,34 @@ export const HomePage = observer(function HomePage() {
             borderRadius="8px"
             borderWidth="1px"
             boxShadow="0 24px 70px rgba(16, 24, 40, 0.08)"
-            gap="5"
-            position={{ lg: 'sticky' }}
-            p={{ base: '4', md: '5' }}
-            top={{ lg: '84px' }}
+            gap={{ base: '5', lg: '2' }}
+            maxH="none"
+            overflowY={{ lg: 'visible' }}
+            p={{ base: '4', md: '5', lg: '3' }}
+            position="static"
+            top="auto"
           >
-            <Stack gap="2">
+            <Stack gap={{ base: '2', lg: '1' }}>
               <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                Command center
+                {t('home.commandCenter')}
               </Text>
-              <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} lineHeight="0.98">
-                Find a server.
+              <Heading
+                as="h1"
+                fontSize={{ base: '3xl', md: '4xl', lg: '3xl' }}
+                lineHeight="0.98"
+              >
+                {t('home.title')}
               </Heading>
-              <Text color="ink.500" fontSize="sm">
-                Pick a need, data center, and contract.
+              <Text color="ink.500" fontSize={{ base: 'sm', lg: 'xs' }}>
+                {t('home.subtitle')}
               </Text>
             </Stack>
 
-            <Stack gap="2">
-              <SectionLabel>Need</SectionLabel>
-              {vm.useCases.map((useCase) => (
+            <Stack gap={{ base: '2', lg: '1' }}>
+              <SectionLabel>{t('home.need')}</SectionLabel>
+              {vm.getUseCaseChoiceRows(t).map((useCase) => (
                 <ChoiceButton
-                  active={vm.selectedUseCaseId === useCase.id}
+                  active={useCase.active}
                   key={useCase.id}
                   label={useCase.label}
                   onClick={() => vm.selectUseCase(useCase.id)}
@@ -64,21 +74,24 @@ export const HomePage = observer(function HomePage() {
               ))}
             </Stack>
 
-            <Stack gap="2">
-              <SectionLabel>Data center</SectionLabel>
-              <SimpleGrid columns={2} gap="2">
-                {vm.regions.map((region) => (
+            <Stack gap={{ base: '2', lg: '1' }}>
+              <SectionLabel>{t('home.dataCenter')}</SectionLabel>
+              <SimpleGrid columns={2} gap={{ base: '2', lg: '1' }}>
+                {vm.getRegionChoiceRows(t).map((region) => (
                   <Button
-                    bg={vm.selectedRegionId === region.id ? 'brand.50' : 'white'}
-                    borderColor={vm.selectedRegionId === region.id ? 'activeBorder' : 'surface.200'}
+                    alignItems="stretch"
+                    bg={region.active ? 'brand.50' : 'white'}
+                    borderColor={region.active ? 'activeBorder' : 'surface.200'}
                     borderRadius="8px"
                     borderWidth="1px"
                     color="ink.900"
                     h="auto"
-                    minH="4.25rem"
+                    justifyContent="flex-start"
+                    minH={{ base: '4.25rem', lg: '2.875rem' }}
                     key={region.id}
                     onClick={() => vm.selectRegion(region.id)}
-                    p="3"
+                    p="2"
+                    textAlign="start"
                     variant="ghost"
                     whiteSpace="normal"
                   >
@@ -95,23 +108,21 @@ export const HomePage = observer(function HomePage() {
               </SimpleGrid>
             </Stack>
 
-            <Stack gap="2">
-              <SectionLabel>Contract</SectionLabel>
-              <SimpleGrid columns={2} gap="2">
-                {vm.billingTerms.map((term) => (
+            <Stack gap={{ base: '2', lg: '1' }}>
+              <SectionLabel>{t('home.contract')}</SectionLabel>
+              <SimpleGrid columns={2} gap={{ base: '2', lg: '1' }}>
+                {vm.getBillingTermChoiceRows(t).map((term) => (
                   <Button
-                    bg={vm.selectedBillingTermId === term.id ? 'successBg' : 'white'}
-                    borderColor={
-                      vm.selectedBillingTermId === term.id ? 'successBorder' : 'surface.200'
-                    }
+                    bg={term.active ? 'successBg' : 'white'}
+                    borderColor={term.active ? 'successBorder' : 'surface.200'}
                     borderRadius="8px"
                     borderWidth="1px"
                     color="ink.900"
                     h="auto"
-                    minH="4.25rem"
+                    minH={{ base: '4.25rem', lg: '2.875rem' }}
                     key={term.id}
                     onClick={() => vm.selectBillingTerm(term.id)}
-                    p="3"
+                    p="2"
                     variant="ghost"
                     whiteSpace="normal"
                   >
@@ -137,34 +148,23 @@ export const HomePage = observer(function HomePage() {
               borderWidth="1px"
               boxShadow="0 28px 90px rgba(16, 24, 40, 0.1)"
               gap={{ base: '4', md: '5' }}
-              p={{ base: '4', md: '5' }}
+              p={{ base: '4', md: '5', lg: '3' }}
               templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 260px' }}
             >
-              <Stack gap="5">
-                <Flex gap="2" wrap="wrap">
-                  <SoftBadge tone="blue">{vm.selectedUseCase.label}</SoftBadge>
-                  <SoftBadge tone="amber">{vm.selectedRegion.label}</SoftBadge>
-                  <SoftBadge tone="green">{vm.selectedBillingTerm.label}</SoftBadge>
-                </Flex>
-
+              <Stack gap="3">
                 <Stack gap="3">
                   <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                    Recommended server
+                    {t('home.recommendedServer')}
                   </Text>
                   <Heading as="h2" fontSize={{ base: '4xl', md: '5xl' }} lineHeight="0.95">
-                    {selectedPlan.name}
+                    {selectedPlanCopy.name}
                   </Heading>
                   <Text color="ink.700" fontSize="md" maxW="660px">
-                    {selectedPlan.summary}
+                    {selectedPlanCopy.summary}
                   </Text>
                 </Stack>
 
-                <SimpleGrid columns={{ base: 2, md: 4 }} gap="3">
-                  <MetricCard label="CPU" value={selectedPlan.cpu} />
-                  <MetricCard label="Memory" value={selectedPlan.ram} />
-                  <MetricCard label="Storage" value={selectedPlan.storage} />
-                  <MetricCard label="Network" value={selectedPlan.network} />
-                </SimpleGrid>
+                <CompactQuerySummary rows={selectionRows} />
               </Stack>
 
               <Stack
@@ -181,46 +181,64 @@ export const HomePage = observer(function HomePage() {
                   fontWeight="700"
                   textTransform="uppercase"
                 >
-                  Price
+                  {t('home.price')}
                 </Text>
                 <Text fontSize="4xl" fontWeight="800" lineHeight="1">
-                  {vm.selectedPrice}
+                  {vm.getSelectedPriceLabel(t)}
                 </Text>
                 <Text color="darkPanelText" fontSize="sm">
-                  {selectedPlan.setup} · {selectedPlan.availability}
+                  {vm.getSelectedSetupAvailabilityLabel(t)}
                 </Text>
                 <Button
                   bg="reserveButtonBg"
                   borderRadius="8px"
                   color="ink.900"
                   disabled={!vm.canReserveServer}
-                  title="Direct reservation will be available in the customer console"
+                  title={t('home.reserveUnavailableTitle')}
                 >
-                  Reserve server
+                  {t('home.reserveServer')}
                 </Button>
                 <Button
                   asChild
+                  bg="transparent"
                   borderColor="darkPanelBorder"
                   borderRadius="8px"
                   color="white"
                   variant="outline"
+                  _active={{
+                    bg: 'darkBadgeBg',
+                    borderColor: 'activeBorder',
+                    color: 'white',
+                  }}
+                  _hover={{
+                    bg: 'darkBadgeBg',
+                    borderColor: 'activeBorder',
+                    color: 'white',
+                  }}
                 >
-                  <NavLink to={vm.quotePath}>Send quote</NavLink>
+                  <NavLink to={vm.quotePath}>{t('home.sendQuote')}</NavLink>
                 </Button>
               </Stack>
             </Grid>
 
-            <Grid
-              gap={{ base: '5', md: '6' }}
-              templateColumns={{ base: '1fr', xl: 'minmax(0, 1.35fr) 0.65fr' }}
+            <Box
+              bg="white"
+              borderColor="surface.200"
+              borderRadius="8px"
+              borderWidth="1px"
+              overflow="hidden"
             >
+              <MetricTable rows={metricRows} />
+            </Box>
+
+            <Stack gap={{ base: '4', md: '5' }}>
               <Stack
                 bg="white"
                 borderColor="surface.200"
                 borderRadius="8px"
                 borderWidth="1px"
                 gap="3"
-                p="4"
+                p={{ base: '4', md: '5', lg: '3' }}
               >
                 <Flex align="center" justify="space-between" gap="3" wrap="wrap">
                   <Stack gap="0">
@@ -230,39 +248,36 @@ export const HomePage = observer(function HomePage() {
                       fontWeight="760"
                       textTransform="uppercase"
                     >
-                      Matching plans
+                      {t('home.matchingPlans')}
                     </Text>
                     <Heading as="h2" fontSize="xl">
-                      Choose another server
+                      {t('home.chooseAnotherServer')}
                     </Heading>
                   </Stack>
-                  <Text color="ink.500" fontSize="sm">
-                    {vm.selectablePlans.length}{' '}
-                    {vm.hasExactPlanMatches ? 'plans match' : 'nearby plans'}
-                  </Text>
+                  <Button asChild borderRadius="8px" size="sm" variant="outline">
+                    <NavLink to="/catalog">{t('home.browseCatalog')}</NavLink>
+                  </Button>
                 </Flex>
 
-                <Stack gap="2">
-                  {vm.planRows.map((plan) => (
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="2">
+                  {vm.getSuggestedPlanRows(t).map((plan) => (
                     <Button
-                      alignItems="center"
+                      alignItems="stretch"
                       aria-pressed={plan.selected}
                       bg={plan.selected ? 'brand.50' : 'white'}
                       borderColor={plan.selected ? 'activeBorder' : 'surface.200'}
                       borderRadius="8px"
                       borderWidth="1px"
                       color="ink.900"
-                      disabled={!plan.selectable}
-                      display="grid"
-                      gap="3"
+                      display="flex"
+                      flexDirection="column"
+                      gap="2"
                       h="auto"
-                      justifyContent="stretch"
+                      justifyContent="space-between"
                       key={plan.id}
-                      opacity={plan.selectable ? 1 : 0.45}
                       onClick={() => vm.selectPlan(plan.id)}
-                      p="3"
-                      textAlign="left"
-                      gridTemplateColumns={{ base: '1fr', md: '1fr auto' }}
+                      p="2"
+                      textAlign="start"
                       variant="ghost"
                       whiteSpace="normal"
                       w="100%"
@@ -272,89 +287,23 @@ export const HomePage = observer(function HomePage() {
                           {plan.name}
                         </Text>
                         <Text color="ink.500" fontSize="sm">
-                          {plan.cpu} · {plan.ram} · {plan.storage}
+                          {plan.hardwareSummary}
                         </Text>
                       </Stack>
-                      <Text color={plan.selected ? 'brand.500' : 'ink.700'} fontWeight="760">
-                        {plan.displayPrice}
-                      </Text>
+                      <Flex align="center" justify="space-between" gap="2">
+                        <Text color={plan.selected ? 'brand.500' : 'ink.700'} fontWeight="760">
+                          {plan.displayPriceLabel}
+                        </Text>
+                        <Text color="ink.500" fontSize="xs">
+                          {plan.availabilityLabel}
+                        </Text>
+                      </Flex>
                     </Button>
                   ))}
-                </Stack>
+                </SimpleGrid>
               </Stack>
 
-              <Stack gap={{ base: '5', md: '6' }}>
-                <QuerySummary rows={vm.selectionRows} />
-
-                <InfoPanel title="Next actions">
-                  {vm.nextActions.map((action) => (
-                    <Button
-                      asChild
-                      bg={action.tone === 'primary' ? 'ctaBg' : 'white'}
-                      borderColor={action.tone === 'primary' ? 'brand.600' : 'surface.200'}
-                      borderRadius="8px"
-                      borderWidth="1px"
-                      color={action.tone === 'primary' ? 'white' : 'ink.900'}
-                      h="auto"
-                      justifyContent="stretch"
-                      key={action.href}
-                      p="3"
-                      textAlign="left"
-                      variant="ghost"
-                      whiteSpace="normal"
-                      w="100%"
-                    >
-                      <NavLink to={action.href}>
-                        <Stack align="start" gap="0.5" minW="0">
-                          <Text fontWeight="760">{action.label}</Text>
-                          <Text
-                            color={action.tone === 'primary' ? 'darkPanelText' : 'ink.500'}
-                            fontSize="xs"
-                            lineHeight="1.25"
-                          >
-                            {action.summary}
-                          </Text>
-                        </Stack>
-                      </NavLink>
-                    </Button>
-                  ))}
-                </InfoPanel>
-
-                <InfoPanel title="Included">
-                  {vm.includedItems.map((item) => (
-                    <InfoRow key={item}>{item}</InfoRow>
-                  ))}
-                </InfoPanel>
-
-                <InfoPanel title="Demo path">
-                  {vm.journeySteps.map((step, index) => (
-                    <Grid
-                      alignItems="start"
-                      bg="panelSubtleBg"
-                      borderColor="surface.200"
-                      borderRadius="8px"
-                      borderWidth="1px"
-                      gap="3"
-                      key={step.id}
-                      p="3"
-                      templateColumns="auto 1fr"
-                    >
-                      <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                        {index + 1}
-                      </Badge>
-                      <Stack gap="0.5">
-                        <Text color="ink.900" fontWeight="760">
-                          {step.label}
-                        </Text>
-                        <Text color="ink.500" fontSize="sm" lineHeight="1.35">
-                          {step.summary}
-                        </Text>
-                      </Stack>
-                    </Grid>
-                  ))}
-                </InfoPanel>
-              </Stack>
-            </Grid>
+            </Stack>
           </Stack>
         </Grid>
       </Container>
@@ -381,11 +330,11 @@ function ChoiceButton({
       borderWidth="1px"
       color="ink.900"
       h="auto"
-      minH="4.75rem"
+      minH={{ base: '4.75rem', lg: '3rem' }}
       justifyContent="flex-start"
       onClick={onClick}
-      p="3"
-      textAlign="left"
+      p="2"
+      textAlign="start"
       variant="ghost"
       whiteSpace="normal"
       w="100%"
@@ -402,40 +351,55 @@ function ChoiceButton({
   );
 }
 
-function InfoPanel({
-  children,
-  title,
+function MetricTable({
+  rows,
 }: {
-  readonly children: React.ReactNode;
-  readonly title: string;
+  readonly rows: readonly { readonly label: string; readonly value: string }[];
 }) {
   return (
-    <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="3" p="4">
-      <Text color="brand.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-        {title}
-      </Text>
-      {children}
-    </Stack>
+    <SimpleGrid as="dl" columns={{ base: 2, md: 4 }} gap="0">
+      {rows.map((row, index) => (
+        <MetricCell
+          hasBottomBorder={index < 2}
+          hasInlineBorder={index % 2 === 0}
+          hasWideInlineBorder={index < rows.length - 1}
+          key={row.label}
+          label={row.label}
+          value={row.value}
+        />
+      ))}
+    </SimpleGrid>
   );
 }
 
-function InfoRow({ children }: { readonly children: React.ReactNode }) {
+function MetricCell({
+  hasBottomBorder,
+  hasInlineBorder,
+  hasWideInlineBorder,
+  label,
+  value,
+}: {
+  readonly hasBottomBorder: boolean;
+  readonly hasInlineBorder: boolean;
+  readonly hasWideInlineBorder: boolean;
+  readonly label: string;
+  readonly value: string;
+}) {
   return (
-    <Box bg="panelSubtleBg" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
-      <Text color="ink.700" fontSize="sm">
-        {children}
-      </Text>
-    </Box>
-  );
-}
-
-function MetricCard({ label, value }: { readonly label: string; readonly value: string }) {
-  return (
-    <Box bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" p="3">
-      <Text color="ink.900" fontSize="lg" fontWeight="780">
+    <Box
+      borderColor="surface.200"
+      borderBottomWidth={{ base: hasBottomBorder ? '1px' : '0', md: '0' }}
+      borderInlineEndWidth={{
+        base: hasInlineBorder ? '1px' : '0',
+        md: hasWideInlineBorder ? '1px' : '0',
+      }}
+      minW="0"
+      p="3"
+    >
+      <Text as="dt" color="ink.900" fontSize="md" fontWeight="760" lineHeight="1.25">
         {value}
       </Text>
-      <Text color="ink.500" fontSize="xs">
+      <Text as="dd" color="ink.500" fontSize="xs" m="0">
         {label}
       </Text>
     </Box>
@@ -447,25 +411,5 @@ function SectionLabel({ children }: { readonly children: React.ReactNode }) {
     <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
       {children}
     </Text>
-  );
-}
-
-function SoftBadge({
-  children,
-  tone,
-}: {
-  readonly children: React.ReactNode;
-  readonly tone: 'amber' | 'blue' | 'green';
-}) {
-  const palette = {
-    amber: { bg: 'amberBg', color: 'amberText' },
-    blue: { bg: 'brand.50', color: 'brand.500' },
-    green: { bg: 'successBg', color: 'successText' },
-  }[tone];
-
-  return (
-    <Badge bg={palette.bg} borderRadius="8px" color={palette.color} px="2.5" py="1">
-      {children}
-    </Badge>
   );
 }
