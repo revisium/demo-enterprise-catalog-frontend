@@ -45,12 +45,6 @@ export interface ServerPlan {
   readonly useCaseIds: readonly UseCaseId[];
 }
 
-export interface JourneyStep {
-  readonly id: string;
-  readonly label: string;
-  readonly summary: string;
-}
-
 const useCaseOptions: readonly UseCaseOption[] = [
   {
     id: 'web-app',
@@ -169,36 +163,6 @@ const serverPlans: readonly ServerPlan[] = [
   },
 ];
 
-const includedItems = [
-  'DDoS protection',
-  'Public IPv4',
-  'Monitoring',
-  'Support ticket SLA',
-] as const;
-
-const journeySteps: readonly JourneyStep[] = [
-  {
-    id: 'pick-capacity',
-    label: 'Pick capacity',
-    summary: 'Choose a need, data center, and contract term.',
-  },
-  {
-    id: 'review-plan',
-    label: 'Review the plan',
-    summary: 'Open specs, documents, stock, and similar plans.',
-  },
-  {
-    id: 'prepare-quote',
-    label: 'Prepare quote',
-    summary: 'Send the selected plan into the public quote request.',
-  },
-  {
-    id: 'continue-console',
-    label: 'Continue in console',
-    summary: 'Track saved plans, quote comments, favorites, and preferences.',
-  },
-];
-
 export class HomePageDataSource {
   getSnapshot() {
     return catalogSnapshot;
@@ -220,11 +184,4 @@ export class HomePageDataSource {
     return serverPlans;
   }
 
-  getIncludedItems() {
-    return includedItems;
-  }
-
-  getJourneySteps() {
-    return journeySteps;
-  }
 }

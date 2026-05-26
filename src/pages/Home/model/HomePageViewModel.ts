@@ -15,13 +15,6 @@ interface PlanRowViewModel extends ServerPlan {
   readonly selectable: boolean;
 }
 
-interface NextAction {
-  readonly href: string;
-  readonly label: string;
-  readonly summary: string;
-  readonly tone: 'primary' | 'secondary';
-}
-
 export class HomePageViewModel {
   readonly dataSource: HomePageDataSource;
   readonly canReserveServer = false;
@@ -133,6 +126,14 @@ export class HomePageViewModel {
     }));
   }
 
+  get suggestedPlanRows(): readonly PlanRowViewModel[] {
+    const selectableRows = this.planRows.filter((plan) => plan.selectable);
+    const alternativeRows = selectableRows.filter((plan) => !plan.selected);
+    const sourceRows = alternativeRows.length > 0 ? alternativeRows : selectableRows;
+
+    return sourceRows.slice(0, 3);
+  }
+
   get hasExactPlanMatches() {
     return this.matchingPlans.length > 0;
   }
@@ -147,58 +148,12 @@ export class HomePageViewModel {
     )?.setupHours;
   }
 
-  get selectedStockLabel() {
+  get selectedStockCount() {
     const stock = this.selectedCatalogProduct?.availabilityByRegion.find(
       (region) => region.regionId === this.selectedRegionId,
     )?.stock;
 
-    return typeof stock === 'number' ? `${stock} units` : this.selectedPlan.availability;
-  }
-
-  get selectionRows() {
-    return [
-      { label: 'Need', value: this.selectedUseCase.label },
-      { label: 'Region', value: this.selectedRegion.label },
-      { label: 'Plan', value: this.selectedPlan.name },
-      { label: 'Contract', value: this.selectedBillingTerm.label },
-      { label: 'Stock', value: this.selectedStockLabel },
-      {
-        label: 'Setup',
-        value:
-          typeof this.selectedSetupLabel === 'number'
-            ? `${this.selectedSetupLabel}h`
-            : this.selectedPlan.setup,
-      },
-    ];
-  }
-
-  get nextActions(): readonly NextAction[] {
-    return [
-      {
-        href: this.quotePath,
-        label: 'Prepare quote',
-        summary: 'Continue with this plan, region, and contract term.',
-        tone: 'primary',
-      },
-      {
-        href: `/catalog/${this.selectedPlan.catalogProductId}`,
-        label: 'Open plan detail',
-        summary: 'Review specs, add-ons, regions, documents, and related plans.',
-        tone: 'secondary',
-      },
-      {
-        href: '/pricing',
-        label: 'Check price rows',
-        summary: 'Compare term, region, support, add-on, and stock filters.',
-        tone: 'secondary',
-      },
-      {
-        href: '/compare',
-        label: 'Compare fit',
-        summary: 'Rank plans by workload scenario and commercial efficiency.',
-        tone: 'secondary',
-      },
-    ];
+    return typeof stock === 'number' ? stock : null;
   }
 
   get quotePath() {
@@ -209,14 +164,6 @@ export class HomePageViewModel {
     });
 
     return `/quote?${params.toString()}`;
-  }
-
-  get includedItems() {
-    return this.dataSource.getIncludedItems();
-  }
-
-  get journeySteps() {
-    return this.dataSource.getJourneySteps();
   }
 
   selectUseCase(useCaseId: UseCaseId) {

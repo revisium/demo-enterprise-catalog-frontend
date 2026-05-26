@@ -27,7 +27,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   }, [params.regionId, vm]);
 
   return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">

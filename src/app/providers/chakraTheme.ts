@@ -16,6 +16,9 @@ const config = defineConfig({
       color: 'inherit',
       textDecoration: 'none',
     },
+    'html:not([data-focus-modality="keyboard"]) :is(a, button, input, select, textarea, [tabindex]):focus-visible': {
+      outline: 'none !important',
+    },
   },
   theme: {
     tokens: {
@@ -66,7 +69,7 @@ const config = defineConfig({
             'linear-gradient(90deg, color-mix(in srgb, {colors.brand.500} 8%, transparent), transparent 34%), linear-gradient(180deg, white 0, {colors.surface.50} 390px, {colors.surface.100} 100%)',
         },
         headerBg: {
-          value: 'color-mix(in srgb, white 84%, transparent)',
+          value: 'color-mix(in srgb, white 96%, transparent)',
         },
         pagePremiumBg: {
           value:

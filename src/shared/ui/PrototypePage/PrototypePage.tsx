@@ -18,7 +18,7 @@ export function PrototypePage({
   title,
 }: PrototypePageProps) {
   return (
-    <Box bg="pagePremiumBg" minH="calc(100dvh - 56px)">
+    <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '7', md: '10' }}>
         <Grid
           alignItems="stretch"
