@@ -626,17 +626,15 @@ function useFocusModality() {
     };
 
     setPointerModality();
-    window.addEventListener('keydown', setKeyboardModality, true);
-    window.addEventListener('focus', setPointerModality, true);
-    window.addEventListener('pageshow', setPointerModality);
-    window.addEventListener('pointerdown', setPointerModality, true);
+    globalThis.addEventListener('keydown', setKeyboardModality, true);
+    globalThis.addEventListener('pageshow', setPointerModality);
+    globalThis.addEventListener('pointerdown', setPointerModality, true);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('keydown', setKeyboardModality, true);
-      window.removeEventListener('focus', setPointerModality, true);
-      window.removeEventListener('pageshow', setPointerModality);
-      window.removeEventListener('pointerdown', setPointerModality, true);
+      globalThis.removeEventListener('keydown', setKeyboardModality, true);
+      globalThis.removeEventListener('pageshow', setPointerModality);
+      globalThis.removeEventListener('pointerdown', setPointerModality, true);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
