@@ -138,6 +138,12 @@ export const HomePage = observer(function HomePage() {
       value: getSetupSummaryLabel(vm.selectedSetupLabel, selectedPlan, t),
     },
   ];
+  const metricRows = [
+    { label: t('home.metric.cpu'), value: formatHardwareValue(selectedPlan.cpu, t) },
+    { label: t('home.metric.memory'), value: selectedPlan.ram },
+    { label: t('home.metric.storage'), value: selectedPlan.storage },
+    { label: t('home.metric.network'), value: selectedPlan.network },
+  ];
 
   return (
     <Box bg="pagePremiumBg" color="ink.900" data-i18n-skip flex="1">
@@ -356,17 +362,9 @@ export const HomePage = observer(function HomePage() {
               borderColor="surface.200"
               borderRadius="8px"
               borderWidth="1px"
-              p={{ base: '4', md: '5', lg: '3' }}
+              overflow="hidden"
             >
-              <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: '3', md: '4' }}>
-                <MetricCard
-                  label={t('home.metric.cpu')}
-                  value={formatHardwareValue(selectedPlan.cpu, t)}
-                />
-                <MetricCard label={t('home.metric.memory')} value={selectedPlan.ram} />
-                <MetricCard label={t('home.metric.storage')} value={selectedPlan.storage} />
-                <MetricCard label={t('home.metric.network')} value={selectedPlan.network} />
-              </SimpleGrid>
+              <MetricTable rows={metricRows} />
             </Box>
 
             <Stack gap={{ base: '4', md: '5' }}>
@@ -602,20 +600,55 @@ function ChoiceButton({
   );
 }
 
-function MetricCard({ label, value }: { readonly label: string; readonly value: string }) {
+function MetricTable({
+  rows,
+}: {
+  readonly rows: readonly { readonly label: string; readonly value: string }[];
+}) {
+  return (
+    <SimpleGrid as="dl" columns={{ base: 2, md: 4 }} gap="0">
+      {rows.map((row, index) => (
+        <MetricCell
+          hasBottomBorder={index < 2}
+          hasInlineBorder={index % 2 === 0}
+          hasWideInlineBorder={index < rows.length - 1}
+          key={row.label}
+          label={row.label}
+          value={row.value}
+        />
+      ))}
+    </SimpleGrid>
+  );
+}
+
+function MetricCell({
+  hasBottomBorder,
+  hasInlineBorder,
+  hasWideInlineBorder,
+  label,
+  value,
+}: {
+  readonly hasBottomBorder: boolean;
+  readonly hasInlineBorder: boolean;
+  readonly hasWideInlineBorder: boolean;
+  readonly label: string;
+  readonly value: string;
+}) {
   return (
     <Box
-      bg="white"
       borderColor="surface.200"
-      borderRadius="8px"
-      borderWidth="1px"
+      borderBottomWidth={{ base: hasBottomBorder ? '1px' : '0', md: '0' }}
+      borderInlineEndWidth={{
+        base: hasInlineBorder ? '1px' : '0',
+        md: hasWideInlineBorder ? '1px' : '0',
+      }}
       minW="0"
-      p="2"
+      p="3"
     >
-      <Text color="ink.900" fontSize="md" fontWeight="760" lineHeight="1.25">
+      <Text as="dt" color="ink.900" fontSize="md" fontWeight="760" lineHeight="1.25">
         {value}
       </Text>
-      <Text color="ink.500" fontSize="xs">
+      <Text as="dd" color="ink.500" fontSize="xs" m="0">
         {label}
       </Text>
     </Box>
