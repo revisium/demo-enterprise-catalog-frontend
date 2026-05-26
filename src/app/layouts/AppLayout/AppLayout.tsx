@@ -15,7 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useEffect, type ChangeEvent } from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { NavLink, NavigationType, useLocation, useNavigationType } from 'react-router';
 
 import { isLocaleCode, supportedLocales, useI18n, type TranslationKey } from 'src/shared/i18n';
 
@@ -305,11 +305,16 @@ export function AppLayout({ children }: AppLayoutProps) {
 }
 
 function useRouteScrollReset() {
-  const { pathname } = useLocation();
+  const { hash, pathname } = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
+    if (hash || navigationType === NavigationType.Pop) {
+      return;
+    }
+
     window.scrollTo({ left: 0, top: 0 });
-  }, [pathname]);
+  }, [hash, navigationType, pathname]);
 }
 
 function LanguageSelect({

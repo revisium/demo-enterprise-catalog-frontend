@@ -92,6 +92,14 @@ export class CatalogPageViewModel {
     );
   }
 
+  get filteredTotalStock() {
+    return this.filteredProducts.reduce((total, product) => total + product.totalStock, 0);
+  }
+
+  get hasNoMatches() {
+    return this.filteredProducts.length === 0;
+  }
+
   get families(): readonly FilterOption[] {
     return [...new Set(this.products.map((product) => product.family))].map((family) => ({
       id: family,
@@ -149,6 +157,10 @@ export class CatalogPageViewModel {
       (this.maxMonthlyPrice > 0 ? 1 : 0) +
       (this.requireCompliance ? 1 : 0)
     );
+  }
+
+  get hasUserFilters() {
+    return this.activeFilterCount > 0;
   }
 
   get queryRows() {

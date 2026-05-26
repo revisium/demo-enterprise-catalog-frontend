@@ -16,13 +16,6 @@ import { CatalogPageViewModel } from '../../model/CatalogPageViewModel';
 
 export const CatalogPage = observer(function CatalogPage() {
   const [vm] = useState(() => new CatalogPageViewModel());
-  const filteredProducts = vm.filteredProducts;
-  const hasNoMatches = filteredProducts.length === 0;
-  const filteredTotalStock = filteredProducts.reduce(
-    (total, product) => total + product.totalStock,
-    0,
-  );
-  const hasUserFilters = vm.activeFilterCount > 0;
 
   return (
     <Box bg="pagePremiumBg" flex="1">
@@ -144,15 +137,15 @@ export const CatalogPage = observer(function CatalogPage() {
                 </Heading>
                 <Flex color="ink.500" fontSize="sm" gap="2" wrap="wrap">
                   <Text as="span">Matches</Text>
-                  <Text as="span">{filteredProducts.length}</Text>
-                  {hasNoMatches ? null : (
+                  <Text as="span">{vm.filteredProducts.length}</Text>
+                  {vm.hasNoMatches ? null : (
                     <>
                       <Text as="span">Stock</Text>
-                      <Text as="span">{filteredTotalStock}</Text>
+                      <Text as="span">{vm.filteredTotalStock}</Text>
                       <Text as="span">units</Text>
                     </>
                   )}
-                  {hasUserFilters ? (
+                  {vm.hasUserFilters ? (
                     <>
                       <Text as="span">Active filters</Text>
                       <Text as="span">{vm.activeFilterCount}</Text>
@@ -169,7 +162,7 @@ export const CatalogPage = observer(function CatalogPage() {
                 Reset filters
               </Button>
             </Flex>
-            {hasNoMatches ? (
+            {vm.hasNoMatches ? (
               <EmptyState
                 actionLabel="Reset filters"
                 onAction={() => vm.resetFilters()}
@@ -177,7 +170,7 @@ export const CatalogPage = observer(function CatalogPage() {
                 title="No server plans match"
               />
             ) : null}
-            {filteredProducts.map((product) => (
+            {vm.filteredProducts.map((product) => (
               <Grid
                 alignItems="stretch"
                 bg="white"
