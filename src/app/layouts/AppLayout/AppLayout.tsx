@@ -121,13 +121,13 @@ export function AppLayout({ children }: AppLayoutProps) {
             py={{ base: '2', md: '2.5' }}
             rowGap="2"
             templateAreas={{
-              base: `"brand menu" "actions actions"`,
-              md: `"brand actions menu"`,
+              base: `"brand menu"`,
+              md: `"brand menu"`,
               lg: `"brand nav actions"`,
             }}
             templateColumns={{
               base: 'minmax(0, 1fr) auto',
-              md: 'minmax(0, 1fr) auto auto',
+              md: 'minmax(0, 1fr) auto',
               lg: 'auto minmax(0, 1fr) auto',
             }}
           >
@@ -187,6 +187,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <Flex
               align="center"
+              display={{ base: 'none', lg: 'flex' }}
               gap="1.5"
               gridArea="actions"
               justify="flex-end"
@@ -218,44 +219,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   )}
                 </NavLink>
               </ChakraLink>
-              <Box
-                className="group"
-                flexShrink="0"
-                role="group"
-                transition="transform 160ms ease"
-                w="62px"
-                _hover={{ transform: 'translateY(-1px)' }}
-              >
-                <NativeSelect.Root size="sm" w="100%">
-                  <NativeSelect.Field
-                    aria-label={t('language.selectLabel')}
-                    bg="white"
-                    borderColor="surface.200"
-                    borderRadius="control"
-                    color="ink.700"
-                    fontSize="xs"
-                    fontWeight="700"
-                    h="8"
-                    minH="8"
-                    onChange={handleLocaleChange}
-                    px="2.5"
-                    title={t('language.selectTitle')}
-                    value={locale}
-                    _groupHover={{
-                      bg: 'surface.50',
-                      borderColor: 'brandBorderMuted',
-                      boxShadow: '0 8px 18px rgba(16, 24, 40, 0.08)',
-                    }}
-                  >
-                    {supportedLocales.map((supportedLocale) => (
-                      <option key={supportedLocale.code} value={supportedLocale.code}>
-                        {supportedLocale.code.toUpperCase()}
-                      </option>
-                    ))}
-                  </NativeSelect.Field>
-                  <NativeSelect.Indicator />
-                </NativeSelect.Root>
-              </Box>
+              <LanguageSelect handleLocaleChange={handleLocaleChange} locale={locale} t={t} />
               <ChakraLink asChild flexShrink="0" {...linkFocusProps}>
                 <NavLink to="/quote">
                   {({ isActive }) => (
@@ -283,9 +247,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </NavLink>
               </ChakraLink>
             </Flex>
-            <Box display={{ base: 'block', lg: 'none' }} gridArea="menu" justifySelf="end">
+            <Flex align="center" display={{ base: 'flex', lg: 'none' }} gap="1.5" gridArea="menu">
+              <Box display="block">
+                <LanguageSelect handleLocaleChange={handleLocaleChange} locale={locale} t={t} />
+              </Box>
               <MobileNavigationDialog t={t} />
-            </Box>
+            </Flex>
           </Grid>
         </Container>
       </Box>
@@ -332,6 +299,57 @@ export function AppLayout({ children }: AppLayoutProps) {
           </Grid>
         </Container>
       </Box>
+    </Box>
+  );
+}
+
+function LanguageSelect({
+  handleLocaleChange,
+  locale,
+  t,
+}: {
+  readonly handleLocaleChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  readonly locale: string;
+  readonly t: (key: TranslationKey) => string;
+}) {
+  return (
+    <Box
+      className="group"
+      flexShrink="0"
+      role="group"
+      transition="transform 160ms ease"
+      w="62px"
+      _hover={{ transform: 'translateY(-1px)' }}
+    >
+      <NativeSelect.Root size="sm" w="100%">
+        <NativeSelect.Field
+          aria-label={t('language.selectLabel')}
+          bg="white"
+          borderColor="surface.200"
+          borderRadius="control"
+          color="ink.700"
+          fontSize="xs"
+          fontWeight="700"
+          h="8"
+          minH="8"
+          onChange={handleLocaleChange}
+          px="2.5"
+          title={t('language.selectTitle')}
+          value={locale}
+          _groupHover={{
+            bg: 'surface.50',
+            borderColor: 'brandBorderMuted',
+            boxShadow: '0 8px 18px rgba(16, 24, 40, 0.08)',
+          }}
+        >
+          {supportedLocales.map((supportedLocale) => (
+            <option key={supportedLocale.code} value={supportedLocale.code}>
+              {supportedLocale.code.toUpperCase()}
+            </option>
+          ))}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator />
+      </NativeSelect.Root>
     </Box>
   );
 }
@@ -406,8 +424,30 @@ function MobileNavigationDialog({ t }: { readonly t: (key: TranslationKey) => st
               px="4"
               py="3"
             >
-              <Dialog.Title color="ink.900" fontSize="lg" fontWeight="800">
-                {t('nav.menu.title')}
+              <Dialog.Title color="ink.900" data-i18n-skip>
+                <HStack gap="3">
+                  <Flex
+                    align="center"
+                    justify="center"
+                    w="8"
+                    h="8"
+                    borderRadius="control"
+                    bg="logoBg"
+                    color="white"
+                    fontSize="xs"
+                    fontWeight="800"
+                  >
+                    HS
+                  </Flex>
+                  <Box>
+                    <Text fontWeight="760" lineHeight="1">
+                      HelioStack
+                    </Text>
+                    <Text color="ink.500" fontSize="xs" lineHeight="1.1">
+                      Cloud servers
+                    </Text>
+                  </Box>
+                </HStack>
               </Dialog.Title>
               <Dialog.CloseTrigger asChild>
                 <Button
@@ -427,10 +467,16 @@ function MobileNavigationDialog({ t }: { readonly t: (key: TranslationKey) => st
               </Dialog.CloseTrigger>
             </Dialog.Header>
             <Dialog.Body px="4" py="5">
-              <Stack as="nav" aria-label="Primary navigation" gap="2">
-                {navItems.map((item) => (
-                  <MobileNavLink item={item} key={item.to} label={t(item.labelKey)} />
-                ))}
+              <Stack gap="5">
+                <Stack gap="2">
+                  <MobileMenuLink label={t('app.console')} to="/app" />
+                  <MobileMenuLink label={t('app.getQuote')} tone="primary" to="/quote" />
+                </Stack>
+                <Stack as="nav" aria-label="Primary navigation" gap="2">
+                  {navItems.map((item) => (
+                    <MobileNavLink item={item} key={item.to} label={t(item.labelKey)} />
+                  ))}
+                </Stack>
               </Stack>
             </Dialog.Body>
           </Dialog.Content>
@@ -438,6 +484,87 @@ function MobileNavigationDialog({ t }: { readonly t: (key: TranslationKey) => st
       </Portal>
     </Dialog.Root>
   );
+}
+
+function MobileMenuLink({
+  label,
+  to,
+  tone = 'plain',
+}: {
+  readonly label: string;
+  readonly to: string;
+  readonly tone?: 'plain' | 'primary';
+}) {
+  const isPrimary = tone === 'primary';
+
+  return (
+    <Dialog.ActionTrigger asChild>
+      <ChakraLink asChild {...linkFocusProps}>
+        <NavLink to={to}>
+          {({ isActive }) => {
+            const styles = getMobileMenuLinkStyles({ isActive, isPrimary });
+
+            return (
+              <Box
+                bg={styles.bg}
+                borderColor={styles.borderColor}
+                borderRadius="8px"
+                borderWidth="1px"
+                color={styles.color}
+                fontSize="lg"
+                fontWeight="760"
+                px="4"
+                py="4"
+                w="100%"
+                _hover={{
+                  bg: styles.hoverBg,
+                  borderColor: styles.hoverBorderColor,
+                }}
+              >
+                {label}
+              </Box>
+            );
+          }}
+        </NavLink>
+      </ChakraLink>
+    </Dialog.ActionTrigger>
+  );
+}
+
+function getMobileMenuLinkStyles({
+  isActive,
+  isPrimary,
+}: {
+  readonly isActive: boolean;
+  readonly isPrimary: boolean;
+}) {
+  if (isPrimary) {
+    return {
+      bg: 'ctaBg',
+      borderColor: 'brand.600',
+      color: 'white',
+      hoverBg: 'ctaBg',
+      hoverBorderColor: 'brand.500',
+    };
+  }
+
+  if (isActive) {
+    return {
+      bg: 'brand.50',
+      borderColor: 'activeBorder',
+      color: 'brand.500',
+      hoverBg: 'brand.50',
+      hoverBorderColor: 'activeBorder',
+    };
+  }
+
+  return {
+    bg: 'white',
+    borderColor: 'surface.200',
+    color: 'ink.900',
+    hoverBg: 'surface.50',
+    hoverBorderColor: 'brandBorderMuted',
+  };
 }
 
 function MobileNavLink({

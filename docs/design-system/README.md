@@ -24,9 +24,9 @@ iteration, not to freeze a brand too early.
 - Header: glass-like sticky bar, constrained content, compact brand mark,
   horizontally scrollable public navigation, portal entry, quote CTA, and
   language control. Desktop uses a three-column grid so navigation stays inside
-  the same `1240px` content rail as the pages. Phone widths use two header
-  rows: brand plus burger menu first, then account, quote, and language actions.
-  Tablet widths keep the header in one row with burger menu as the last action.
+  the same `1240px` content rail as the pages. Phone and tablet widths keep only
+  brand, language, and burger in the header; account and quote actions move into
+  the full-screen menu.
 - Main page spacing: `24-36px` vertical page padding and `20-24px` gaps between
   major widgets.
 - Home layout: left configurator and right recommendation column scroll

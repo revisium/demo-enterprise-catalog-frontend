@@ -330,10 +330,21 @@ export const HomePage = observer(function HomePage() {
                 </Button>
                 <Button
                   asChild
+                  bg="transparent"
                   borderColor="darkPanelBorder"
                   borderRadius="8px"
                   color="white"
                   variant="outline"
+                  _active={{
+                    bg: 'darkBadgeBg',
+                    borderColor: 'activeBorder',
+                    color: 'white',
+                  }}
+                  _hover={{
+                    bg: 'darkBadgeBg',
+                    borderColor: 'activeBorder',
+                    color: 'white',
+                  }}
                 >
                   <NavLink to={vm.quotePath}>{t('home.sendQuote')}</NavLink>
                 </Button>
