@@ -5,6 +5,7 @@ export { BackNavButton } from './BackNavButton/BackNavButton';
 export { DarkFact } from './DarkFact/DarkFact';
 export { DarkSummaryPanel } from './DarkSummaryPanel/DarkSummaryPanel';
 export { DetailHeroPanel } from './DetailHeroPanel/DetailHeroPanel';
+export { PageSectionSurface } from './PageSectionSurface/PageSectionSurface';
 export {
   ChipGroup,
   EmptyState,
@@ -13,6 +14,8 @@ export {
   FilterCard,
   MetricGrid,
   PageIntroGrid,
+  PageIntroVisual,
+  ResetButton,
   QuerySummary,
   SectionEyebrow,
   SelectField,

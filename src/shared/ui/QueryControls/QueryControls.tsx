@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  type ButtonProps,
   Flex,
   Grid,
   Heading,
@@ -8,6 +9,7 @@ import {
   Stack,
   Text,
   chakra,
+  type BoxProps,
   type SimpleGridProps,
   type StackProps,
 } from '@chakra-ui/react';
@@ -58,6 +60,10 @@ interface EmptyStateProps {
   readonly title: string;
 }
 
+interface ResetButtonProps extends ButtonProps {
+  readonly children: ReactNode;
+}
+
 interface MetricGridProps {
   readonly ariaLabel: string;
   readonly columns?: SimpleGridProps['columns'];
@@ -67,10 +73,20 @@ interface MetricGridProps {
 interface PageIntroGridProps {
   readonly children?: ReactNode;
   readonly eyebrow: string;
+  readonly image?: PageIntroImage;
   readonly metrics: readonly Metric[];
   readonly metricsLabel: string;
   readonly summary: string;
   readonly title: string;
+}
+
+interface PageIntroImage {
+  readonly alt?: string;
+  readonly src: string;
+}
+
+interface PageIntroVisualProps extends Omit<BoxProps, 'children'> {
+  readonly image: PageIntroImage;
 }
 
 interface SelectFieldProps {
@@ -154,11 +170,37 @@ export function EmptyState({ actionLabel, onAction, summary, title }: EmptyState
         </Text>
       </Stack>
       {onAction && actionLabel ? (
-        <Button borderRadius="8px" onClick={onAction} size="sm" variant="outline">
-          {actionLabel}
-        </Button>
+        <ResetButton onClick={onAction}>{actionLabel}</ResetButton>
       ) : null}
     </Stack>
+  );
+}
+
+export function ResetButton({ children, ...props }: Readonly<ResetButtonProps>) {
+  return (
+    <Button
+      bg="surface.200"
+      borderColor="surface.200"
+      borderRadius="8px"
+      color="ink.900"
+      _active={{
+        bg: 'surface.200',
+        borderColor: 'surface.200',
+      }}
+      _focusVisible={{
+        boxShadow: '0 0 0 3px rgba(51, 65, 85, 0.2)',
+        outline: 'none',
+      }}
+      _hover={{
+        bg: 'surface.100',
+        borderColor: 'surface.200',
+      }}
+      size="sm"
+      variant="solid"
+      {...props}
+    >
+      {children}
+    </Button>
   );
 }
 
@@ -207,6 +249,7 @@ export function MetricGrid({ ariaLabel, columns = { base: 2, sm: 3 }, metrics }:
 export function PageIntroGrid({
   children,
   eyebrow,
+  image,
   metrics,
   metricsLabel,
   summary,
@@ -217,10 +260,23 @@ export function PageIntroGrid({
       alignItems="start"
       gap={{ base: '5', md: '8' }}
       pb={{ base: '2', md: '3' }}
-      templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}
+      templateColumns={{
+        base: '1fr',
+        md: 'minmax(0, 1fr) minmax(260px, 320px)',
+        lg: 'minmax(0, 1fr) 340px',
+      }}
     >
       <Stack as="header" gap={{ base: '3', md: '4' }}>
         <SectionEyebrow>{eyebrow}</SectionEyebrow>
+        {image ? (
+          <PageIntroVisual
+            display={{ base: 'block', md: 'none' }}
+            image={image}
+            alignSelf="center"
+            maxW="clamp(280px, 78vw, 400px)"
+            w="fit-content"
+          />
+        ) : null}
         <Heading
           as="h1"
           color="ink.900"
@@ -238,8 +294,38 @@ export function PageIntroGrid({
       <Box display="none">
         <MetricGrid ariaLabel={metricsLabel} metrics={metrics} />
       </Box>
-      {children ?? null}
+      {image ? <PageIntroVisual image={image} /> : (children ?? null)}
     </Grid>
+  );
+}
+
+export function PageIntroVisual({ image, ...props }: Readonly<PageIntroVisualProps>) {
+  return (
+    <Box
+      aria-hidden="true"
+      aspectRatio="1.6"
+      display={{ base: 'none', md: 'block' }}
+      justifySelf="end"
+      alignSelf="center"
+      maxW="clamp(260px, 34vw, 380px)"
+      minW="240px"
+      w="100%"
+      transition="all 180ms cubic-bezier(0.2, 0.8, 0.2, 1)"
+      transitionProperty="max-width, width, transform"
+      {...props}
+    >
+      <chakra.img
+        alt={image.alt ?? ''}
+        decoding="async"
+        display="block"
+        filter="drop-shadow(0 22px 34px rgba(16, 24, 40, 0.16))"
+        h="100%"
+        objectFit="contain"
+        objectPosition="center"
+        src={image.src}
+        w="100%"
+      />
+    </Box>
   );
 }
 

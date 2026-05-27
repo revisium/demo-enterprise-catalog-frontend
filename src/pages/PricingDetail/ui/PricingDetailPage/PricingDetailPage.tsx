@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -7,12 +7,14 @@ import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   ChipGroup,
+  PageSectionSurface,
   EmptyState,
   FieldHint,
   FilterButton,
   FilterCard,
   PageIntroGrid,
   QuerySummary,
+  ResetButton,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -30,7 +32,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
   }, [params.priceBookId, vm]);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '4', md: '5' }}>
           <BackNavButton fallbackTo="/pricing" />
@@ -138,15 +140,18 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
               minW="0"
               wrap="wrap"
             >
-              <SectionEyebrow>Regional price rows</SectionEyebrow>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
+              <Stack gap="1" maxW="620px">
+                <SectionEyebrow>Rows in this book</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  Book regional rows
+                </Heading>
+                <FieldHint>Rows belong to the selected price book version.</FieldHint>
+              </Stack>
+              {vm.hasUserFilters ? (
+                <ResetButton onClick={() => vm.resetFilters()}>
+                  Reset filters
+                </ResetButton>
+              ) : null}
             </Flex>
 
             <Stack
@@ -263,38 +268,65 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
               w="100%"
             >
               <FilterCard>
-                <SectionEyebrow>Related books</SectionEyebrow>
+                <SectionEyebrow>Other price book versions</SectionEyebrow>
+                <FieldHint>Switch to another effective date or draft book.</FieldHint>
                 <Stack gap="2">
                   {vm.relatedBooks.map((book) => (
                     <Grid
-                      alignItems="center"
+                      asChild
                       borderColor="surface.200"
                       borderRadius="8px"
                       borderWidth="1px"
+                      color="inherit"
+                      cursor="pointer"
                       gap="3"
                       key={book.id}
                       minW="0"
                       p="3"
                       templateColumns="minmax(0, 1fr) auto"
+                      textDecoration="none"
+                      transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
+                      _focusVisible={{
+                        boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
+                        outline: 'none',
+                      }}
+                      _hover={{
+                        borderColor: 'activeBorder',
+                        boxShadow: '0 12px 30px rgba(16, 24, 40, 0.1)',
+                        transform: 'translateY(-1px)',
+                      }}
                     >
-                      <Stack gap="0" minW="0">
-                        <Text
-                          color="ink.900"
-                          fontSize="sm"
-                          fontWeight="760"
-                          overflowWrap="anywhere"
-                        >
-                          {book.title}
-                        </Text>
-                        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                          {book.status} · effective {book.effectiveFrom}
-                        </Text>
-                      </Stack>
-                      <Button asChild borderRadius="8px" size="xs" variant="outline">
-                        <Link state={returnState} to={book.href}>
-                          Open
-                        </Link>
-                      </Button>
+                      <Link state={returnState} to={book.href}>
+                        <Stack gap="2" minW="0">
+                          <Flex align="start" gap="2" justify="space-between" minW="0">
+                            <Text
+                              color="ink.900"
+                              fontSize="sm"
+                              fontWeight="760"
+                              overflowWrap="anywhere"
+                            >
+                              {book.title}
+                            </Text>
+                            <Badge
+                              bg={book.status === 'Active' ? 'successBg' : 'panelGlassBg'}
+                              borderRadius="8px"
+                              color={book.status === 'Active' ? 'successText' : 'ink.700'}
+                              flexShrink="0"
+                            >
+                              {book.status}
+                            </Badge>
+                          </Flex>
+                          <Flex align="center" color="ink.500" fontSize="xs" gap="2" wrap="wrap">
+                            <Badge bg="brand.50" borderRadius="8px" color="brand.700">
+                              Source book
+                            </Badge>
+                            <Text>Applies from</Text>
+                            <Text color="ink.900" fontWeight="700">
+                              {book.effectiveFrom}
+                            </Text>
+                          </Flex>
+                        </Stack>
+                      </Link>
                     </Grid>
                   ))}
                 </Stack>
@@ -323,7 +355,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

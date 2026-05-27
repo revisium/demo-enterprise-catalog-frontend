@@ -30,6 +30,8 @@ Typed mock CMS article data plus local saved/helpful state.
 - Resources uses the shared public-page rhythm from pricing and locations:
   compact intro, filters spanning two columns, and a right-side featured guide
   panel;
+- show a compact desktop-only raster intro visual that signals docs and guides
+  without adding a marketing hero;
 - article results render as dense readable records with category, role, update
   date, summary, tags, read time, helpful count, save, and open actions;
 - the right rail keeps topics, saved reads, and section counts aligned to the
@@ -39,6 +41,11 @@ Typed mock CMS article data plus local saved/helpful state.
   the dark guide summary, actions, and next paths stack in the right column;
 - related guides on detail pages use the same three-card grid pattern as the
   checklist;
+- show the primary reset action only while docs filters or sort differ from the
+  default query, and hide it after reset;
+- make guide list items and saved-read items clickable with hover feedback
+  instead of rendering separate `Open guide` or `Open` buttons, while keeping
+  helpful and save buttons explicit;
 - public docs copy must stay customer-facing and must not expose CMS table,
   source, mock, or proof mechanics.
 

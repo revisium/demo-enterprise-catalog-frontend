@@ -1,4 +1,6 @@
-import { Box, Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+
+import { PageSectionSurface } from 'src/shared/ui';
 
 interface PrototypePageProps {
   readonly asideSummary: string;
@@ -18,7 +20,7 @@ export function PrototypePage({
   title,
 }: PrototypePageProps) {
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '7', md: '10' }}>
         <Grid
           alignItems="stretch"
@@ -68,6 +70,6 @@ export function PrototypePage({
         </Grid>
         {children}
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 }

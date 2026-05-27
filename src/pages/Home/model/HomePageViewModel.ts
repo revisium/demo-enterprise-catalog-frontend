@@ -145,7 +145,7 @@ export class HomePageViewModel {
   selectedBillingTermId: BillingTermId = 'monthly';
   selectedRegionId: RegionId = 'de-fra';
   selectedUseCaseId: UseCaseId = 'web-app';
-  selectedPlanId: ServerPlanId = 'business-vm';
+  selectedPlanId: ServerPlanId = 'starter-vps';
 
   constructor(dataSource = new HomePageDataSource()) {
     this.dataSource = dataSource;
@@ -251,10 +251,8 @@ export class HomePageViewModel {
 
   get suggestedPlanRows(): readonly PlanRowViewModel[] {
     const selectableRows = this.planRows.filter((plan) => plan.selectable);
-    const alternativeRows = selectableRows.filter((plan) => !plan.selected);
-    const sourceRows = alternativeRows.length > 0 ? alternativeRows : selectableRows;
 
-    return sourceRows.slice(0, 3);
+    return selectableRows.slice(0, 3);
   }
 
   get hasExactPlanMatches() {

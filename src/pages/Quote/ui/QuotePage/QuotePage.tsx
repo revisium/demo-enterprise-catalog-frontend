@@ -3,12 +3,15 @@ import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
 import { Link as RouterLink, useLocation, useSearchParams } from 'react-router';
 
+import { quoteRequestIntroImage } from 'src/shared/assets';
+import { useI18n } from 'src/shared/i18n';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   FieldHint,
   FilterButton,
   FilterCard,
+  PageSectionSurface,
   PageIntroGrid,
   SectionEyebrow,
   StickyPanel,
@@ -18,6 +21,7 @@ import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 export const QuotePage = observer(function QuotePage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const { t } = useI18n();
   const planId = searchParams.get('plan');
   const regionId = searchParams.get('region');
   const term = searchParams.get('term');
@@ -33,11 +37,12 @@ export const QuotePage = observer(function QuotePage() {
   const returnState = createReturnState(location);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Quote request"
+          image={{ src: quoteRequestIntroImage }}
           metrics={vm.quoteMetrics}
           metricsLabel="Quote estimate"
           summary="Turn a selected server plan, region, quantity, billing term, and service options into a review-ready request."
@@ -418,16 +423,18 @@ export const QuotePage = observer(function QuotePage() {
             <FilterCard>
               <SectionEyebrow>Review path</SectionEyebrow>
               <Stack gap="3">
-                {vm.reviewSteps.map((step) => (
-                  <Grid gap="3" key={step.id} templateColumns="auto 1fr">
-                    <Badge
-                      bg={step.status === 'complete' ? 'successBg' : 'brand.50'}
-                      borderRadius="8px"
-                      color={step.status === 'next' ? 'ink.500' : 'brand.500'}
-                    >
-                      {step.status}
-                    </Badge>
-                    <Stack gap="0">
+                {vm.reviewSteps.map((step, index) => (
+                  <Grid alignItems="start" gap="3" key={step.id} templateColumns="24px 1fr">
+                    <ReviewStepMarker
+                      isActive={step.status !== 'next'}
+                      isCurrent={step.status === 'current'}
+                      isComplete={step.status === 'complete'}
+                      isLast={index === vm.reviewSteps.length - 1}
+                    />
+                    <Stack gap="1">
+                      <Text color="ink.500" fontSize="xs" fontWeight="700" textTransform="uppercase">
+                        {getReviewStepStatusLabel(step.status, t)}
+                      </Text>
                       <Text color="ink.900" fontSize="sm" fontWeight="760">
                         {step.title}
                       </Text>
@@ -457,6 +464,74 @@ export const QuotePage = observer(function QuotePage() {
           </StickyPanel>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
+
+function ReviewStepMarker({
+  isActive,
+  isCurrent,
+  isComplete,
+  isLast,
+}: {
+  readonly isActive: boolean;
+  readonly isCurrent: boolean;
+  readonly isComplete: boolean;
+  readonly isLast: boolean;
+}) {
+  let markerBg: string;
+  let markerColor: string;
+  let markerSymbol: string;
+
+  if (isComplete) {
+    markerBg = 'successBg';
+    markerColor = 'successText';
+    markerSymbol = '✓';
+  } else if (isCurrent) {
+    markerBg = 'brand.50';
+    markerColor = 'brand.500';
+    markerSymbol = '●';
+  } else {
+    markerBg = 'white';
+    markerColor = 'ink.500';
+    markerSymbol = '○';
+  }
+  const lineColor = isActive ? 'activeBorder' : 'surface.200';
+
+  return (
+    <Stack align="center" gap="0" minH={isLast ? '0' : 'auto'} w="4">
+      <Box
+        alignItems="center"
+        bg={markerBg}
+        borderColor={isActive ? 'activeBorder' : 'surface.200'}
+        borderRadius="999px"
+        borderWidth="1px"
+        color={markerColor}
+        display="flex"
+        h="6"
+        justifyContent="center"
+        minW="6"
+      >
+        <Text as="span" fontSize="xs" fontWeight="760">
+          {markerSymbol}
+        </Text>
+      </Box>
+      {isLast ? null : <Box bg={lineColor} h="100%" w="1px" />}
+    </Stack>
+  );
+}
+
+function getReviewStepStatusLabel(
+  status: 'complete' | 'current' | 'next',
+  t: (key: 'quote.reviewStep.completed' | 'quote.reviewStep.current' | 'quote.reviewStep.next') => string,
+) {
+  if (status === 'complete') {
+    return t('quote.reviewStep.completed');
+  }
+
+  if (status === 'current') {
+    return t('quote.reviewStep.current');
+  }
+
+  return t('quote.reviewStep.next');
+}

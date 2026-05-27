@@ -116,6 +116,16 @@ export class PricingPageViewModel {
     return addonMatchOptions;
   }
 
+  get activePriceBook() {
+    const book = this.priceBooks.find((item) => item.status === 'Active') ?? this.priceBooks[0];
+
+    if (!book) {
+      throw new Error('Price book mock data is empty');
+    }
+
+    return book;
+  }
+
   get addons(): readonly FilterOption[] {
     return [...new Set(this.products.flatMap((product) => product.addons))]
       .sort((left, right) => left.localeCompare(right))
@@ -130,6 +140,23 @@ export class PricingPageViewModel {
 
   get hasNoMatches() {
     return this.filteredRows.length === 0;
+  }
+
+  get hasUserFilters() {
+    return (
+      this.addonMatchMode !== 'any' ||
+      this.billingTermId !== 'monthly' ||
+      this.maxMonthlyPrice > 0 ||
+      this.maxSetupHours > 0 ||
+      this.minRamGb > 0 ||
+      this.selectedAddonIds.length > 0 ||
+      this.selectedFamilyIds.length > 0 ||
+      this.selectedRegionIds.length > 0 ||
+      this.selectedRowIds.length > 0 ||
+      this.selectedSupportWindows.length > 0 ||
+      this.sortId !== 'effective-price' ||
+      !this.stockOnly
+    );
   }
 
   get maxSetupOptions() {

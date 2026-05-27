@@ -56,6 +56,15 @@ export class ResourcesPageViewModel {
     return this.filteredArticles.length === 0;
   }
 
+  get hasUserFilters() {
+    return (
+      this.selectedCategory !== 'All' ||
+      this.selectedRole !== 'All' ||
+      this.selectedTag !== 'All' ||
+      this.sortId !== 'recommended'
+    );
+  }
+
   get popularTags() {
     const counts = new Map<string, number>();
 

@@ -11,6 +11,7 @@ import {
   DetailHeroPanel,
   FieldHint,
   FilterCard,
+  PageSectionSurface,
   ProductVisual,
   SectionEyebrow,
   StickyPanel,
@@ -49,7 +50,7 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
   }
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '4', md: '5' }}>
           <BackNavButton fallbackTo="/app" />
@@ -281,7 +282,7 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

@@ -61,6 +61,8 @@ that sets backend-owned cookies.
 - Keep saved-plan and quote detail routes in the same item-detail pattern as the
   catalog pages: light intro panel spans two columns, dark summary panel uses the
   third column, and follow-up actions live in the right rail below.
+- Keep saved-plan row status badges sized to their label instead of filling the
+  action grid column.
 - On mobile, stack rail cards after the primary content and keep row internals
   allowed to scroll or wrap rather than forcing unreadable compression.
 - Runtime actions should feel like normal customer actions. Do not expose

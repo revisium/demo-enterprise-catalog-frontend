@@ -35,6 +35,8 @@ snapshot.
   and mobile lets rows shrink to a readable compact width before horizontal
   scrolling;
 - the right-side panel highlights the best visible plan and related regions;
+- show the primary reset action only while related-plan filters or sort differ
+  from the default regional query, and hide it after reset;
 - public UI must not expose internal revisions, source-table proof, mock labels,
   or route fallback mechanics.
 

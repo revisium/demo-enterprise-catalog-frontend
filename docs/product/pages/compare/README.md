@@ -24,6 +24,8 @@ Prototype typed mock data from the shared catalog snapshot.
 - first screen follows the same premium catalog shell as pricing and locations:
   compact intro, comparison controls spanning two columns, and a right-side
   quote-fit panel;
+- use a compact desktop-only raster intro visual to make the comparison section
+  feel distinct from pricing while preserving table density;
 - comparison controls remain dense and operational, with plan chips, compact
   select controls, billing term, stock mode, add-ons, and active query summary;
 - the comparison matrix renders as a true scan-friendly table and uses internal

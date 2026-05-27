@@ -1,10 +1,17 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 
 import { createReturnState } from 'src/shared/routing';
-import { BackNavButton, DarkFact, FilterCard, SectionEyebrow, StickyPanel } from 'src/shared/ui';
+import {
+  BackNavButton,
+  DarkFact,
+  FilterCard,
+  PageSectionSurface,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { ResourceDetailPageViewModel } from '../../model/ResourceDetailPageViewModel';
 import { GuideActionButton } from '../GuideActionButton/GuideActionButton';
 
@@ -19,7 +26,7 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
   }, [params.articleId, vm]);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <BackNavButton fallbackTo="/resources" />
@@ -232,6 +239,6 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });

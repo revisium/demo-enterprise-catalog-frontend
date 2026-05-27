@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
 import { Link, useFetcher, useLocation, useParams } from 'react-router';
@@ -11,6 +11,7 @@ import {
   DetailHeroPanel,
   FieldHint,
   FilterCard,
+  PageSectionSurface,
   SectionEyebrow,
   StickyPanel,
 } from 'src/shared/ui';
@@ -42,7 +43,7 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
   }
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '4', md: '5' }}>
           <BackNavButton fallbackTo="/app" />
@@ -259,6 +260,6 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });

@@ -11,6 +11,16 @@ import { ProductDetailPageDataSource } from '../api/ProductDetailPageDataSource'
 
 type RegionSortId = 'fastest-setup' | 'readiness' | 'region-name' | 'stock';
 type AlternativeSortId = 'monthly-price' | 'price-efficiency' | 'recently-updated' | 'stock';
+export type ProductResourceVisual =
+  | 'api'
+  | 'backup'
+  | 'billing'
+  | 'document'
+  | 'lifecycle'
+  | 'monitoring'
+  | 'network'
+  | 'pricing'
+  | 'support';
 
 interface FilterOption {
   readonly id: string;
@@ -43,12 +53,16 @@ interface AddOnRow {
   readonly href: string;
   readonly id: string;
   readonly label: string;
+  readonly targetLabel: string;
+  readonly visual: ProductResourceVisual;
 }
 
 interface DocumentRow {
   readonly href: string;
   readonly id: string;
   readonly label: string;
+  readonly targetLabel: string;
+  readonly visual: ProductResourceVisual;
 }
 
 const addonLabels = new Map([
@@ -141,6 +155,8 @@ export class ProductDetailPageViewModel {
         href: this.getAddOnHref(addonId),
         id: addonId,
         label: addonLabels.get(addonId) ?? addonId,
+        targetLabel: this.getAddOnTargetLabel(addonId),
+        visual: this.getAddOnVisual(addonId),
       })),
     );
   }
@@ -151,6 +167,8 @@ export class ProductDetailPageViewModel {
         href: this.getDocumentHref(label),
         id: label,
         label,
+        targetLabel: 'Document guide',
+        visual: this.getDocumentVisual(label),
       })),
     );
   }
@@ -234,35 +252,6 @@ export class ProductDetailPageViewModel {
     );
   }
 
-  get regionSortOptions() {
-    return regionSortOptions;
-  }
-
-  get alternativeSortOptions() {
-    return alternativeSortOptions;
-  }
-
-  get queryRows() {
-    return [
-      {
-        label: 'Availability view',
-        value: this.inStockRegionsOnly ? 'available only' : 'all regions',
-      },
-      {
-        label: 'Region sort',
-        value: this.getOptionLabel(regionSortOptions, this.regionSortId),
-      },
-      {
-        label: 'Alternative sort',
-        value: this.getOptionLabel(alternativeSortOptions, this.alternativeSortId),
-      },
-      {
-        label: 'Updated',
-        value: this.formatDate(this.product.system.updatedAt),
-      },
-    ];
-  }
-
   createQuotePath(planId: string, regionId: string) {
     const params = new URLSearchParams({
       plan: planId,
@@ -324,10 +313,6 @@ export class ProductDetailPageViewModel {
     return right.readinessScore - left.readinessScore;
   }
 
-  private getOptionLabel(options: readonly FilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
   private getAddOnHref(addonId: string) {
     if (addonId === 'support') {
       return this.quotePath;
@@ -356,6 +341,42 @@ export class ProductDetailPageViewModel {
     return '/resources';
   }
 
+  private getAddOnTargetLabel(addonId: string) {
+    if (addonId === 'support') {
+      return 'Quote request';
+    }
+
+    if (addonId === 'backup' || addonId === 'ipv4') {
+      return 'Pricing rows';
+    }
+
+    return 'Resource guide';
+  }
+
+  private getAddOnVisual(addonId: string): ProductResourceVisual {
+    if (addonId === 'backup') {
+      return 'backup';
+    }
+
+    if (addonId === 'monitoring') {
+      return 'monitoring';
+    }
+
+    if (addonId === 'support') {
+      return 'support';
+    }
+
+    if (addonId === 'ipv4' || addonId === 'private-vlan') {
+      return 'network';
+    }
+
+    if (addonId === 'lifecycle-rules') {
+      return 'lifecycle';
+    }
+
+    return 'document';
+  }
+
   private getDocumentHref(label: string) {
     const normalized = label.toLowerCase();
 
@@ -376,6 +397,32 @@ export class ProductDetailPageViewModel {
     }
 
     return '/resources/choose-production-server-plan';
+  }
+
+  private getDocumentVisual(label: string): ProductResourceVisual {
+    const normalized = label.toLowerCase();
+
+    if (normalized.includes('network')) {
+      return 'network';
+    }
+
+    if (normalized.includes('backup')) {
+      return 'backup';
+    }
+
+    if (normalized.includes('billing') || normalized.includes('terms')) {
+      return 'billing';
+    }
+
+    if (normalized.includes('api')) {
+      return 'api';
+    }
+
+    if (normalized.includes('driver') || normalized.includes('matrix')) {
+      return 'lifecycle';
+    }
+
+    return 'document';
   }
 
   private uniqueByHref<Row extends { readonly href: string }>(rows: readonly Row[]) {

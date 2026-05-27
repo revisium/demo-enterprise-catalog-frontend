@@ -1,4 +1,6 @@
-import { Badge, Box, Container, Grid, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+import { Badge, Container, Grid, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+
+import { PageSectionSurface } from 'src/shared/ui';
 
 interface PlaceholderPageProps {
   readonly title: string;
@@ -7,7 +9,7 @@ interface PlaceholderPageProps {
 
 export function PlaceholderPage({ title, summary }: PlaceholderPageProps) {
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Grid
           alignItems="stretch"
@@ -79,6 +81,6 @@ export function PlaceholderPage({ title, summary }: PlaceholderPageProps) {
           ))}
         </SimpleGrid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 }

@@ -107,6 +107,17 @@ export class PricingDetailPageViewModel {
     return this.filteredRows.length === 0;
   }
 
+  get hasUserFilters() {
+    return (
+      this.minEfficiency > 0 ||
+      this.selectedFamilyIds.length > 0 ||
+      this.selectedRegionIds.length > 0 ||
+      this.selectedTermId !== 'monthly' ||
+      this.sortId !== 'effective-monthly' ||
+      !this.stockOnly
+    );
+  }
+
   get metrics() {
     const lowestPrice = this.filteredRows.reduce(
       (lowest, row) => Math.min(lowest, row.effectiveMonthlyUsd),

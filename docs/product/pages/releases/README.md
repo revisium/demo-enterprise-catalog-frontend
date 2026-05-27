@@ -30,11 +30,18 @@ Typed mock CMS update data plus local saved/like state.
 
 - Releases uses the same public-page grid as resources and locations: filters
   span two columns and the latest visible update occupies the right rail;
+- show a compact desktop-only raster intro visual that signals release/change
+  activity without replacing the update feed;
 - update rows stay dense and scan-friendly, with date, type, audience, priority,
   summary, tags, customer impact, reactions, save, and open actions visible in
   one record;
 - saved updates and feed mix stay in the aligned third-column rail rather than
   using a separate narrow sidebar width;
+- show the primary reset action only while feed filters or sort differ from the
+  default query, and hide it after reset;
+- make update list items and saved-update items clickable with hover feedback
+  instead of rendering separate `Open update` or `Open` buttons, while keeping
+  like and save buttons explicit;
 - Release Detail uses an item-page layout with the update intro spanning two
   columns, a dark summary card on the right, and impact detail/affected
   workspaces separated from update actions and related updates;

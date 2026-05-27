@@ -1,7 +1,10 @@
 # Visual Assets
 
-The current UI uses Chakra-rendered product panels so layout can stabilize
-before committing to brand assets.
+The current UI uses Chakra-rendered product panels plus a first generated raster
+intro image set so layout can stabilize before committing to final brand assets.
+The intro set uses the product palette of blue, graphite, glassy white surfaces,
+and a restrained copper amber accent (`accent.400`, `#f59e0b`) so sections feel
+more distinct without becoming separate visual brands.
 
 ## Logo
 
@@ -19,14 +22,22 @@ Logo requirements:
 ## Product Imagery
 
 Generated product imagery is useful after page density and hierarchy are
-accepted. The first asset set should cover:
+accepted. The first asset set lives in `src/shared/assets/page-intros/` and
+covers public section intro blocks with enterprise-style raster infographics:
 
 - cloud server rack;
-- dedicated server chassis;
-- database/storage server detail;
 - data-center/location imagery;
 - documentation/API thumbnails;
 - price-book revision proof visual.
+- portal/account workspace visual.
+- quote preparation / cost projection visual.
+- comparison matrix visual;
+- update/release timeline visual.
+
+Intro images are decorative support assets: use generated raster PNGs with
+alpha, keep them free of readable text and logos, render them as isolated
+objects without UI frames or background plates, hide them on mobile during the
+first layout pass, and do not use them as source-data proof.
 
 Generated images should not replace source-data proof. They support the catalog
 experience; Revisium evidence still comes from project/table/row links, diffs,

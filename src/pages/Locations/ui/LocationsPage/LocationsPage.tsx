@@ -1,8 +1,9 @@
-import { Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
+import { locationsIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
@@ -12,8 +13,10 @@ import {
   FieldHint,
   FilterCard,
   MetricGrid,
+  PageSectionSurface,
   PageIntroGrid,
   QuerySummary,
+  ResetButton,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -28,12 +31,13 @@ export const LocationsPage = observer(function LocationsPage() {
   const featuredLocation = vm.featuredLocation;
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="locations" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <BackNavButton fallbackTo="/" showOnlyWithReturnState />
           <PageIntroGrid
             eyebrow="Locations"
+            image={{ src: locationsIntroImage }}
             metrics={vm.summaryMetrics}
             metricsLabel="Location summary"
             summary="Choose a region by stock, setup speed, support coverage, and available server families."
@@ -134,14 +138,11 @@ export const LocationsPage = observer(function LocationsPage() {
                   {vm.filteredLocations.length} regions · {vm.filteredTotalStock} units available
                 </Text>
               </Stack>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
+              {vm.hasUserFilters ? (
+                <ResetButton onClick={() => vm.resetFilters()}>
+                  Reset filters
+                </ResetButton>
+              ) : null}
             </Flex>
 
             <Stack
@@ -195,28 +196,40 @@ export const LocationsPage = observer(function LocationsPage() {
                   Best capacity match
                 </Text>
                 {featuredLocation ? (
-                  <Stack gap="3">
-                    <Stack gap="1">
-                      <Heading as="h2" color="white" fontSize="2xl">
-                        {featuredLocation.regionLabel}
-                      </Heading>
-                      <Text color="darkPanelText" fontSize="sm">
-                        {featuredLocation.totalStock} units · {featuredLocation.fastestSetupHours}h
-                        fastest setup
-                      </Text>
-                    </Stack>
-                    <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
-                      <DarkFact label="Readiness" value={String(featuredLocation.readinessScore)} />
-                      <DarkFact
-                        label="Family coverage"
-                        value={`${featuredLocation.familyCoveragePercent}%`}
-                      />
-                    </Grid>
-                    <Button asChild bg="reserveButtonBg" borderRadius="8px" color="ink.900">
-                      <Link state={returnState} to={`/locations/${featuredLocation.regionId}`}>
-                        Open region
-                      </Link>
-                    </Button>
+                  <Stack
+                    asChild
+                    color="inherit"
+                    cursor="pointer"
+                    gap="3"
+                    textDecoration="none"
+                    transition="transform 0.18s ease"
+                    _focusVisible={{
+                      boxShadow: '0 0 0 3px rgba(255, 255, 255, 0.28)',
+                      outline: 'none',
+                    }}
+                    _hover={{ transform: 'translateY(-1px)' }}
+                  >
+                    <Link state={returnState} to={`/locations/${featuredLocation.regionId}`}>
+                      <Stack gap="1">
+                        <Heading as="h2" color="white" fontSize="2xl">
+                          {featuredLocation.regionLabel}
+                        </Heading>
+                        <Text color="darkPanelText" fontSize="sm">
+                          {featuredLocation.totalStock} units · {featuredLocation.fastestSetupHours}
+                          h fastest setup
+                        </Text>
+                      </Stack>
+                      <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
+                        <DarkFact
+                          label="Readiness"
+                          value={String(featuredLocation.readinessScore)}
+                        />
+                        <DarkFact
+                          label="Family coverage"
+                          value={`${featuredLocation.familyCoveragePercent}%`}
+                        />
+                      </Grid>
+                    </Link>
                   </Stack>
                 ) : (
                   <Text color="darkPanelText" fontSize="sm">
@@ -233,29 +246,40 @@ export const LocationsPage = observer(function LocationsPage() {
                 <Stack gap="2">
                   {vm.filteredLocations.slice(0, 4).map((region) => (
                     <Grid
+                      asChild
                       alignItems="center"
                       borderColor="surface.200"
                       borderRadius="8px"
                       borderWidth="1px"
+                      color="inherit"
+                      cursor="pointer"
                       gap="3"
                       key={region.regionId}
                       minW="0"
                       p="3"
-                      templateColumns="minmax(0, 1fr) auto"
+                      textDecoration="none"
+                      templateColumns="minmax(0, 1fr)"
+                      transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
+                      _focusVisible={{
+                        boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
+                        outline: 'none',
+                      }}
+                      _hover={{
+                        borderColor: 'activeBorder',
+                        boxShadow: '0 12px 30px rgba(16, 24, 40, 0.1)',
+                        transform: 'translateY(-1px)',
+                      }}
                     >
-                      <Stack gap="0" minW="0">
-                        <Text color="ink.900" fontSize="sm" fontWeight="760">
-                          {region.regionLabel}
-                        </Text>
-                        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                          {region.totalStock} units · {region.readinessScore} readiness
-                        </Text>
-                      </Stack>
-                      <Button asChild borderRadius="8px" size="xs" variant="outline">
-                        <Link state={returnState} to={`/locations/${region.regionId}`}>
-                          Open
-                        </Link>
-                      </Button>
+                      <Link state={returnState} to={`/locations/${region.regionId}`}>
+                        <Stack gap="0" minW="0">
+                          <Text color="ink.900" fontSize="sm" fontWeight="760">
+                            {region.regionLabel}
+                          </Text>
+                          <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
+                            {region.totalStock} units · {region.readinessScore} readiness
+                          </Text>
+                        </Stack>
+                      </Link>
                     </Grid>
                   ))}
                 </Stack>
@@ -264,6 +288,6 @@ export const LocationsPage = observer(function LocationsPage() {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });

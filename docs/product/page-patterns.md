@@ -30,6 +30,12 @@ Catalog, pricing, and locations pages should always provide:
 
 - clear filter hints in customer language;
 - empty states with a reset action;
+- primary reset-filter actions only while the current query differs from the
+  default view, so the action disappears immediately after a successful reset;
+- browse-list items that only navigate to detail pages should make the whole
+  item clickable with a visible hover state instead of adding `Open` buttons;
+- keep explicit buttons for row selection, quote requests, saved/helpful
+  feedback, and other state-changing actions;
 - mobile layouts that keep row labels, prices, stock, and setup text readable;
 - no mock labels, project names, table names, row IDs, or source widgets in the
   public layout.
