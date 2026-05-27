@@ -18,8 +18,6 @@ import { PricingPageViewModel } from '../../model/PricingPageViewModel';
 
 export const PricingPage = observer(function PricingPage() {
   const [vm] = useState(() => new PricingPageViewModel());
-  const firstSummaryColumn = vm.queryRows.slice(0, 3);
-  const secondSummaryColumn = vm.queryRows.slice(3, 6);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
@@ -154,7 +152,7 @@ export const PricingPage = observer(function PricingPage() {
                 templateColumns={{ base: '1fr', xl: 'repeat(2, 1fr)' }}
               >
                 <Stack gap="2">
-                  {firstSummaryColumn.map((row) => (
+                  {vm.firstSummaryColumn.map((row) => (
                     <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
                       <Text color="ink.500" fontSize="sm">
                         {row.label}
@@ -166,7 +164,7 @@ export const PricingPage = observer(function PricingPage() {
                   ))}
                 </Stack>
                 <Stack gap="2">
-                  {secondSummaryColumn.map((row) => (
+                  {vm.secondSummaryColumn.map((row) => (
                     <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
                       <Text color="ink.500" fontSize="sm">
                         {row.label}

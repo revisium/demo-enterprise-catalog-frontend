@@ -99,8 +99,14 @@ function preserveOuterWhitespace(source: string, translated: string) {
 function removeTerminalPeriod(source: string) {
   let endIndex = source.length;
 
-  while (endIndex > 0 && isTerminalPeriod(source.charCodeAt(endIndex - 1))) {
-    endIndex -= 1;
+  while (endIndex > 0) {
+    const codePoint = source.codePointAt(endIndex - 1) ?? 0;
+
+    if (!isTerminalPeriod(codePoint)) {
+      break;
+    }
+
+    endIndex -= codePoint > 0xffff ? 2 : 1;
   }
 
   return endIndex === source.length ? source : source.slice(0, endIndex);

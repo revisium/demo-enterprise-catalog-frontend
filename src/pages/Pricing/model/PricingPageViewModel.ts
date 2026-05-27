@@ -184,6 +184,14 @@ export class PricingPageViewModel {
     ];
   }
 
+  get firstSummaryColumn() {
+    return this.queryRows.slice(0, 3);
+  }
+
+  get secondSummaryColumn() {
+    return this.queryRows.slice(3, 6);
+  }
+
   get quotePath() {
     const params = new URLSearchParams();
     const [selectedRow] = this.selectedRows;
