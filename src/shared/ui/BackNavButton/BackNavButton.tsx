@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { resolveReturnPath } from 'src/shared/routing';
+import { canGoBack, resolveReturnPath } from 'src/shared/routing';
 
 interface BackNavButtonProps {
   readonly ariaLabel?: string;
@@ -27,7 +27,7 @@ export function BackNavButton({
       return;
     }
 
-    if (typeof globalThis.window !== 'undefined' && globalThis.window.history.length > 1) {
+    if (canGoBack()) {
       void navigate(-1);
       return;
     }

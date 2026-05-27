@@ -164,6 +164,15 @@ export class ProductDetailPageViewModel {
     ];
   }
 
+  get technicalRows() {
+    return [
+      { label: 'Platform', value: this.product.specs.enclosure },
+      { label: 'Security', value: this.product.specs.ingress },
+      { label: 'SLA', value: this.product.specs.operatingRange },
+      { label: 'Network', value: this.product.specs.connectivity },
+    ];
+  }
+
   get regionRows(): readonly ProductRegionRow[] {
     const enterpriseCoveragePercent = this.product.supportTier === 'Enterprise' ? 100 : 0;
 

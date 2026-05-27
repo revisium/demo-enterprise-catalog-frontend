@@ -14,6 +14,7 @@ import {
   SelectField,
 } from 'src/shared/ui';
 import { ProductDetailPageViewModel } from '../../model/ProductDetailPageViewModel';
+import { DetailRowsCard } from '../DetailRowsCard/DetailRowsCard';
 
 const sectionHeadingProps = {
   color: 'brand.500',
@@ -28,12 +29,6 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
   const [vm] = useState(() => new ProductDetailPageViewModel(params.productId));
   const returnState = createReturnState(location);
   const sectionGap = { base: '4', md: '5' } as const;
-  const technicalRows = [
-    { label: 'Platform', value: vm.product.specs.enclosure },
-    { label: 'Security', value: vm.product.specs.ingress },
-    { label: 'SLA', value: vm.product.specs.operatingRange },
-    { label: 'Network', value: vm.product.specs.connectivity },
-  ];
 
   return (
     <Box bg="pagePremiumBg" flex="1">
@@ -247,7 +242,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               <Stack gap={sectionGap}>
                 <DetailRowsCard keyPrefix="query" rows={vm.queryRows} title="Query summary" />
 
-                <DetailRowsCard keyPrefix="spec" rows={technicalRows} title="Technical specs" />
+                <DetailRowsCard keyPrefix="spec" rows={vm.technicalRows} title="Technical specs" />
 
                 <Stack
                   bg="white"
@@ -448,41 +443,3 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
     </Box>
   );
 });
-
-interface KeyValueRow {
-  readonly label: string;
-  readonly value: string;
-}
-
-interface DetailRowsCardProps {
-  readonly keyPrefix: string;
-  readonly rows: readonly KeyValueRow[];
-  readonly title: string;
-}
-
-function DetailRowsCard({ keyPrefix, rows, title }: DetailRowsCardProps) {
-  return (
-    <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="2" p="3">
-      <Heading as="h2" {...sectionHeadingProps}>
-        {title}
-      </Heading>
-      <Stack as="dl" gap="1">
-        {rows.map((row) => (
-          <Grid
-            as="div"
-            gap="3"
-            key={`${keyPrefix}-${row.label}`}
-            templateColumns={{ base: '1fr', md: '180px minmax(0, 1fr)' }}
-          >
-            <Text as="dt" color="ink.500" fontSize="sm">
-              {row.label}
-            </Text>
-            <Text as="dd" color="ink.900" fontSize="sm" fontWeight="700" m="0" textAlign="left">
-              {row.value}
-            </Text>
-          </Grid>
-        ))}
-      </Stack>
-    </Stack>
-  );
-}

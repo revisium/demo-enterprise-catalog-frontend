@@ -23,3 +23,7 @@ export function resolveReturnPath(state: unknown): string | null {
 
   return typeof from === 'string' && from.startsWith('/') ? from : null;
 }
+
+export function canGoBack() {
+  return typeof globalThis.window !== 'undefined' && globalThis.window.history.length > 1;
+}

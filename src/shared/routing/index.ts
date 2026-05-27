@@ -1,1 +1,1 @@
-export { createReturnState, resolveReturnPath } from './returnNavigation';
+export { canGoBack, createReturnState, resolveReturnPath } from './returnNavigation';
