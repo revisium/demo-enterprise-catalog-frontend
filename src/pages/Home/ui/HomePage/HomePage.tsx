@@ -11,15 +11,18 @@ import {
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 
 import { useI18n } from 'src/shared/i18n';
-import { StickyPanel } from 'src/shared/ui';
+import { createReturnState } from 'src/shared/routing';
+import { BackNavButton, StickyPanel } from 'src/shared/ui';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 import { CompactQuerySummary } from '../CompactQuerySummary/CompactQuerySummary';
 
 export const HomePage = observer(function HomePage() {
   const [vm] = useState(() => new HomePageViewModel());
+  const location = useLocation();
+  const returnState = createReturnState(location);
   const { t } = useI18n();
   const selectedPlanCopy = vm.getSelectedPlanCopy(t);
   const selectionRows = vm.getSelectionRows(t);
@@ -28,8 +31,9 @@ export const HomePage = observer(function HomePage() {
   return (
     <Box bg="pagePremiumBg" color="ink.900" data-i18n-skip flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <Grid
-          gap={{ base: '5', md: '6' }}
+          gap={{ base: '4', md: '5' }}
           templateColumns={{ base: '1fr', lg: '344px minmax(0, 1fr)' }}
         >
           <StickyPanel
@@ -140,7 +144,7 @@ export const HomePage = observer(function HomePage() {
             </Stack>
           </StickyPanel>
 
-          <Stack gap={{ base: '5', md: '6' }}>
+          <Stack gap={{ base: '4', md: '5' }}>
             <Grid
               bg="recommendationBg"
               borderColor="panelBorderStrong"
@@ -216,7 +220,9 @@ export const HomePage = observer(function HomePage() {
                     color: 'white',
                   }}
                 >
-                  <NavLink to={vm.quotePath}>{t('home.sendQuote')}</NavLink>
+                  <NavLink state={returnState} to={vm.quotePath}>
+                    {t('home.sendQuote')}
+                  </NavLink>
                 </Button>
               </Stack>
             </Grid>
@@ -255,7 +261,9 @@ export const HomePage = observer(function HomePage() {
                     </Heading>
                   </Stack>
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
-                    <NavLink to="/catalog">{t('home.browseCatalog')}</NavLink>
+                    <NavLink state={returnState} to="/catalog">
+                      {t('home.browseCatalog')}
+                    </NavLink>
                   </Button>
                 </Flex>
 

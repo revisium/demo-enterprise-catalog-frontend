@@ -40,6 +40,13 @@ interface AlternativeCandidate {
 }
 
 interface AddOnRow {
+  readonly href: string;
+  readonly id: string;
+  readonly label: string;
+}
+
+interface DocumentRow {
+  readonly href: string;
   readonly id: string;
   readonly label: string;
 }
@@ -129,10 +136,23 @@ export class ProductDetailPageViewModel {
   }
 
   get addOnRows(): readonly AddOnRow[] {
-    return this.product.addons.map((addonId) => ({
-      id: addonId,
-      label: addonLabels.get(addonId) ?? addonId,
-    }));
+    return this.uniqueByHref(
+      this.product.addons.map((addonId) => ({
+        href: this.getAddOnHref(addonId),
+        id: addonId,
+        label: addonLabels.get(addonId) ?? addonId,
+      })),
+    );
+  }
+
+  get documentRows(): readonly DocumentRow[] {
+    return this.uniqueByHref(
+      this.product.documents.map((label) => ({
+        href: this.getDocumentHref(label),
+        id: label,
+        label,
+      })),
+    );
   }
 
   get packageRows() {
@@ -141,6 +161,15 @@ export class ProductDetailPageViewModel {
       { label: 'Billing terms', value: this.product.billingTerms.join(', ') },
       { label: 'Compliance', value: this.product.compliance.join(', ') || 'standard terms' },
       { label: 'Documents', value: `${this.product.documents.length} files` },
+    ];
+  }
+
+  get technicalRows() {
+    return [
+      { label: 'Platform', value: this.product.specs.enclosure },
+      { label: 'Security', value: this.product.specs.ingress },
+      { label: 'SLA', value: this.product.specs.operatingRange },
+      { label: 'Network', value: this.product.specs.connectivity },
     ];
   }
 
@@ -216,7 +245,7 @@ export class ProductDetailPageViewModel {
   get queryRows() {
     return [
       {
-        label: 'Region view',
+        label: 'Availability view',
         value: this.inStockRegionsOnly ? 'available only' : 'all regions',
       },
       {
@@ -224,7 +253,7 @@ export class ProductDetailPageViewModel {
         value: this.getOptionLabel(regionSortOptions, this.regionSortId),
       },
       {
-        label: 'Alternatives',
+        label: 'Alternative sort',
         value: this.getOptionLabel(alternativeSortOptions, this.alternativeSortId),
       },
       {
@@ -297,6 +326,72 @@ export class ProductDetailPageViewModel {
 
   private getOptionLabel(options: readonly FilterOption[], id: string) {
     return options.find((option) => option.id === id)?.label ?? id;
+  }
+
+  private getAddOnHref(addonId: string) {
+    if (addonId === 'support') {
+      return this.quotePath;
+    }
+
+    if (addonId === 'backup') {
+      return '/pricing';
+    }
+
+    if (addonId === 'monitoring') {
+      return '/resources/backup-and-restore-policy';
+    }
+
+    if (addonId === 'ipv4') {
+      return '/pricing';
+    }
+
+    if (addonId === 'private-vlan') {
+      return '/resources/network-options-by-region';
+    }
+
+    if (addonId === 'lifecycle-rules') {
+      return '/resources/choose-production-server-plan';
+    }
+
+    return '/resources';
+  }
+
+  private getDocumentHref(label: string) {
+    const normalized = label.toLowerCase();
+
+    if (normalized.includes('network')) {
+      return '/resources/network-options-by-region';
+    }
+
+    if (normalized.includes('backup')) {
+      return '/resources/backup-and-restore-policy';
+    }
+
+    if (normalized.includes('billing') || normalized.includes('terms')) {
+      return '/resources/access-review-checklist';
+    }
+
+    if (normalized.includes('api')) {
+      return '/resources/partner-api-overview';
+    }
+
+    return '/resources/choose-production-server-plan';
+  }
+
+  private uniqueByHref<Row extends { readonly href: string }>(rows: readonly Row[]) {
+    const uniqueRows: Row[] = [];
+    const hrefs = new Set<string>();
+
+    rows.forEach((row) => {
+      if (hrefs.has(row.href)) {
+        return;
+      }
+
+      hrefs.add(row.href);
+      uniqueRows.push(row);
+    });
+
+    return uniqueRows;
   }
 
   private formatPriceDelta(value: number) {

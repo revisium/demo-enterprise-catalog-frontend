@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FieldHint,
@@ -18,8 +20,10 @@ import {
 import { LocationDetailPageViewModel } from '../../model/LocationDetailPageViewModel';
 
 export const LocationDetailPage = observer(function LocationDetailPage() {
+  const location = useLocation();
   const params = useParams();
   const [vm] = useState(() => new LocationDetailPageViewModel(params.regionId));
+  const returnState = createReturnState(location);
   const { regionSummary } = vm;
 
   useEffect(() => {
@@ -29,10 +33,8 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/locations">Back to locations</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/locations" />
 
           <PageIntroGrid
             eyebrow="Location detail"
@@ -114,7 +116,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
             </FilterCard>
           </Grid>
 
-          <Grid gap={{ base: '5', lg: '6' }} templateColumns={{ base: '1fr', lg: '1fr 320px' }}>
+          <Grid gap={{ base: '4', lg: '5' }} templateColumns={{ base: '1fr', lg: '1fr 320px' }}>
             <Stack as="section" aria-label="Plans in region" gap="3">
               {vm.hasNoMatches ? (
                 <EmptyState
@@ -188,7 +190,9 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                       setup {row.setupHours}h · {vm.formatSupportWindow(row.supportWindow)}
                     </Text>
                     <Button asChild borderRadius="8px" mt="2" variant="outline">
-                      <Link to={row.planHref}>Open server</Link>
+                      <Link state={returnState} to={row.planHref}>
+                        Open server
+                      </Link>
                     </Button>
                   </Stack>
                 </Grid>
@@ -221,7 +225,9 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                       </Text>
                     </Stack>
                     <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <Link to={region.href}>Open</Link>
+                      <Link state={returnState} to={region.href}>
+                        Open
+                      </Link>
                     </Button>
                   </Grid>
                 ))}

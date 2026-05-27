@@ -1,10 +1,12 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link, useFetcher } from 'react-router';
+import { Link, useFetcher, useLocation } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   FieldHint,
   FilterButton,
   FilterCard,
@@ -13,6 +15,8 @@ import {
   StickyPanel,
 } from 'src/shared/ui';
 import { CustomerPortalPageViewModel } from '../../model/CustomerPortalPageViewModel';
+import { PlansPanel } from '../PlansPanel/PlansPanel';
+import { QuotesPanel } from '../QuotesPanel/QuotesPanel';
 
 interface PortalActionResponse {
   readonly message: string;
@@ -27,12 +31,15 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
   const contentFeedbackFetcher = useFetcher<PortalActionResponse>();
   const preferenceFetcher = useFetcher<PortalActionResponse>();
   const [vm] = useState(() => new CustomerPortalPageViewModel(session));
+  const location = useLocation();
+  const returnState = createReturnState(location);
   const activeOrganization = vm.activeOrganization;
   const primaryQuote = vm.primaryQuote;
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Customer console"
           metrics={vm.metrics}
@@ -113,7 +120,9 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                   </Badge>
                 </Flex>
                 <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
-                  <Link to={`/app/quotes/${primaryQuote.id}`}>Open quote</Link>
+                  <Link state={returnState} to={`/app/quotes/${primaryQuote.id}`}>
+                    Open quote
+                  </Link>
                 </Button>
               </Stack>
             ) : (
@@ -266,7 +275,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </FilterCard>
         </Grid>
 
-        <Grid gap={{ base: '5', lg: '6' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
+        <Grid gap={{ base: '4', lg: '5' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
           <StickyPanel as="aside" position={{ lg: 'sticky' }} top={{ lg: '84px' }}>
             <FilterCard>
               <Stack gap="1">
@@ -291,10 +300,12 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </StickyPanel>
 
           {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
-            <PlansPanel vm={vm} />
+            <PlansPanel returnState={returnState} vm={vm} />
           ) : null}
 
-          {vm.selectedSection === 'quotes' ? <QuotesPanel vm={vm} /> : null}
+          {vm.selectedSection === 'quotes' ? (
+            <QuotesPanel returnState={returnState} vm={vm} />
+          ) : null}
         </Grid>
       </Container>
     </Box>
@@ -319,149 +330,5 @@ function AccountFact({ label, value }: { readonly label: string; readonly value:
         {value}
       </Text>
     </Box>
-  );
-}
-
-function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
-  const hasNoVisibleItems =
-    vm.selectedSection === 'favorites'
-      ? vm.visiblePlans.length === 0 && vm.favoriteItems.length === 0
-      : vm.visiblePlans.length === 0;
-  const emptyMessage =
-    vm.selectedSection === 'favorites' ? 'No favorites yet.' : 'No saved plans yet.';
-
-  return (
-    <FilterCard>
-      <PanelHeader
-        summary="Save reusable server configurations, mark important plans, and carry a selected plan into the quote flow later."
-        title={vm.selectedSection === 'favorites' ? 'Favorite saved plans' : 'Saved server plans'}
-      />
-      {vm.visiblePlans.map((plan) => (
-        <Grid
-          alignItems="center"
-          borderColor="surface.200"
-          borderRadius="8px"
-          borderWidth="1px"
-          gap="3"
-          key={plan.id}
-          p="3"
-          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 130px 112px 112px' }}
-        >
-          <Stack gap="1">
-            <Text color="ink.900" fontWeight="780">
-              {plan.name}
-            </Text>
-            <Text color="ink.500" fontSize="sm">
-              {plan.plan} · {plan.region} · ${plan.monthlyUsd}/mo
-            </Text>
-          </Stack>
-          <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
-            {plan.status}
-          </Badge>
-          <Button asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to={`/app/plans/${plan.id}`}>Open plan</Link>
-          </Button>
-          <Button
-            aria-pressed={vm.isFavorited(plan.id)}
-            borderRadius="8px"
-            onClick={() => vm.toggleFavorite(plan.id)}
-            size="sm"
-            variant={vm.isFavorited(plan.id) ? 'solid' : 'outline'}
-          >
-            Favorite
-          </Button>
-        </Grid>
-      ))}
-      {vm.selectedSection === 'favorites'
-        ? vm.favoriteItems.map((favorite) => (
-            <Stack
-              borderColor="surface.200"
-              borderRadius="8px"
-              borderWidth="1px"
-              gap="1"
-              key={favorite.id}
-              p="3"
-            >
-              <Badge alignSelf="start" bg="panelGlassBg" borderRadius="8px" color="ink.700">
-                {favorite.type}
-              </Badge>
-              <Text color="ink.900" fontWeight="780">
-                {favorite.title}
-              </Text>
-              <Text color="ink.500" fontSize="sm">
-                {favorite.summary}
-              </Text>
-            </Stack>
-          ))
-        : null}
-      {hasNoVisibleItems ? (
-        <Text color="ink.500" fontSize="sm">
-          {emptyMessage}
-        </Text>
-      ) : null}
-    </FilterCard>
-  );
-}
-
-function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
-  return (
-    <FilterCard>
-      <PanelHeader
-        summary="Track customer and sales replies, quote status, monthly totals, and follow-up timing."
-        title="Quote lifecycle"
-      />
-      {vm.quotes.map((quote) => (
-        <Grid
-          borderColor="surface.200"
-          borderRadius="8px"
-          borderWidth="1px"
-          gap="3"
-          key={quote.id}
-          p="3"
-          templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 150px' }}
-        >
-          <Stack gap="1">
-            <Flex align="center" gap="2" justify="space-between" wrap="wrap">
-              <Text color="ink.900" fontWeight="780">
-                {quote.plan} · {quote.region}
-              </Text>
-              <Badge bg="surface.100" borderRadius="8px" color="ink.700">
-                {quote.status}
-              </Badge>
-            </Flex>
-            <Text color="ink.600" fontSize="sm">
-              {quote.summary}
-            </Text>
-            <Text color="ink.500" fontSize="xs">
-              {quote.commentCount} comments · updated {quote.updatedAt}
-            </Text>
-          </Stack>
-          <Stack align={{ base: 'start', md: 'end' }} gap="1">
-            <Text color="ink.900" fontWeight="780">
-              ${quote.monthlyUsd}/mo
-            </Text>
-            <Text color="ink.500" fontSize="xs">
-              due {quote.due}
-            </Text>
-            <Button asChild borderRadius="8px" size="sm" variant="outline">
-              <Link to={`/app/quotes/${quote.id}`}>Open quote</Link>
-            </Button>
-          </Stack>
-        </Grid>
-      ))}
-    </FilterCard>
-  );
-}
-
-function PanelHeader({ summary, title }: { readonly summary: string; readonly title: string }) {
-  return (
-    <Stack gap="1">
-      <Heading as="h2" color="ink.900" fontSize="2xl">
-        {title}
-      </Heading>
-      <Text color="ink.500" fontSize="sm">
-        {summary}
-      </Text>
-    </Stack>
   );
 }
