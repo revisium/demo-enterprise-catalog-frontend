@@ -49,234 +49,155 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
         />
 
         <Grid
+          alignItems="start"
           gap={{ base: '4', md: '5' }}
+          minW="0"
           my={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: 'repeat(4, minmax(0, 1fr))' }}
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          w="100%"
         >
-          <FilterCard>
-            <SectionEyebrow>Signed-in user</SectionEyebrow>
-            <Heading as="h2" color="ink.900" fontSize="2xl">
-              {vm.currentUser.name}
-            </Heading>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
-              <AccountFact label="Email" value={vm.currentUser.email} />
-              {vm.sessionRows.map((row) => (
-                <AccountFact key={row.label} label={row.label} value={row.value} />
-              ))}
-            </Grid>
-          </FilterCard>
-
-          <FilterCard>
-            <SectionEyebrow>Organization</SectionEyebrow>
-            <Heading as="h2" color="ink.900" fontSize="2xl">
-              {activeOrganization.name}
-            </Heading>
-            <Flex gap="2" wrap="wrap">
-              {vm.organizationOptions.map((organization) => (
-                <FilterButton
-                  key={organization.id}
-                  onClick={() => vm.selectOrganization(organization.id)}
-                  selected={vm.selectedOrganizationId === organization.id}
-                  tone="neutral"
-                >
-                  {organization.label}
-                </FilterButton>
-              ))}
-            </Flex>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
-              <AccountFact label="Support" value={activeOrganization.supportPlan} />
-              <AccountFact label="Home region" value={activeOrganization.homeRegion} />
-              <AccountFact label="Members" value={String(activeOrganization.memberCount)} />
-              <AccountFact label="Billing" value={activeOrganization.billingContact} />
-            </Grid>
-          </FilterCard>
-
-          <FilterCard bg="surface.900" color="white">
-            <Text
-              color="darkPanelMutedText"
-              fontSize="xs"
-              fontWeight="760"
-              textTransform="uppercase"
-            >
-              Next quote
-            </Text>
-            {primaryQuote ? (
-              <Stack gap="3">
-                <Heading as="h2" fontSize="2xl">
-                  {primaryQuote.plan} in {primaryQuote.region}
+          <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
+            <FilterCard>
+              <Stack gap="1">
+                <SectionEyebrow>Customer workspace</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  {activeOrganization.name}
                 </Heading>
-                <Text color="darkPanelText" fontSize="sm">
-                  {primaryQuote.summary}
-                </Text>
-                <Flex gap="2" wrap="wrap">
-                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                    {primaryQuote.status}
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    {primaryQuote.commentCount} comments
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    ${primaryQuote.monthlyUsd}/mo
-                  </Badge>
-                </Flex>
-                <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
-                  <Link state={returnState} to={`/app/quotes/${primaryQuote.id}`}>
-                    Open quote
-                  </Link>
-                </Button>
-              </Stack>
-            ) : (
-              <Text color="darkPanelText" fontSize="sm">
-                No open quote for this organization.
-              </Text>
-            )}
-          </FilterCard>
-
-          <FilterCard>
-            <SectionEyebrow>Preferences</SectionEyebrow>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
-              {vm.preferenceRows.map((row) => (
-                <AccountFact key={row.label} label={row.label} value={row.value} />
-              ))}
-            </Grid>
-          </FilterCard>
-        </Grid>
-
-        <Grid
-          gap={{ base: '4', md: '5' }}
-          mb={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }}
-        >
-          <FilterCard>
-            <SectionEyebrow>Reference checks</SectionEyebrow>
-            <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
-              {vm.validationRows.length === 0 ? (
-                <Box
-                  bg="panelGlassBg"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  p="3"
-                >
-                  <Text color="ink.500" fontSize="sm">
-                    No reference checks for this user and organization.
-                  </Text>
-                </Box>
-              ) : null}
-              {vm.validationRows.map((row) => (
-                <Box
-                  bg="panelGlassBg"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  key={row.id}
-                  p="3"
-                >
-                  <Flex align="center" gap="2" justify="space-between">
-                    <Text color="ink.500" fontSize="xs">
-                      {row.label}
-                    </Text>
-                    <Badge bg="successBg" borderRadius="8px" color="successText">
-                      {row.status}
-                    </Badge>
-                  </Flex>
-                  <Text color="ink.900" fontSize="sm" fontWeight="760">
-                    {row.value}
-                  </Text>
-                  <Text color="ink.500" fontSize="xs">
-                    {row.scope}
-                  </Text>
-                </Box>
-              ))}
-            </Grid>
-          </FilterCard>
-
-          <FilterCard>
-            <SectionEyebrow>Workspace actions</SectionEyebrow>
-            <FieldHint>
-              User actions are accepted only after the server checks the session and referenced
-              catalog, region, language, currency, and content choices.
-            </FieldHint>
-            <Stack gap="2">
-              <preferenceFetcher.Form action="/app/actions/preferences" method="post">
-                <input
-                  name="languageId"
-                  type="hidden"
-                  value={vm.preferenceActionPayload.languageId}
-                />
-                <input
-                  name="currencyId"
-                  type="hidden"
-                  value={vm.preferenceActionPayload.currencyId}
-                />
-                <input
-                  name="organizationId"
-                  type="hidden"
-                  value={vm.preferenceActionPayload.organizationId}
-                />
-                <input name="regionId" type="hidden" value={vm.preferenceActionPayload.regionId} />
-                <Button borderRadius="8px" size="sm" type="submit" variant="outline">
-                  Save defaults
-                </Button>
-              </preferenceFetcher.Form>
-              {preferenceFetcher.data ? <ActionMessage response={preferenceFetcher.data} /> : null}
-              <contentFeedbackFetcher.Form action="/app/actions/content-feedback" method="post">
-                <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
-                <input
-                  name="organizationId"
-                  type="hidden"
-                  value={vm.sourceFeedbackSample.organizationId}
-                />
-                <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
-                <Button borderRadius="8px" size="sm" type="submit" variant="outline">
-                  Save update
-                </Button>
-              </contentFeedbackFetcher.Form>
-              {contentFeedbackFetcher.data ? (
-                <ActionMessage response={contentFeedbackFetcher.data} />
-              ) : null}
-            </Stack>
-          </FilterCard>
-
-          <FilterCard>
-            <SectionEyebrow>Recent activity</SectionEyebrow>
-            <Stack gap="2">
-              {vm.auditEvents.length === 0 ? (
                 <Text color="ink.500" fontSize="sm">
-                  No recent activity for this user.
+                  {vm.currentUser.name} · {vm.currentUser.email}
                 </Text>
-              ) : null}
-              {vm.auditEvents.map((event) => (
-                <Stack
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  gap="1"
-                  key={event.id}
-                  p="3"
-                >
-                  <Flex gap="2" justify="space-between" wrap="wrap">
-                    <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-                      {event.scope}
-                    </Badge>
-                    <Text color="ink.500" fontSize="xs">
-                      {event.when}
-                    </Text>
-                  </Flex>
-                  <Text color="ink.900" fontSize="sm" fontWeight="760">
-                    {event.event}
-                  </Text>
-                  <Text color="ink.500" fontSize="xs">
-                    {event.actor}
-                  </Text>
-                </Stack>
-              ))}
-            </Stack>
-          </FilterCard>
-        </Grid>
+              </Stack>
 
-        <Grid gap={{ base: '4', lg: '5' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
-          <StickyPanel as="aside" position={{ lg: 'sticky' }} top={{ lg: '84px' }}>
+              <Flex gap="2" wrap="wrap">
+                {vm.organizationOptions.map((organization) => (
+                  <FilterButton
+                    key={organization.id}
+                    onClick={() => vm.selectOrganization(organization.id)}
+                    selected={vm.selectedOrganizationId === organization.id}
+                    tone="neutral"
+                  >
+                    {organization.label}
+                  </FilterButton>
+                ))}
+              </Flex>
+
+              <Grid gap="2" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
+                <AccountFact label="Email" value={vm.currentUser.email} />
+                {vm.sessionRows.map((row) => (
+                  <AccountFact key={row.label} label={row.label} value={row.value} />
+                ))}
+                <AccountFact label="Support" value={activeOrganization.supportPlan} />
+                <AccountFact label="Home region" value={activeOrganization.homeRegion} />
+                <AccountFact label="Members" value={String(activeOrganization.memberCount)} />
+                <AccountFact label="Billing" value={activeOrganization.billingContact} />
+              </Grid>
+            </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>Reference checks</SectionEyebrow>
+              <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+                {vm.validationRows.length === 0 ? (
+                  <Box
+                    bg="panelGlassBg"
+                    borderColor="surface.200"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    p="3"
+                  >
+                    <Text color="ink.500" fontSize="sm">
+                      No reference checks for this user and organization.
+                    </Text>
+                  </Box>
+                ) : null}
+                {vm.validationRows.map((row) => (
+                  <Box
+                    bg="panelGlassBg"
+                    borderColor="surface.200"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    key={row.id}
+                    p="3"
+                  >
+                    <Flex align="center" gap="2" justify="space-between">
+                      <Text color="ink.500" fontSize="xs">
+                        {row.label}
+                      </Text>
+                      <Badge bg="successBg" borderRadius="8px" color="successText">
+                        {row.status}
+                      </Badge>
+                    </Flex>
+                    <Text color="ink.900" fontSize="sm" fontWeight="760">
+                      {row.value}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.scope}
+                    </Text>
+                  </Box>
+                ))}
+              </Grid>
+            </FilterCard>
+
+            {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
+              <PlansPanel returnState={returnState} vm={vm} />
+            ) : null}
+
+            {vm.selectedSection === 'quotes' ? (
+              <QuotesPanel returnState={returnState} vm={vm} />
+            ) : null}
+          </Stack>
+
+          <StickyPanel
+            as="aside"
+            gridColumn={{ xl: '3' }}
+            maxH="none"
+            overscrollBehavior="auto"
+            overflowY="visible"
+            pb="0"
+            position={{ xl: 'static' }}
+            pr="0"
+            w="100%"
+          >
+            <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white" w="100%">
+              <Text
+                color="darkPanelMutedText"
+                fontSize="xs"
+                fontWeight="800"
+                textTransform="uppercase"
+              >
+                Next quote
+              </Text>
+              {primaryQuote ? (
+                <Stack gap="3">
+                  <Heading as="h2" fontSize="2xl">
+                    {primaryQuote.plan} in {primaryQuote.region}
+                  </Heading>
+                  <Text color="darkPanelText" fontSize="sm">
+                    {primaryQuote.summary}
+                  </Text>
+                  <Flex gap="2" wrap="wrap">
+                    <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                      {primaryQuote.status}
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      {primaryQuote.commentCount} comments
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      ${primaryQuote.monthlyUsd}/mo
+                    </Badge>
+                  </Flex>
+                  <Button asChild bg="white" borderRadius="8px" color="ink.900" size="sm">
+                    <Link state={returnState} to={`/app/quotes/${primaryQuote.id}`}>
+                      Open quote
+                    </Link>
+                  </Button>
+                </Stack>
+              ) : (
+                <Text color="darkPanelText" fontSize="sm">
+                  No open quote for this organization.
+                </Text>
+              )}
+            </FilterCard>
+
             <FilterCard>
               <Stack gap="1">
                 <SectionEyebrow>Workspace</SectionEyebrow>
@@ -297,15 +218,105 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                 ))}
               </Flex>
             </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>Preferences</SectionEyebrow>
+              <Grid gap="2" templateColumns={{ base: '1fr', md: '1fr 1fr', xl: '1fr' }}>
+                {vm.preferenceRows.map((row) => (
+                  <AccountFact key={row.label} label={row.label} value={row.value} />
+                ))}
+              </Grid>
+            </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>Workspace actions</SectionEyebrow>
+              <FieldHint>
+                User actions are accepted only after the server checks the session and referenced
+                catalog, region, language, currency, and content choices.
+              </FieldHint>
+              <Stack align="start" gap="2">
+                <preferenceFetcher.Form action="/app/actions/preferences" method="post">
+                  <input
+                    name="languageId"
+                    type="hidden"
+                    value={vm.preferenceActionPayload.languageId}
+                  />
+                  <input
+                    name="currencyId"
+                    type="hidden"
+                    value={vm.preferenceActionPayload.currencyId}
+                  />
+                  <input
+                    name="organizationId"
+                    type="hidden"
+                    value={vm.preferenceActionPayload.organizationId}
+                  />
+                  <input
+                    name="regionId"
+                    type="hidden"
+                    value={vm.preferenceActionPayload.regionId}
+                  />
+                  <Button borderRadius="8px" size="sm" type="submit" variant="outline">
+                    Save defaults
+                  </Button>
+                </preferenceFetcher.Form>
+                {preferenceFetcher.data ? (
+                  <ActionMessage response={preferenceFetcher.data} />
+                ) : null}
+                <contentFeedbackFetcher.Form action="/app/actions/content-feedback" method="post">
+                  <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
+                  <input
+                    name="organizationId"
+                    type="hidden"
+                    value={vm.sourceFeedbackSample.organizationId}
+                  />
+                  <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
+                  <Button borderRadius="8px" size="sm" type="submit" variant="outline">
+                    Save update
+                  </Button>
+                </contentFeedbackFetcher.Form>
+                {contentFeedbackFetcher.data ? (
+                  <ActionMessage response={contentFeedbackFetcher.data} />
+                ) : null}
+              </Stack>
+            </FilterCard>
+
+            <FilterCard>
+              <SectionEyebrow>Recent activity</SectionEyebrow>
+              <Stack gap="2">
+                {vm.auditEvents.length === 0 ? (
+                  <Text color="ink.500" fontSize="sm">
+                    No recent activity for this user.
+                  </Text>
+                ) : null}
+                {vm.auditEvents.map((event) => (
+                  <Stack
+                    borderColor="surface.200"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    gap="1"
+                    key={event.id}
+                    p="3"
+                  >
+                    <Flex gap="2" justify="space-between" wrap="wrap">
+                      <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
+                        {event.scope}
+                      </Badge>
+                      <Text color="ink.500" fontSize="xs">
+                        {event.when}
+                      </Text>
+                    </Flex>
+                    <Text color="ink.900" fontSize="sm" fontWeight="760">
+                      {event.event}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {event.actor}
+                    </Text>
+                  </Stack>
+                ))}
+              </Stack>
+            </FilterCard>
           </StickyPanel>
-
-          {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
-            <PlansPanel returnState={returnState} vm={vm} />
-          ) : null}
-
-          {vm.selectedSection === 'quotes' ? (
-            <QuotesPanel returnState={returnState} vm={vm} />
-          ) : null}
         </Grid>
       </Container>
     </Box>

@@ -33,10 +33,12 @@ Typed mock CMS article data plus local saved/helpful state.
 - article results render as dense readable records with category, role, update
   date, summary, tags, read time, helpful count, save, and open actions;
 - the right rail keeps topics, saved reads, and section counts aligned to the
-  same third-column width as the featured panel;
-- Resource Detail uses an item-page layout: intro content spans two columns,
-  a dark guide summary occupies the right rail, and guide body/checklist content
-  remains separate from actions and related guides;
+  same third-column width as the featured panel, directly below it;
+- Resource Detail uses an item-page layout with a continuous third-column rail:
+  intro/body/checklist/related-guide content spans the first two columns, while
+  the dark guide summary, actions, and next paths stack in the right column;
+- related guides on detail pages use the same three-card grid pattern as the
+  checklist;
 - public docs copy must stay customer-facing and must not expose CMS table,
   source, mock, or proof mechanics.
 

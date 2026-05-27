@@ -260,7 +260,7 @@ function DarkFact({ label, value }: { readonly label: string; readonly value: st
       borderRadius="8px"
       borderWidth="1px"
       gap="1"
-      p="3"
+      p="2"
     >
       <Text color="white" fontSize="lg" fontWeight="800" lineHeight="1.1" overflowWrap="anywhere">
         {value}

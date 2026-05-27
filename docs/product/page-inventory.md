@@ -13,10 +13,10 @@
 | `/resources/:slug`      | Prototype | One guide: article body, checklist, related guides      | typed mock   | guide summary approval         |
 | `/releases`             | Prototype | Product/news updates, reactions, saved announcements    | typed mock   | feed row density approval      |
 | `/releases/:slug`       | Prototype | One update: impact, affected paths, related updates     | typed mock   | update summary approval        |
-| `/quote`                | Prototype | Public quote draft, readiness, add-ons, review path     | mock form    | backend mutation contract      |
-| `/app`                  | Prototype | User session, preferences, quotes, favorites, audit     | backend mock | saved-plan edit pattern        |
-| `/app/plans/:planId`    | Prototype | One saved plan: package, related quotes, next actions   | backend mock | edit/share actions             |
-| `/app/quotes/:quoteId`  | Prototype | One quote: timeline, comments, related saved plans      | backend mock | conversation actions           |
+| `/quote`                | Prototype | Public quote draft, readiness, add-ons, review path     | mock form    | quote rail approval            |
+| `/app`                  | Prototype | User session, preferences, quotes, favorites, audit     | backend mock | console rail approval          |
+| `/app/plans/:planId`    | Prototype | One saved plan: package, related quotes, next actions   | backend mock | saved-plan action approval     |
+| `/app/quotes/:quoteId`  | Prototype | One quote: timeline, comments, related saved plans      | backend mock | conversation action approval   |
 
 ## Page Status Rules
 

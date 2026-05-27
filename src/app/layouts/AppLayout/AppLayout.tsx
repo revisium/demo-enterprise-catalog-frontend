@@ -162,7 +162,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       HelioStack
                     </Text>
                     <Text color="ink.500" fontSize="xs" lineHeight="1.1" textDecoration="none">
-                      Cloud servers
+                      {t('nav.brand.subtitle')}
                     </Text>
                   </Box>
                 </HStack>
@@ -458,7 +458,7 @@ function MobileNavigationDialog({ t }: { readonly t: (key: TranslationKey) => st
                       HelioStack
                     </Text>
                     <Text color="ink.500" fontSize="xs" lineHeight="1.1">
-                      Cloud servers
+                      {t('nav.brand.subtitle')}
                     </Text>
                   </Box>
                 </HStack>

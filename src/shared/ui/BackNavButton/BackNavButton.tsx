@@ -44,6 +44,7 @@ export function BackNavButton({
       alignSelf="start"
       aria-label={ariaLabel}
       borderRadius="8px"
+      mb={showOnlyWithReturnState ? { base: '3', md: '4' } : undefined}
       minW="9"
       onClick={handleClick}
       px="0"

@@ -251,7 +251,7 @@ export function QuerySummary({ rows }: QuerySummaryProps) {
       borderRadius="8px"
       borderWidth="1px"
       gap="2"
-      p="3"
+      p="2"
     >
       <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
         Query summary

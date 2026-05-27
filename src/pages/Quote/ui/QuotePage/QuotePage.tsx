@@ -11,6 +11,7 @@ import {
   FilterCard,
   PageIntroGrid,
   SectionEyebrow,
+  StickyPanel,
 } from 'src/shared/ui';
 import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 
@@ -45,9 +46,11 @@ export const QuotePage = observer(function QuotePage() {
 
         <Grid
           alignItems="start"
-          gap={{ base: '4', lg: '5' }}
+          gap={{ base: '4', md: '5' }}
           mt={{ base: '4', md: '5' }}
-          templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 380px' }}
+          minW="0"
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          w="100%"
         >
           <Stack
             as="form"
@@ -57,6 +60,8 @@ export const QuotePage = observer(function QuotePage() {
             borderWidth="1px"
             boxShadow="panel"
             gap="4"
+            gridColumn={{ xl: 'span 2' }}
+            minW="0"
             onSubmit={vm.submit}
             p="3"
           >
@@ -297,7 +302,47 @@ export const QuotePage = observer(function QuotePage() {
             ) : null}
           </Stack>
 
-          <Stack gap="4">
+          <StickyPanel
+            as="aside"
+            gridColumn={{ xl: '3' }}
+            maxH="none"
+            overscrollBehavior="auto"
+            overflowY="visible"
+            pb="0"
+            position={{ xl: 'static' }}
+            pr="0"
+            w="100%"
+          >
+            <Stack
+              bg="panelDarkBg"
+              borderColor="darkPanelBorder"
+              borderRadius="8px"
+              borderWidth="1px"
+              boxShadow="panel"
+              color="white"
+              gap="3"
+              p="3"
+            >
+              <Text
+                color="darkPanelMutedText"
+                fontSize="xs"
+                fontWeight="800"
+                textTransform="uppercase"
+              >
+                Request preview
+              </Text>
+              {vm.payloadPreview.map((item) => (
+                <Flex gap="3" justify="space-between" key={item.label}>
+                  <Text color="darkPanelMutedText" fontSize="sm">
+                    {item.label}
+                  </Text>
+                  <Text color="white" fontSize="sm" fontWeight="760" textAlign="right">
+                    {item.value}
+                  </Text>
+                </Flex>
+              ))}
+            </Stack>
+
             <FilterCard>
               <SectionEyebrow>Commercial review</SectionEyebrow>
               <Stack gap="2">
@@ -370,34 +415,6 @@ export const QuotePage = observer(function QuotePage() {
               </Stack>
             </FilterCard>
 
-            <Stack
-              bg="surface.900"
-              borderRadius="8px"
-              boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
-              color="white"
-              gap="3"
-              p="4"
-            >
-              <Text
-                color="darkPanelMutedText"
-                fontSize="xs"
-                fontWeight="700"
-                textTransform="uppercase"
-              >
-                Request preview
-              </Text>
-              {vm.payloadPreview.map((item) => (
-                <Flex gap="3" justify="space-between" key={item.label}>
-                  <Text color="darkPanelMutedText" fontSize="sm">
-                    {item.label}
-                  </Text>
-                  <Text color="white" fontSize="sm" fontWeight="760" textAlign="right">
-                    {item.value}
-                  </Text>
-                </Flex>
-              ))}
-            </Stack>
-
             <FilterCard>
               <SectionEyebrow>Review path</SectionEyebrow>
               <Stack gap="3">
@@ -437,7 +454,7 @@ export const QuotePage = observer(function QuotePage() {
                 </Button>
               </Stack>
             </FilterCard>
-          </Stack>
+          </StickyPanel>
         </Grid>
       </Container>
     </Box>

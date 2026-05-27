@@ -36,101 +36,54 @@ export const ReleasesPage = observer(function ReleasesPage() {
         />
 
         <Grid
-          alignItems="stretch"
-          gap={{ base: '4', md: '5' }}
-          my={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
-        >
-          <FilterCard gridColumn={{ xl: 'span 2' }}>
-            <SectionEyebrow>Feed filters</SectionEyebrow>
-            <Flex gap="2" wrap="wrap">
-              {vm.typeOptions.map((type) => (
-                <FilterButton
-                  key={type.id}
-                  onClick={() => vm.selectType(type.id)}
-                  selected={vm.selectedType === type.id}
-                  tone="neutral"
-                >
-                  {type.label}
-                </FilterButton>
-              ))}
-            </Flex>
-            <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
-              <SelectField
-                compact
-                label="Audience"
-                onChange={(value) => vm.selectAudience(value)}
-                options={vm.audienceOptions}
-                value={vm.selectedAudience}
-              />
-              <SelectField
-                compact
-                label="Priority"
-                onChange={(value) => vm.selectPriority(value)}
-                options={vm.priorityOptions}
-                value={vm.selectedPriority}
-              />
-              <SelectField
-                compact
-                label="Sort"
-                onChange={(value) => vm.selectSort(value)}
-                options={vm.sortOptions}
-                value={vm.sortId}
-              />
-            </Grid>
-            <QuerySummary rows={vm.queryRows} />
-          </FilterCard>
-
-          <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white">
-            <Text
-              color="darkPanelMutedText"
-              fontSize="xs"
-              fontWeight="800"
-              textTransform="uppercase"
-            >
-              Latest visible update
-            </Text>
-            {latest ? (
-              <Stack gap="3">
-                <Heading as="h2" fontSize="2xl">
-                  {latest.title}
-                </Heading>
-                <Text color="darkPanelText" fontSize="sm">
-                  {latest.summary}
-                </Text>
-                <Flex gap="2" wrap="wrap">
-                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                    {latest.type}
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    {latest.priority}
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    {latest.audience}
-                  </Badge>
-                </Flex>
-                <Button asChild bg="reserveButtonBg" borderRadius="8px" color="ink.900" size="sm">
-                  <Link state={returnState} to={`/releases/${latest.id}`}>
-                    Open update
-                  </Link>
-                </Button>
-              </Stack>
-            ) : (
-              <Text color="darkPanelText" fontSize="sm">
-                No update matches the current filters.
-              </Text>
-            )}
-          </FilterCard>
-        </Grid>
-
-        <Grid
           alignItems="start"
           gap={{ base: '4', md: '5' }}
           minW="0"
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           w="100%"
         >
           <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
+            <FilterCard>
+              <SectionEyebrow>Feed filters</SectionEyebrow>
+              <Flex gap="2" wrap="wrap">
+                {vm.typeOptions.map((type) => (
+                  <FilterButton
+                    key={type.id}
+                    onClick={() => vm.selectType(type.id)}
+                    selected={vm.selectedType === type.id}
+                    tone="neutral"
+                  >
+                    {type.label}
+                  </FilterButton>
+                ))}
+              </Flex>
+              <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
+                <SelectField
+                  compact
+                  label="Audience"
+                  onChange={(value) => vm.selectAudience(value)}
+                  options={vm.audienceOptions}
+                  value={vm.selectedAudience}
+                />
+                <SelectField
+                  compact
+                  label="Priority"
+                  onChange={(value) => vm.selectPriority(value)}
+                  options={vm.priorityOptions}
+                  value={vm.selectedPriority}
+                />
+                <SelectField
+                  compact
+                  label="Sort"
+                  onChange={(value) => vm.selectSort(value)}
+                  options={vm.sortOptions}
+                  value={vm.sortId}
+                />
+              </Grid>
+              <QuerySummary rows={vm.queryRows} />
+            </FilterCard>
+
             <Flex align="end" gap="3" justify="space-between" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Update feed</SectionEyebrow>
@@ -258,6 +211,67 @@ export const ReleasesPage = observer(function ReleasesPage() {
             pr="0"
             w="100%"
           >
+            <FilterCard
+              bg="panelDarkBg"
+              borderColor="darkPanelBorder"
+              color="white"
+              justify="space-between"
+              w="100%"
+            >
+              <Text
+                color="darkPanelMutedText"
+                fontSize="xs"
+                fontWeight="800"
+                textTransform="uppercase"
+              >
+                Latest visible update
+              </Text>
+              {latest ? (
+                <>
+                  <Stack gap="3">
+                    <Heading as="h2" fontSize="2xl">
+                      {latest.title}
+                    </Heading>
+                    <Text color="darkPanelText" fontSize="sm">
+                      {latest.summary}
+                    </Text>
+                  </Stack>
+                  <Flex gap="2" wrap="wrap">
+                    <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                      {latest.type}
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      {latest.priority}
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      {latest.audience}
+                    </Badge>
+                  </Flex>
+                  <Button
+                    asChild
+                    bg="reserveButtonBg"
+                    borderRadius="8px"
+                    color="ink.900"
+                    size="sm"
+                    w="100%"
+                  >
+                    <Link state={returnState} to={`/releases/${latest.id}`}>
+                      Open update
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                <Stack flex="1" justify="center">
+                  <Heading as="h2" fontSize="2xl">
+                    No update matches the current filters.
+                  </Heading>
+                  <Text color="darkPanelText" fontSize="sm">
+                    Adjust feed filters to return to the full announcement feed.
+                  </Text>
+                </Stack>
+              )}
+            </FilterCard>
+
             <FilterCard>
               <SectionEyebrow>Saved updates</SectionEyebrow>
               {vm.savedUpdates.map((update) => (

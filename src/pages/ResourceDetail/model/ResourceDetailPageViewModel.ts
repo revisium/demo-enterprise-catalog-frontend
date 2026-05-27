@@ -10,7 +10,6 @@ interface DetailSection {
 interface LinkItem {
   readonly href: string;
   readonly label: string;
-  readonly summary: string;
 }
 
 const sectionCopy: Record<ResourceArticle['category'], readonly DetailSection[]> = {
@@ -118,9 +117,7 @@ export class ResourceDetailPageViewModel {
 
   get metrics() {
     return [
-      { label: 'Read time', value: `${this.article.readTimeMinutes} min` },
       { label: 'Helpful', value: String(this.getHelpfulCount(this.article)) },
-      { label: 'Topic', value: this.article.relatedTopic },
       { label: 'Updated', value: this.article.updatedAt },
     ];
   }
@@ -130,17 +127,14 @@ export class ResourceDetailPageViewModel {
       {
         href: '/catalog',
         label: 'Open catalog',
-        summary: 'Compare server plans that match this guide.',
       },
       {
         href: '/quote',
         label: 'Prepare quote',
-        summary: 'Carry the selected plan and add-ons into a request.',
       },
       {
         href: '/app',
         label: 'Customer console',
-        summary: 'Review saved plans, quotes, and account activity.',
       },
     ];
   }

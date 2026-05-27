@@ -36,101 +36,54 @@ export const ResourcesPage = observer(function ResourcesPage() {
         />
 
         <Grid
-          alignItems="stretch"
-          gap={{ base: '4', md: '5' }}
-          my={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
-        >
-          <FilterCard gridColumn={{ xl: 'span 2' }}>
-            <SectionEyebrow>Library filters</SectionEyebrow>
-            <Flex gap="2" wrap="wrap">
-              {vm.categoryOptions.map((category) => (
-                <FilterButton
-                  key={category.id}
-                  onClick={() => vm.selectCategory(category.id)}
-                  selected={vm.selectedCategory === category.id}
-                  tone="neutral"
-                >
-                  {category.label}
-                </FilterButton>
-              ))}
-            </Flex>
-            <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
-              <SelectField
-                compact
-                label="Team role"
-                onChange={(value) => vm.selectRole(value)}
-                options={vm.roleOptions}
-                value={vm.selectedRole}
-              />
-              <SelectField
-                compact
-                label="Topic"
-                onChange={(value) => vm.selectTag(value)}
-                options={vm.tagOptions}
-                value={vm.selectedTag}
-              />
-              <SelectField
-                compact
-                label="Sort"
-                onChange={(value) => vm.selectSort(value)}
-                options={vm.sortOptions}
-                value={vm.sortId}
-              />
-            </Grid>
-            <QuerySummary rows={vm.queryRows} />
-          </FilterCard>
-
-          <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white">
-            <Text
-              color="darkPanelMutedText"
-              fontSize="xs"
-              fontWeight="800"
-              textTransform="uppercase"
-            >
-              Featured answer
-            </Text>
-            {featured ? (
-              <Stack gap="3">
-                <Heading as="h2" fontSize="2xl">
-                  {featured.title}
-                </Heading>
-                <Text color="darkPanelText" fontSize="sm">
-                  {featured.summary}
-                </Text>
-                <Flex gap="2" wrap="wrap">
-                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                    {featured.category}
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    {featured.readTimeMinutes} min
-                  </Badge>
-                  <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                    {featured.relatedTopic}
-                  </Badge>
-                </Flex>
-                <Button asChild bg="reserveButtonBg" borderRadius="8px" color="ink.900" size="sm">
-                  <Link state={returnState} to={`/resources/${featured.id}`}>
-                    Open guide
-                  </Link>
-                </Button>
-              </Stack>
-            ) : (
-              <Text color="darkPanelText" fontSize="sm">
-                No article matches the current filters.
-              </Text>
-            )}
-          </FilterCard>
-        </Grid>
-
-        <Grid
           alignItems="start"
           gap={{ base: '4', md: '5' }}
           minW="0"
+          my={{ base: '6', md: '8' }}
           templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           w="100%"
         >
           <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
+            <FilterCard>
+              <SectionEyebrow>Library filters</SectionEyebrow>
+              <Flex gap="2" wrap="wrap">
+                {vm.categoryOptions.map((category) => (
+                  <FilterButton
+                    key={category.id}
+                    onClick={() => vm.selectCategory(category.id)}
+                    selected={vm.selectedCategory === category.id}
+                    tone="neutral"
+                  >
+                    {category.label}
+                  </FilterButton>
+                ))}
+              </Flex>
+              <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
+                <SelectField
+                  compact
+                  label="Team role"
+                  onChange={(value) => vm.selectRole(value)}
+                  options={vm.roleOptions}
+                  value={vm.selectedRole}
+                />
+                <SelectField
+                  compact
+                  label="Topic"
+                  onChange={(value) => vm.selectTag(value)}
+                  options={vm.tagOptions}
+                  value={vm.selectedTag}
+                />
+                <SelectField
+                  compact
+                  label="Sort"
+                  onChange={(value) => vm.selectSort(value)}
+                  options={vm.sortOptions}
+                  value={vm.sortId}
+                />
+              </Grid>
+              <QuerySummary rows={vm.queryRows} />
+            </FilterCard>
+
             <Flex align="end" justify="space-between" gap="3" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Articles</SectionEyebrow>
@@ -251,6 +204,54 @@ export const ResourcesPage = observer(function ResourcesPage() {
             pr="0"
             w="100%"
           >
+            <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white" w="100%">
+              <Text
+                color="darkPanelMutedText"
+                fontSize="xs"
+                fontWeight="800"
+                textTransform="uppercase"
+              >
+                Featured answer
+              </Text>
+              {featured ? (
+                <Stack gap="3">
+                  <Heading as="h2" fontSize="2xl">
+                    {featured.title}
+                  </Heading>
+                  <Text color="darkPanelText" fontSize="sm">
+                    {featured.summary}
+                  </Text>
+                  <Flex gap="2" wrap="wrap">
+                    <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                      {featured.category}
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      {featured.readTimeMinutes} min
+                    </Badge>
+                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                      {featured.relatedTopic}
+                    </Badge>
+                  </Flex>
+                  <Button
+                    asChild
+                    bg="reserveButtonBg"
+                    borderRadius="8px"
+                    color="ink.900"
+                    size="sm"
+                    w="100%"
+                  >
+                    <Link state={returnState} to={`/resources/${featured.id}`}>
+                      Open guide
+                    </Link>
+                  </Button>
+                </Stack>
+              ) : (
+                <Text color="darkPanelText" fontSize="sm">
+                  No article matches the current filters.
+                </Text>
+              )}
+            </FilterCard>
+
             <FilterCard>
               <SectionEyebrow>Topics</SectionEyebrow>
               <Flex gap="2" wrap="wrap">

@@ -93,6 +93,6 @@ hierarchy are accepted.
   instead of stretching across the viewport.
 - Tables can start as card-like rows until a real dense table pattern is chosen.
 - Text must not overlap or depend on viewport-width font scaling.
-- Compare, resources, and releases use the same third-column rail pattern as
-  locations so featured summaries, saved lists, and actions align vertically
-  with the main two-column content area.
+- Compare, resources, releases, quote, and customer-console pages use the same
+  third-column rail pattern as locations so featured summaries, saved lists,
+  previews, and actions align vertically with the main two-column content area.
