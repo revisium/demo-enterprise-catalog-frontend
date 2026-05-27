@@ -1,9 +1,11 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FieldHint,
@@ -18,8 +20,10 @@ import {
 import { PricingDetailPageViewModel } from '../../model/PricingDetailPageViewModel';
 
 export const PricingDetailPage = observer(function PricingDetailPage() {
+  const location = useLocation();
   const params = useParams();
   const [vm] = useState(() => new PricingDetailPageViewModel(params.priceBookId));
+  const returnState = createReturnState(location);
 
   useEffect(() => {
     vm.setPriceBookId(params.priceBookId);
@@ -28,10 +32,8 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/pricing">Back to pricing</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/pricing" />
 
           <PageIntroGrid
             eyebrow="Price book"
@@ -136,12 +138,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
               minW="0"
               wrap="wrap"
             >
-              <Stack gap="1">
-                <SectionEyebrow>Rows</SectionEyebrow>
-                <Heading as="h2" color="ink.900" fontSize="2xl">
-                  Regional price rows
-                </Heading>
-              </Stack>
+              <SectionEyebrow>Regional price rows</SectionEyebrow>
               <Button
                 borderRadius="8px"
                 onClick={() => vm.resetFilters()}
@@ -186,7 +183,9 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 >
                   <Stack gap="0" minW="0">
                     <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
-                      <Link to={row.rowHref}>{row.plan.name}</Link>
+                      <Link state={returnState} to={row.rowHref}>
+                        {row.plan.name}
+                      </Link>
                     </Box>
                     <Text
                       color="ink.500"
@@ -236,10 +235,14 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                   </Stack>
                   <Flex gap="2" justify="end" minW="0" wrap="wrap">
                     <Button asChild borderRadius="8px" size="sm" variant="outline">
-                      <Link to={row.locationHref}>Region</Link>
+                      <Link state={returnState} to={row.locationHref}>
+                        Region
+                      </Link>
                     </Button>
                     <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
-                      <Link to={row.quoteHref}>Quote</Link>
+                      <Link state={returnState} to={row.quoteHref}>
+                        Quote
+                      </Link>
                     </Button>
                   </Flex>
                 </Grid>
@@ -288,7 +291,9 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                         </Text>
                       </Stack>
                       <Button asChild borderRadius="8px" size="xs" variant="outline">
-                        <Link to={book.href}>Open</Link>
+                        <Link state={returnState} to={book.href}>
+                          Open
+                        </Link>
                       </Button>
                     </Grid>
                   ))}
@@ -303,10 +308,14 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 </FieldHint>
                 <Flex gap="2" wrap="wrap">
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
-                    <Link to="/pricing">All pricing</Link>
+                    <Link state={returnState} to="/pricing">
+                      All pricing
+                    </Link>
                   </Button>
                   <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
-                    <Link to="/quote">New quote</Link>
+                    <Link state={returnState} to="/quote">
+                      New quote
+                    </Link>
                   </Button>
                 </Flex>
               </FilterCard>

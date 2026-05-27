@@ -1,14 +1,24 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 
-import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow, StickyPanel } from 'src/shared/ui';
+import { createReturnState } from 'src/shared/routing';
+import {
+  BackNavButton,
+  FieldHint,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { ReleaseDetailPageViewModel } from '../../model/ReleaseDetailPageViewModel';
 
 export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
+  const location = useLocation();
   const params = useParams();
   const [vm] = useState(() => new ReleaseDetailPageViewModel(params.updateId));
+  const returnState = createReturnState(location);
 
   useEffect(() => {
     vm.setUpdateId(params.updateId);
@@ -17,10 +27,8 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/releases">Back to updates</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/releases" />
 
           <PageIntroGrid
             eyebrow={`${vm.update.type} update`}
@@ -60,9 +68,7 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
                 </Stack>
                 {vm.detailSections.map((section) => (
                   <Stack gap="1" key={section.title}>
-                    <Heading as="h2" color="ink.900" fontSize="2xl">
-                      {section.title}
-                    </Heading>
+                    <SectionEyebrow>{section.title}</SectionEyebrow>
                     <Text color="ink.700" fontSize="sm">
                       {section.body}
                     </Text>
@@ -90,7 +96,9 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
                         size="sm"
                         variant="outline"
                       >
-                        <Link to={path.href}>{path.label}</Link>
+                        <Link state={returnState} to={path.href}>
+                          {path.label}
+                        </Link>
                       </Button>
                       <Text color="ink.500" fontSize="sm">
                         {path.summary}
@@ -147,7 +155,9 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
                       {update.type} · {update.date}
                     </Text>
                     <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
-                      <Link to={`/releases/${update.id}`}>Open update</Link>
+                      <Link state={returnState} to={`/releases/${update.id}`}>
+                        Open update
+                      </Link>
                     </Button>
                   </Stack>
                 ))}

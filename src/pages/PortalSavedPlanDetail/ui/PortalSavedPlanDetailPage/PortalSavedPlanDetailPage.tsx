@@ -1,10 +1,12 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useMemo } from 'react';
-import { Link, useFetcher, useParams } from 'react-router';
+import { Link, useFetcher, useLocation, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   FieldHint,
   FilterCard,
   PageIntroGrid,
@@ -26,11 +28,13 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
   readonly session: PortalDemoSession;
 }) {
   const favoriteFetcher = useFetcher<PortalActionResponse>();
+  const location = useLocation();
   const params = useParams();
   const vm = useMemo(
     () => new PortalSavedPlanDetailPageViewModel(params.planId, session),
     [params.planId, session],
   );
+  const returnState = createReturnState(location);
   const savedPlan = vm.savedPlan;
 
   useEffect(() => {
@@ -46,10 +50,8 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to console</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/app" />
 
           <PageIntroGrid
             eyebrow={vm.organization.name}
@@ -89,10 +91,14 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                     </Text>
                     <Flex gap="2" wrap="wrap">
                       <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
-                        <Link to={vm.quotePath}>Prepare quote</Link>
+                        <Link state={returnState} to={vm.quotePath}>
+                          Prepare quote
+                        </Link>
                       </Button>
                       <Button asChild borderRadius="8px" size="sm" variant="outline">
-                        <Link to={vm.productPath}>Open server</Link>
+                        <Link state={returnState} to={vm.productPath}>
+                          Open server
+                        </Link>
                       </Button>
                       <favoriteFetcher.Form action="/app/actions/favorites" method="post">
                         <input name="planId" type="hidden" value={savedPlan.id} />
@@ -159,7 +165,9 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                       </Text>
                     </Stack>
                     <Button asChild borderRadius="8px" size="sm" variant="outline">
-                      <Link to={`/app/quotes/${quote.id}`}>Open quote</Link>
+                      <Link state={returnState} to={`/app/quotes/${quote.id}`}>
+                        Open quote
+                      </Link>
                     </Button>
                   </Grid>
                 ))}
@@ -185,10 +193,14 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                 <SectionEyebrow>Linked pages</SectionEyebrow>
                 <Flex gap="2" wrap="wrap">
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
-                    <Link to={vm.pricingPath}>Pricing</Link>
+                    <Link state={returnState} to={vm.pricingPath}>
+                      Pricing
+                    </Link>
                   </Button>
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
-                    <Link to={vm.locationPath}>Region</Link>
+                    <Link state={returnState} to={vm.locationPath}>
+                      Region
+                    </Link>
                   </Button>
                 </Flex>
               </FilterCard>
@@ -215,7 +227,9 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
                       </Text>
                     </Stack>
                     <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <Link to={`/app/plans/${plan.id}`}>Open</Link>
+                      <Link state={returnState} to={`/app/plans/${plan.id}`}>
+                        Open
+                      </Link>
                     </Button>
                   </Grid>
                 ))}

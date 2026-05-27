@@ -1,17 +1,14 @@
-import { Box, Button, Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
-import { Link } from 'react-router';
+import { Box, Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 
-import { FieldHint, FilterCard, SectionEyebrow } from 'src/shared/ui';
+import { BackNavButton, FieldHint, FilterCard, SectionEyebrow } from 'src/shared/ui';
 import type { PortalSavedPlanDetailPageViewModel } from '../../model/PortalSavedPlanDetailPageViewModel';
 
 export function SavedPlanAccessState({ vm }: { readonly vm: PortalSavedPlanDetailPageViewModel }) {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap="5">
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to console</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/app" />
           <FilterCard>
             <SectionEyebrow>Access check</SectionEyebrow>
             <Heading as="h1" color="ink.900" fontSize="3xl">

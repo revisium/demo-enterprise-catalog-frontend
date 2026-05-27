@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FieldHint,
@@ -17,10 +19,13 @@ import { LocationsPageViewModel } from '../../model/LocationsPageViewModel';
 
 export const LocationsPage = observer(function LocationsPage() {
   const [vm] = useState(() => new LocationsPageViewModel());
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Locations"
           metrics={vm.summaryMetrics}
@@ -126,7 +131,9 @@ export const LocationsPage = observer(function LocationsPage() {
                     {location.readinessScore} readiness
                   </Badge>
                   <Button asChild borderRadius="8px" size="xs" variant="outline">
-                    <Link to={`/locations/${location.regionId}`}>Open region</Link>
+                    <Link state={returnState} to={`/locations/${location.regionId}`}>
+                      Open region
+                    </Link>
                   </Button>
                 </Flex>
 
@@ -161,7 +168,9 @@ export const LocationsPage = observer(function LocationsPage() {
                         </Text>
                       </Stack>
                       <Button asChild borderRadius="8px" size="xs" variant="outline">
-                        <Link to={row.planHref}>Open</Link>
+                        <Link state={returnState} to={row.planHref}>
+                          Open
+                        </Link>
                       </Button>
                     </Grid>
                   ))}

@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   chakra,
+  type SimpleGridProps,
   type StackProps,
 } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
@@ -59,6 +60,7 @@ interface EmptyStateProps {
 
 interface MetricGridProps {
   readonly ariaLabel: string;
+  readonly columns?: SimpleGridProps['columns'];
   readonly metrics: readonly Metric[];
 }
 
@@ -72,6 +74,8 @@ interface PageIntroGridProps {
 }
 
 interface SelectFieldProps {
+  readonly compact?: boolean;
+  readonly labelGap?: StackProps['gap'];
   readonly label: string;
   readonly onChange: (value: string) => void;
   readonly options: readonly FilterOption[];
@@ -175,9 +179,9 @@ export function FilterCard({ children, ...props }: Readonly<FilterCardProps>) {
   );
 }
 
-export function MetricGrid({ ariaLabel, metrics }: MetricGridProps) {
+export function MetricGrid({ ariaLabel, columns = { base: 2, sm: 3 }, metrics }: MetricGridProps) {
   return (
-    <SimpleGrid aria-label={ariaLabel} columns={{ base: 2, sm: 3 }} gap="1.5" minW="0">
+    <SimpleGrid aria-label={ariaLabel} columns={columns} gap="1.5" minW="0">
       {metrics.map((metric) => (
         <Box
           bg="panelGlassBg"
@@ -305,9 +309,16 @@ export function StickyPanel({
   );
 }
 
-export function SelectField({ label, onChange, options, value }: SelectFieldProps) {
+export function SelectField({
+  compact = false,
+  label,
+  labelGap = '1.5',
+  onChange,
+  options,
+  value,
+}: SelectFieldProps) {
   return (
-    <Stack as="label" gap="1.5" minW="0" w="100%">
+    <Stack as="label" gap={labelGap} minW="0" w="100%">
       <Text color="ink.700" fontWeight="650" lineHeight="1.25" overflowWrap="anywhere">
         {label}
       </Text>
@@ -316,12 +327,13 @@ export function SelectField({ label, onChange, options, value }: SelectFieldProp
         borderColor="surface.200"
         borderRadius="8px"
         borderWidth="1px"
+        fontSize={compact ? 'sm' : 'md'}
         minW="0"
         onChange={(event) => onChange(event.currentTarget.value)}
-        pb="2.5"
+        pb={compact ? '2' : '2.5'}
         pl="2.5"
-        pr="9"
-        pt="2.5"
+        pr={compact ? '8' : '9'}
+        pt={compact ? '2' : '2.5'}
         value={value}
         w="100%"
       >

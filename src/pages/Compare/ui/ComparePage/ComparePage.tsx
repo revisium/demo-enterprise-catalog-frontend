@@ -1,9 +1,11 @@
 import { Badge, Box, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FieldHint,
@@ -19,10 +21,13 @@ import { ComparePageViewModel } from '../../model/ComparePageViewModel';
 export const ComparePage = observer(function ComparePage() {
   const [vm] = useState(() => new ComparePageViewModel());
   const recommendation = vm.recommendation;
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Server comparison"
           metrics={vm.highlights}
@@ -219,7 +224,9 @@ export const ComparePage = observer(function ComparePage() {
                       {product.family}
                     </Badge>
                     <Box asChild color="brand.500" fontSize="sm" fontWeight="760">
-                      <RouterLink to={`/catalog/${product.id}`}>Open plan</RouterLink>
+                      <RouterLink state={returnState} to={`/catalog/${product.id}`}>
+                        Open plan
+                      </RouterLink>
                     </Box>
                   </Flex>
                 </Stack>
@@ -283,7 +290,9 @@ export const ComparePage = observer(function ComparePage() {
               >
                 <Stack gap="0">
                   <Box asChild color="ink.900" fontWeight="760">
-                    <RouterLink to={row.detailHref}>{row.label}</RouterLink>
+                    <RouterLink state={returnState} to={row.detailHref}>
+                      {row.label}
+                    </RouterLink>
                   </Box>
                   <Text color="ink.500" fontSize="sm">
                     Best region: {row.bestRegionLabel}
@@ -313,7 +322,9 @@ export const ComparePage = observer(function ComparePage() {
             px="4"
             py="2.5"
           >
-            <RouterLink to={vm.quotePath}>Request quote</RouterLink>
+            <RouterLink state={returnState} to={vm.quotePath}>
+              Request quote
+            </RouterLink>
           </Box>
         </Grid>
       </Container>

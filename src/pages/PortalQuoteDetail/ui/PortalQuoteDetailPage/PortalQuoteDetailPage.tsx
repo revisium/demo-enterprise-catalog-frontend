@@ -1,10 +1,18 @@
 import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
-import { Link, useFetcher, useParams } from 'react-router';
+import { Link, useFetcher, useLocation, useParams } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
-import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow, StickyPanel } from 'src/shared/ui';
+import { createReturnState } from 'src/shared/routing';
+import {
+  BackNavButton,
+  FieldHint,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
 import { QuoteAccessState } from '../QuoteAccessState/QuoteAccessState';
 
@@ -19,11 +27,13 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
   readonly session: PortalDemoSession;
 }) {
   const commentFetcher = useFetcher<PortalActionResponse>();
+  const location = useLocation();
   const params = useParams();
   const vm = useMemo(
     () => new PortalQuoteDetailPageViewModel(params.quoteId, session),
     [params.quoteId, session],
   );
+  const returnState = createReturnState(location);
   const quote = vm.quote;
 
   if (!vm.canViewQuote || !quote) {
@@ -33,10 +43,8 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/app">Back to console</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/app" />
 
           <PageIntroGrid
             eyebrow={vm.organization.name}
@@ -154,7 +162,9 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
                 </FieldHint>
                 <Flex gap="2" wrap="wrap">
                   <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
-                    <Link to="/quote">Prepare public quote</Link>
+                    <Link state={returnState} to="/quote">
+                      Prepare public quote
+                    </Link>
                   </Button>
                   <commentFetcher.Form action="/app/actions/quote-comments" method="post">
                     <input name="quoteId" type="hidden" value={quote.id} />
@@ -164,7 +174,9 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
                     </Button>
                   </commentFetcher.Form>
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
-                    <Link to="/pricing">Check price rows</Link>
+                    <Link state={returnState} to="/pricing">
+                      Check price rows
+                    </Link>
                   </Button>
                 </Flex>
                 {commentFetcher.data ? (

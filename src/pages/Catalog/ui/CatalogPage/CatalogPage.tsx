@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FilterButton,
@@ -16,10 +18,13 @@ import { CatalogPageViewModel } from '../../model/CatalogPageViewModel';
 
 export const CatalogPage = observer(function CatalogPage() {
   const [vm] = useState(() => new CatalogPageViewModel());
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <Stack as="header" gap={{ base: '3', md: '4' }} maxW="820px" pb={{ base: '2', md: '3' }}>
           <SectionEyebrow>Servers</SectionEyebrow>
           <Heading
@@ -37,7 +42,7 @@ export const CatalogPage = observer(function CatalogPage() {
 
         <Grid
           alignItems="start"
-          gap={{ base: '5', xl: '6' }}
+          gap={{ base: '4', xl: '5' }}
           mt={{ base: '3', md: '4' }}
           templateColumns={{ base: '1fr', lg: '390px minmax(0, 1fr)' }}
         >
@@ -225,7 +230,9 @@ export const CatalogPage = observer(function CatalogPage() {
                     ${product.pricing.monthlyUsd}/mo · {product.totalStock} units
                   </Text>
                   <Button asChild alignSelf="end" borderRadius="8px" mt="auto" variant="outline">
-                    <Link to={product.detailHref}>Open</Link>
+                    <Link state={returnState} to={product.detailHref}>
+                      Open
+                    </Link>
                   </Button>
                 </Stack>
               </Grid>

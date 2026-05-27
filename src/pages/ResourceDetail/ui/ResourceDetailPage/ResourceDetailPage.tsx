@@ -1,14 +1,24 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 
-import { FieldHint, FilterCard, PageIntroGrid, SectionEyebrow, StickyPanel } from 'src/shared/ui';
+import { createReturnState } from 'src/shared/routing';
+import {
+  BackNavButton,
+  FieldHint,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+  StickyPanel,
+} from 'src/shared/ui';
 import { ResourceDetailPageViewModel } from '../../model/ResourceDetailPageViewModel';
 
 export const ResourceDetailPage = observer(function ResourceDetailPage() {
+  const location = useLocation();
   const params = useParams();
   const [vm] = useState(() => new ResourceDetailPageViewModel(params.articleId));
+  const returnState = createReturnState(location);
 
   useEffect(() => {
     vm.setArticleId(params.articleId);
@@ -17,10 +27,8 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '5', md: '6' }}>
-          <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to="/resources">Back to resources</Link>
-          </Button>
+        <Stack gap={{ base: '4', md: '5' }}>
+          <BackNavButton fallbackTo="/resources" />
 
           <PageIntroGrid
             eyebrow={vm.article.category}
@@ -48,9 +56,7 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
                 </Flex>
                 {vm.detailSections.map((section) => (
                   <Stack gap="1" key={section.title}>
-                    <Heading as="h2" color="ink.900" fontSize="2xl">
-                      {section.title}
-                    </Heading>
+                    <SectionEyebrow>{section.title}</SectionEyebrow>
                     <Text color="ink.700" fontSize="sm">
                       {section.body}
                     </Text>
@@ -128,7 +134,9 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
                       size="sm"
                       variant="outline"
                     >
-                      <Link to={link.href}>{link.label}</Link>
+                      <Link state={returnState} to={link.href}>
+                        {link.label}
+                      </Link>
                     </Button>
                     <Text color="ink.500" fontSize="sm">
                       {link.summary}
@@ -155,7 +163,9 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
                       {article.category} · {article.readTimeMinutes} min
                     </Text>
                     <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
-                      <Link to={`/resources/${article.id}`}>Open guide</Link>
+                      <Link state={returnState} to={`/resources/${article.id}`}>
+                        Open guide
+                      </Link>
                     </Button>
                   </Stack>
                 ))}

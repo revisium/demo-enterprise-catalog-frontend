@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   ChipGroup,
   EmptyState,
   FieldHint,
@@ -18,10 +20,13 @@ import { PricingPageViewModel } from '../../model/PricingPageViewModel';
 
 export const PricingPage = observer(function PricingPage() {
   const [vm] = useState(() => new PricingPageViewModel());
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Pricing"
           metrics={vm.summaryMetrics}
@@ -248,7 +253,9 @@ export const PricingPage = observer(function PricingPage() {
                 >
                   <Stack gap="0" minW="0">
                     <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
-                      <RouterLink to={row.detailHref}>{row.plan.name}</RouterLink>
+                      <RouterLink state={returnState} to={row.detailHref}>
+                        {row.plan.name}
+                      </RouterLink>
                     </Box>
                     <Text
                       color="ink.500"
@@ -357,7 +364,9 @@ export const PricingPage = observer(function PricingPage() {
                       </Text>
                     </Stack>
                     <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <RouterLink to={book.href}>Open</RouterLink>
+                      <RouterLink state={returnState} to={book.href}>
+                        Open
+                      </RouterLink>
                     </Button>
                   </Grid>
                 ))}
@@ -425,7 +434,9 @@ export const PricingPage = observer(function PricingPage() {
                 py="2.5"
                 textAlign="center"
               >
-                <RouterLink to={vm.quotePath}>Continue to quote</RouterLink>
+                <RouterLink state={returnState} to={vm.quotePath}>
+                  Continue to quote
+                </RouterLink>
               </Box>
             </FilterCard>
           </StickyPanel>

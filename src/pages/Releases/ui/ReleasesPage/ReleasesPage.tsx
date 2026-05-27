@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   EmptyState,
   FilterButton,
   FilterCard,
@@ -18,10 +20,13 @@ import { ReleasesPageViewModel } from '../../model/ReleasesPageViewModel';
 export const ReleasesPage = observer(function ReleasesPage() {
   const [vm] = useState(() => new ReleasesPageViewModel());
   const latest = vm.latestUpdate;
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Product updates"
           metrics={vm.summaryMetrics}
@@ -101,7 +106,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   </Badge>
                 </Flex>
                 <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
-                  <Link to={`/releases/${latest.id}`}>Open update</Link>
+                  <Link state={returnState} to={`/releases/${latest.id}`}>
+                    Open update
+                  </Link>
                 </Button>
               </Stack>
             ) : (
@@ -210,7 +217,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                       Save
                     </Button>
                     <Button asChild borderRadius="8px" size="sm" variant="outline">
-                      <Link to={`/releases/${update.id}`}>Open update</Link>
+                      <Link state={returnState} to={`/releases/${update.id}`}>
+                        Open update
+                      </Link>
                     </Button>
                   </Flex>
                 </Stack>
@@ -246,7 +255,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                     {update.type} · {update.priority}
                   </Text>
                   <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
-                    <Link to={`/releases/${update.id}`}>Open</Link>
+                    <Link state={returnState} to={`/releases/${update.id}`}>
+                      Open
+                    </Link>
                   </Button>
                 </Stack>
               ))}

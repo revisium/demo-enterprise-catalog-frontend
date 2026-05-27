@@ -1,10 +1,12 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link, useFetcher } from 'react-router';
+import { Link, useFetcher, useLocation } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   FieldHint,
   FilterButton,
   FilterCard,
@@ -27,12 +29,15 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
   const contentFeedbackFetcher = useFetcher<PortalActionResponse>();
   const preferenceFetcher = useFetcher<PortalActionResponse>();
   const [vm] = useState(() => new CustomerPortalPageViewModel(session));
+  const location = useLocation();
+  const returnState = createReturnState(location);
   const activeOrganization = vm.activeOrganization;
   const primaryQuote = vm.primaryQuote;
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Customer console"
           metrics={vm.metrics}
@@ -113,7 +118,9 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                   </Badge>
                 </Flex>
                 <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
-                  <Link to={`/app/quotes/${primaryQuote.id}`}>Open quote</Link>
+                  <Link state={returnState} to={`/app/quotes/${primaryQuote.id}`}>
+                    Open quote
+                  </Link>
                 </Button>
               </Stack>
             ) : (
@@ -266,7 +273,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </FilterCard>
         </Grid>
 
-        <Grid gap={{ base: '5', lg: '6' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
+        <Grid gap={{ base: '4', lg: '5' }} templateColumns={{ base: '1fr', lg: '320px 1fr' }}>
           <StickyPanel as="aside" position={{ lg: 'sticky' }} top={{ lg: '84px' }}>
             <FilterCard>
               <Stack gap="1">
@@ -291,10 +298,12 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </StickyPanel>
 
           {vm.selectedSection === 'plans' || vm.selectedSection === 'favorites' ? (
-            <PlansPanel vm={vm} />
+            <PlansPanel returnState={returnState} vm={vm} />
           ) : null}
 
-          {vm.selectedSection === 'quotes' ? <QuotesPanel vm={vm} /> : null}
+          {vm.selectedSection === 'quotes' ? (
+            <QuotesPanel returnState={returnState} vm={vm} />
+          ) : null}
         </Grid>
       </Container>
     </Box>
@@ -322,7 +331,13 @@ function AccountFact({ label, value }: { readonly label: string; readonly value:
   );
 }
 
-function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+function PlansPanel({
+  returnState,
+  vm,
+}: {
+  readonly returnState: ReturnType<typeof createReturnState>;
+  readonly vm: CustomerPortalPageViewModel;
+}) {
   const hasNoVisibleItems =
     vm.selectedSection === 'favorites'
       ? vm.visiblePlans.length === 0 && vm.favoriteItems.length === 0
@@ -359,7 +374,9 @@ function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
             {plan.status}
           </Badge>
           <Button asChild borderRadius="8px" size="sm" variant="outline">
-            <Link to={`/app/plans/${plan.id}`}>Open plan</Link>
+            <Link state={returnState} to={`/app/plans/${plan.id}`}>
+              Open plan
+            </Link>
           </Button>
           <Button
             aria-pressed={vm.isFavorited(plan.id)}
@@ -403,7 +420,13 @@ function PlansPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
   );
 }
 
-function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
+function QuotesPanel({
+  returnState,
+  vm,
+}: {
+  readonly returnState: ReturnType<typeof createReturnState>;
+  readonly vm: CustomerPortalPageViewModel;
+}) {
   return (
     <FilterCard>
       <PanelHeader
@@ -444,7 +467,9 @@ function QuotesPanel({ vm }: { readonly vm: CustomerPortalPageViewModel }) {
               due {quote.due}
             </Text>
             <Button asChild borderRadius="8px" size="sm" variant="outline">
-              <Link to={`/app/quotes/${quote.id}`}>Open quote</Link>
+              <Link state={returnState} to={`/app/quotes/${quote.id}`}>
+                Open quote
+              </Link>
             </Button>
           </Stack>
         </Grid>

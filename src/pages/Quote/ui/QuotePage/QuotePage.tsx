@@ -1,13 +1,22 @@
 import { Badge, Box, Button, Container, Flex, Grid, Stack, Text, chakra } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useMemo } from 'react';
-import { Link as RouterLink, useSearchParams } from 'react-router';
+import { Link as RouterLink, useLocation, useSearchParams } from 'react-router';
 
-import { FieldHint, FilterButton, FilterCard, PageIntroGrid, SectionEyebrow } from 'src/shared/ui';
+import { createReturnState } from 'src/shared/routing';
+import {
+  BackNavButton,
+  FieldHint,
+  FilterButton,
+  FilterCard,
+  PageIntroGrid,
+  SectionEyebrow,
+} from 'src/shared/ui';
 import { QuotePageViewModel } from '../../model/QuotePageViewModel';
 
 export const QuotePage = observer(function QuotePage() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const planId = searchParams.get('plan');
   const regionId = searchParams.get('region');
   const term = searchParams.get('term');
@@ -20,10 +29,12 @@ export const QuotePage = observer(function QuotePage() {
       }),
     [planId, regionId, term],
   );
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Quote request"
           metrics={vm.quoteMetrics}
@@ -34,8 +45,8 @@ export const QuotePage = observer(function QuotePage() {
 
         <Grid
           alignItems="start"
-          gap={{ base: '5', lg: '6' }}
-          mt={{ base: '5', md: '6' }}
+          gap={{ base: '4', lg: '5' }}
+          mt={{ base: '4', md: '5' }}
           templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 380px' }}
         >
           <Stack
@@ -230,7 +241,9 @@ export const QuotePage = observer(function QuotePage() {
                   ))}
                 </Flex>
                 <Box asChild alignSelf="start" color="brand.500" fontSize="sm" fontWeight="760">
-                  <RouterLink to={vm.quoteDetailHref}>Open plan detail</RouterLink>
+                  <RouterLink state={returnState} to={vm.quoteDetailHref}>
+                    Open plan detail
+                  </RouterLink>
                 </Box>
               </Stack>
             ) : null}
@@ -271,7 +284,9 @@ export const QuotePage = observer(function QuotePage() {
                   Request captured. Continue in the customer console to review the account quote.
                 </Text>
                 <Button alignSelf="start" asChild borderRadius="8px" size="sm" variant="outline">
-                  <RouterLink to={vm.consoleHref}>Open console</RouterLink>
+                  <RouterLink state={returnState} to={vm.consoleHref}>
+                    Open console
+                  </RouterLink>
                 </Button>
               </Stack>
             ) : null}
@@ -416,7 +431,9 @@ export const QuotePage = observer(function QuotePage() {
                   preferences.
                 </Text>
                 <Button asChild borderRadius="8px" size="sm" variant="outline">
-                  <RouterLink to={vm.consoleHref}>Open console</RouterLink>
+                  <RouterLink state={returnState} to={vm.consoleHref}>
+                    Open console
+                  </RouterLink>
                 </Button>
               </Stack>
             </FilterCard>

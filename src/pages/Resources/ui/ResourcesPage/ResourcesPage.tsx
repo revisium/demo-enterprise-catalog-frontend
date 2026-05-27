@@ -1,9 +1,11 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
+import { createReturnState } from 'src/shared/routing';
 import {
+  BackNavButton,
   EmptyState,
   FilterButton,
   FilterCard,
@@ -18,10 +20,13 @@ import { ResourcesPageViewModel } from '../../model/ResourcesPageViewModel';
 export const ResourcesPage = observer(function ResourcesPage() {
   const [vm] = useState(() => new ResourcesPageViewModel());
   const featured = vm.featuredArticle;
+  const location = useLocation();
+  const returnState = createReturnState(location);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
+        <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Docs and guides"
           metrics={vm.summaryMetrics}
@@ -101,7 +106,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                   </Badge>
                 </Flex>
                 <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
-                  <Link to={`/resources/${featured.id}`}>Open guide</Link>
+                  <Link state={returnState} to={`/resources/${featured.id}`}>
+                    Open guide
+                  </Link>
                 </Button>
               </Stack>
             ) : (
@@ -194,7 +201,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                   </Text>
                   <Flex gap="2" justify={{ base: 'start', lg: 'end' }} wrap="wrap">
                     <Button asChild borderRadius="8px" size="sm" variant="outline">
-                      <Link to={`/resources/${article.id}`}>Open guide</Link>
+                      <Link state={returnState} to={`/resources/${article.id}`}>
+                        Open guide
+                      </Link>
                     </Button>
                     <Button
                       aria-pressed={vm.isHelpful(article.id)}
@@ -255,7 +264,9 @@ export const ResourcesPage = observer(function ResourcesPage() {
                     {article.category} · {article.readTimeMinutes} min
                   </Text>
                   <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
-                    <Link to={`/resources/${article.id}`}>Open</Link>
+                    <Link state={returnState} to={`/resources/${article.id}`}>
+                      Open
+                    </Link>
                   </Button>
                 </Stack>
               ))}
