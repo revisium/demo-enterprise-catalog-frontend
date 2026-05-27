@@ -51,6 +51,9 @@ iteration, not to freeze a brand too early.
   removed intentionally before publishing the next PR.
 - Product, catalog, quote, and planned pages use `recommendationBg` for the main
   intro panel and `surface.900` for compact dark status/action panels.
+- Locations use the pricing/catalog density pattern: compact filter panels,
+  white result rows, a single dark capacity/snapshot panel, and customer-facing
+  availability language.
 - Footer: constrained product summary plus grouped links for explore,
   resources, and account actions.
 - Text inside buttons must wrap inside the control. Use stable min-heights for

@@ -7,7 +7,7 @@
 | `/catalog/:productId`   | Prototype | One server plan: specs, add-ons, regions, related plans | typed mock   | item detail hierarchy approval |
 | `/pricing`              | Prototype | Regional price-book row analysis                        | typed mock   | price table density approval   |
 | `/pricing/:priceBookId` | Prototype | One price book: status, computed rows, related books    | typed mock   | detail density approval        |
-| `/locations`            | Prototype | Data-center stock, setup, and support market selection  | typed mock   | location card/table pattern    |
+| `/locations`            | Prototype | Data-center stock, setup, and support market selection  | typed mock   | capacity layout approval       |
 | `/compare`              | Prototype | Scenario-based short-list decision                      | typed mock   | scenario ranking approval      |
 | `/resources`            | Prototype | Customer docs, saved reads, helpful feedback            | typed mock   | library density approval       |
 | `/resources/:slug`      | Prototype | One guide: article body, checklist, related guides      | typed mock   | article template approval      |
