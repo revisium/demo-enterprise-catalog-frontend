@@ -245,9 +245,9 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               </Stack>
 
               <Stack gap={sectionGap}>
-                <SelectionSummaryCard queryRows={vm.queryRows} />
+                <DetailRowsCard keyPrefix="query" rows={vm.queryRows} title="Query summary" />
 
-                <TechnicalSpecsCard specRows={technicalRows} />
+                <DetailRowsCard keyPrefix="spec" rows={technicalRows} title="Technical specs" />
 
                 <Stack
                   bg="white"
@@ -454,50 +454,24 @@ interface KeyValueRow {
   readonly value: string;
 }
 
-interface SelectionAndSpecsCardProps {
-  readonly queryRows: readonly KeyValueRow[];
-  readonly specRows: readonly KeyValueRow[];
+interface DetailRowsCardProps {
+  readonly keyPrefix: string;
+  readonly rows: readonly KeyValueRow[];
+  readonly title: string;
 }
 
-function SelectionSummaryCard({ queryRows }: Pick<SelectionAndSpecsCardProps, 'queryRows'>) {
+function DetailRowsCard({ keyPrefix, rows, title }: DetailRowsCardProps) {
   return (
     <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="2" p="3">
       <Heading as="h2" {...sectionHeadingProps}>
-        Query summary
+        {title}
       </Heading>
       <Stack as="dl" gap="1">
-        {queryRows.map((row) => (
+        {rows.map((row) => (
           <Grid
             as="div"
             gap="3"
-            key={`query-${row.label}`}
-            templateColumns={{ base: '1fr', md: '180px minmax(0, 1fr)' }}
-          >
-            <Text as="dt" color="ink.500" fontSize="sm">
-              {row.label}
-            </Text>
-            <Text as="dd" color="ink.900" fontSize="sm" fontWeight="700" m="0" textAlign="left">
-              {row.value}
-            </Text>
-          </Grid>
-        ))}
-      </Stack>
-    </Stack>
-  );
-}
-
-function TechnicalSpecsCard({ specRows }: Pick<SelectionAndSpecsCardProps, 'specRows'>) {
-  return (
-    <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="2" p="3">
-      <Heading as="h2" {...sectionHeadingProps}>
-        Technical specs
-      </Heading>
-      <Stack as="dl" gap="1">
-        {specRows.map((row) => (
-          <Grid
-            as="div"
-            gap="3"
-            key={`spec-${row.label}`}
+            key={`${keyPrefix}-${row.label}`}
             templateColumns={{ base: '1fr', md: '180px minmax(0, 1fr)' }}
           >
             <Text as="dt" color="ink.500" fontSize="sm">

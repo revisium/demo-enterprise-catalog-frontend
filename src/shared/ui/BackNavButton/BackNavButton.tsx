@@ -27,7 +27,7 @@ export function BackNavButton({
       return;
     }
 
-    if (typeof window !== 'undefined' && window.history.length > 1) {
+    if (typeof globalThis.window !== 'undefined' && globalThis.window.history.length > 1) {
       void navigate(-1);
       return;
     }
