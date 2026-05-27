@@ -38,6 +38,9 @@ iteration, not to freeze a brand too early.
 - White cards and framed white control blocks use compact `12px` internal
   padding by default; larger spacing should stay reserved for true intro or
   feature panels.
+- Dense summary micro-panels such as query summaries may use `8px` internal
+  padding when the content is label/value rows and sits inside a larger control
+  block.
 - Public route intro blocks align their eyebrow and H1 from the same top rail
   across navigation tabs; push/replace route changes without hash targets reset
   document scroll to avoid preserved-position title jumps, while hash targets

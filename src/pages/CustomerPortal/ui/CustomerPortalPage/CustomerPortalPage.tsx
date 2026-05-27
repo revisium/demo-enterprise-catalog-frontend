@@ -231,31 +231,13 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
             <FilterCard>
               <SectionEyebrow>Workspace actions</SectionEyebrow>
               <FieldHint>
-                User actions are accepted only after the server checks the session and referenced
-                catalog, region, language, currency, and content choices.
+                Your changes will be applied to this workspace and may take a moment.
               </FieldHint>
               <Stack align="start" gap="2">
                 <preferenceFetcher.Form action="/app/actions/preferences" method="post">
-                  <input
-                    name="languageId"
-                    type="hidden"
-                    value={vm.preferenceActionPayload.languageId}
-                  />
-                  <input
-                    name="currencyId"
-                    type="hidden"
-                    value={vm.preferenceActionPayload.currencyId}
-                  />
-                  <input
-                    name="organizationId"
-                    type="hidden"
-                    value={vm.preferenceActionPayload.organizationId}
-                  />
-                  <input
-                    name="regionId"
-                    type="hidden"
-                    value={vm.preferenceActionPayload.regionId}
-                  />
+                  {vm.preferenceActionFields.map((field) => (
+                    <input key={field.name} name={field.name} type="hidden" value={field.value} />
+                  ))}
                   <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                     Save defaults
                   </Button>
@@ -264,13 +246,9 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
                   <ActionMessage response={preferenceFetcher.data} />
                 ) : null}
                 <contentFeedbackFetcher.Form action="/app/actions/content-feedback" method="post">
-                  <input name="articleId" type="hidden" value={vm.sourceFeedbackSample.articleId} />
-                  <input
-                    name="organizationId"
-                    type="hidden"
-                    value={vm.sourceFeedbackSample.organizationId}
-                  />
-                  <input name="updateId" type="hidden" value={vm.sourceFeedbackSample.updateId} />
+                  {vm.contentFeedbackActionFields.map((field) => (
+                    <input key={field.name} name={field.name} type="hidden" value={field.value} />
+                  ))}
                   <Button borderRadius="8px" size="sm" type="submit" variant="outline">
                     Save update
                   </Button>

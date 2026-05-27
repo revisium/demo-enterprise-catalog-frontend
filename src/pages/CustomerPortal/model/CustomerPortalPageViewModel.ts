@@ -5,6 +5,11 @@ import { CustomerPortalPageDataSource } from '../api/CustomerPortalPageDataSourc
 
 type PortalSection = 'favorites' | 'plans' | 'quotes';
 
+interface PortalActionField {
+  readonly name: string;
+  readonly value: string;
+}
+
 const sectionLabels: Record<PortalSection, string> = {
   favorites: 'Favorites',
   plans: 'Saved plans',
@@ -72,13 +77,21 @@ export class CustomerPortalPageViewModel {
     return this.dataSource.getOrganizationOptions(this.currentUser);
   }
 
-  get preferenceActionPayload() {
-    return {
+  get preferenceActionFields(): readonly PortalActionField[] {
+    return this.createActionFields({
       currencyId: this.currentUser.preferences.currencyId,
       languageId: this.currentUser.preferences.languageId,
       organizationId: this.selectedOrganizationId,
       regionId: this.currentUser.preferences.preferredRegionId,
-    };
+    });
+  }
+
+  get contentFeedbackActionFields(): readonly PortalActionField[] {
+    return this.createActionFields({
+      articleId: 'choose-production-server-plan',
+      organizationId: this.selectedOrganizationId,
+      updateId: 'singapore-storage-capacity-expanded',
+    });
   }
 
   get preferenceRows() {
@@ -119,14 +132,6 @@ export class CustomerPortalPageViewModel {
         value: this.session.fingerprintStatus === 'recognized' ? 'Recognized' : 'Created',
       },
     ];
-  }
-
-  get sourceFeedbackSample() {
-    return {
-      articleId: 'choose-production-server-plan',
-      organizationId: this.selectedOrganizationId,
-      updateId: 'singapore-storage-capacity-expanded',
-    };
   }
 
   get validationRows() {
@@ -181,5 +186,9 @@ export class CustomerPortalPageViewModel {
     this.favoritedPlanIds = this.favoritedPlanIds.includes(planId)
       ? this.favoritedPlanIds.filter((id) => id !== planId)
       : [...this.favoritedPlanIds, planId];
+  }
+
+  private createActionFields(fields: Record<string, string>): readonly PortalActionField[] {
+    return Object.entries(fields).map(([name, value]) => ({ name, value }));
   }
 }

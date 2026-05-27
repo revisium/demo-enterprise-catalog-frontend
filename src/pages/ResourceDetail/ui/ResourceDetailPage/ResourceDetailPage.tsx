@@ -4,13 +4,9 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 
 import { createReturnState } from 'src/shared/routing';
-import {
-  BackNavButton,
-  FilterCard,
-  SectionEyebrow,
-  StickyPanel,
-} from 'src/shared/ui';
+import { BackNavButton, DarkFact, FilterCard, SectionEyebrow, StickyPanel } from 'src/shared/ui';
 import { ResourceDetailPageViewModel } from '../../model/ResourceDetailPageViewModel';
+import { GuideActionButton } from '../GuideActionButton/GuideActionButton';
 
 export const ResourceDetailPage = observer(function ResourceDetailPage() {
   const location = useLocation();
@@ -190,7 +186,12 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
                 </Stack>
                 <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
                   {vm.metrics.map((metric) => (
-                    <DarkFact key={metric.label} label={metric.label} value={metric.value} />
+                    <DarkFact
+                      key={metric.label}
+                      label={metric.label}
+                      value={metric.value}
+                      variant="compact"
+                    />
                   ))}
                 </Grid>
               </Stack>
@@ -219,13 +220,7 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
                 <SectionEyebrow>Next paths</SectionEyebrow>
                 <Flex gap="2" wrap="wrap">
                   {vm.quickLinks.map((link) => (
-                    <Button
-                      asChild
-                      borderRadius="8px"
-                      key={link.href}
-                      size="sm"
-                      variant="outline"
-                    >
+                    <Button asChild borderRadius="8px" key={link.href} size="sm" variant="outline">
                       <Link state={returnState} to={link.href}>
                         {link.label}
                       </Link>
@@ -240,68 +235,3 @@ export const ResourceDetailPage = observer(function ResourceDetailPage() {
     </Box>
   );
 });
-
-interface GuideActionButtonProps {
-  readonly active: boolean;
-  readonly activeLabel: string;
-  readonly inactiveLabel: string;
-  readonly onClick: () => void;
-  readonly tone: 'brand' | 'success';
-}
-
-function GuideActionButton({
-  active,
-  activeLabel,
-  inactiveLabel,
-  onClick,
-  tone,
-}: GuideActionButtonProps) {
-  const selectedStyles =
-    tone === 'success'
-      ? { bg: 'successBg', borderColor: 'successBorder', color: 'successText' }
-      : { bg: 'brand.50', borderColor: 'activeBorder', color: 'brand.500' };
-  const idleStyles = { bg: 'white', borderColor: 'surface.200', color: 'ink.700' };
-  const styles = active ? selectedStyles : idleStyles;
-
-  return (
-    <Button
-      aria-pressed={active}
-      bg={styles.bg}
-      borderColor={styles.borderColor}
-      borderRadius="8px"
-      borderWidth="1px"
-      color={styles.color}
-      fontWeight="760"
-      onClick={onClick}
-      size="sm"
-      variant="outline"
-      _hover={{
-        bg: active ? styles.bg : 'surface.50',
-        borderColor: active ? styles.borderColor : 'brandBorderMuted',
-        color: active ? styles.color : 'ink.900',
-      }}
-    >
-      {active ? activeLabel : inactiveLabel}
-    </Button>
-  );
-}
-
-function DarkFact({ label, value }: { readonly label: string; readonly value: string }) {
-  return (
-    <Stack
-      bg="darkBadgeBg"
-      borderColor="darkPanelBorder"
-      borderRadius="8px"
-      borderWidth="1px"
-      gap="1"
-      p="2"
-    >
-      <Text color="white" fontSize="lg" fontWeight="800" lineHeight="1.1" overflowWrap="anywhere">
-        {value}
-      </Text>
-      <Text color="darkPanelMutedText" fontSize="xs">
-        {label}
-      </Text>
-    </Stack>
-  );
-}
