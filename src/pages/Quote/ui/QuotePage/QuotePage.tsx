@@ -29,7 +29,7 @@ export const QuotePage = observer(function QuotePage() {
           metrics={vm.quoteMetrics}
           metricsLabel="Quote estimate"
           summary="Turn a selected server plan, region, quantity, billing term, and service options into a review-ready request."
-          title="Prepare a server quote request."
+          title="Prepare a server quote request"
         />
 
         <Grid
@@ -47,7 +47,7 @@ export const QuotePage = observer(function QuotePage() {
             boxShadow="panel"
             gap="4"
             onSubmit={vm.submit}
-            p={{ base: '4', md: '5' }}
+            p="3"
           >
             <Stack gap="1">
               <SectionEyebrow>Request details</SectionEyebrow>

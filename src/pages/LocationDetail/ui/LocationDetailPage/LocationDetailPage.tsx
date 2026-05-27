@@ -134,7 +134,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                   boxShadow="panel"
                   gap="4"
                   key={row.plan.id}
-                  p="4"
+                  p="3"
                   templateColumns={{
                     base: '1fr',
                     md: '96px minmax(0, 1fr) minmax(180px, auto)',

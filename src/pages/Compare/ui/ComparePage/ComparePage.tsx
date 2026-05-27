@@ -28,7 +28,7 @@ export const ComparePage = observer(function ComparePage() {
           metrics={vm.highlights}
           metricsLabel="Comparison summary"
           summary="Choose up to four server plans, narrow them to a region, then compare price, hardware, stock, and setup time before sending a quote request."
-          title="Build a short list for the next quote."
+          title="Build a short list for the next quote"
         />
 
         <Grid
@@ -177,7 +177,7 @@ export const ComparePage = observer(function ComparePage() {
               borderBottomWidth="1px"
               gap="3"
               justify="space-between"
-              p="4"
+              p="3"
               wrap="wrap"
             >
               <Stack gap="1">
@@ -198,7 +198,7 @@ export const ComparePage = observer(function ComparePage() {
               gap="0"
               templateColumns={`180px repeat(${vm.comparedProducts.length}, minmax(0, 1fr))`}
             >
-              <Box p="4">
+              <Box p="3">
                 <Text color="ink.500" fontSize="sm" fontWeight="760">
                   Metric
                 </Text>
@@ -209,7 +209,7 @@ export const ComparePage = observer(function ComparePage() {
                   borderLeftWidth="1px"
                   gap="2"
                   key={product.id}
-                  p="4"
+                  p="3"
                 >
                   <Text color="ink.900" fontWeight="780">
                     {product.name}
@@ -237,7 +237,7 @@ export const ComparePage = observer(function ComparePage() {
                   lg: `180px repeat(${vm.comparedProducts.length}, minmax(0, 1fr))`,
                 }}
               >
-                <Box bg={{ base: 'surface.50', lg: 'transparent' }} p="4">
+                <Box bg={{ base: 'surface.50', lg: 'transparent' }} p="3">
                   <Text color="ink.700" fontWeight="760">
                     {metric.label}
                   </Text>
@@ -252,7 +252,7 @@ export const ComparePage = observer(function ComparePage() {
                     justify="space-between"
                     key={`${metric.id}-${vm.comparedProducts[index]?.id ?? index}`}
                     minH="14"
-                    p="4"
+                    p="3"
                   >
                     <Text color="ink.500" display={{ base: 'block', lg: 'none' }} fontSize="sm">
                       {vm.comparedProducts[index]?.name}

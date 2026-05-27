@@ -15,7 +15,7 @@ export function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageVie
           <FilterCard>
             <SectionEyebrow>Access check</SectionEyebrow>
             <Heading as="h1" color="ink.900" fontSize="3xl">
-              Quote is not available for this user.
+              Quote is not available for this user
             </Heading>
             <FieldHint>
               The backend mock resolved the current user from cookies and rejected this quote id

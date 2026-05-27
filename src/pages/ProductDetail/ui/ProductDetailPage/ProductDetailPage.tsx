@@ -74,7 +74,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
           />
         </Grid>
 
-        <Box bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" mt="5" p="4">
+        <Box bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" mt="5" p="3">
           <MetricGrid ariaLabel="Product metrics" metrics={vm.summaryMetrics} />
         </Box>
 
@@ -128,7 +128,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             borderRadius="8px"
             borderWidth="1px"
             gap="4"
-            p="4"
+            p="3"
           >
             <Heading as="h2" color="ink.900" fontSize="2xl">
               Technical specs
@@ -166,7 +166,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             borderRadius="8px"
             borderWidth="1px"
             gap="4"
-            p="4"
+            p="3"
           >
             <Stack gap="1">
               <Heading as="h2" color="ink.900" fontSize="2xl">
@@ -253,7 +253,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
             borderRadius="8px"
             borderWidth="1px"
             gap="3"
-            p="4"
+            p="3"
           >
             <SectionEyebrow>Regional availability</SectionEyebrow>
             {vm.hasNoRegionMatches ? (
@@ -338,7 +338,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
           borderWidth="1px"
           gap="3"
           mt={{ base: '5', md: '6' }}
-          p="4"
+          p="3"
         >
           <Flex align="center" justify="space-between" gap="3" wrap="wrap">
             <Stack gap="1">

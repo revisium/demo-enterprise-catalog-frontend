@@ -38,7 +38,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
           summary="Saved plans, quotes, favorites, preferences, and activity for the signed-in user."
-          title="Customer console."
+          title="Customer console"
         />
 
         <Grid

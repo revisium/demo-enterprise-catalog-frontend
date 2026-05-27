@@ -41,8 +41,13 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
             title={vm.book.title}
           />
 
-          <Grid gap="3" templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}>
-            <FilterCard>
+          <Grid
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+            w="100%"
+          >
+            <FilterCard gridColumn={{ xl: 'span 2' }}>
               <SectionEyebrow>Price row controls</SectionEyebrow>
               <FieldHint>
                 Filter by family, region, stock, and efficiency score; then sort the active rows.
@@ -82,7 +87,12 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 options={vm.regionOptions}
                 selectedIds={vm.selectedRegionIds}
               />
-              <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <Grid
+                gap="3"
+                maxW={{ base: '100%', md: '50%', xl: '100%' }}
+                templateColumns="1fr"
+                w="100%"
+              >
                 <SelectField
                   label="Minimum score"
                   onChange={(value) => vm.setMinEfficiency(value)}
@@ -96,7 +106,6 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                   value={vm.sortId}
                 />
               </Grid>
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
 
             <FilterCard>
@@ -107,27 +116,52 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 <BookFact label="Effective" value={vm.book.effectiveFrom} />
                 <BookFact label="Updated" value={vm.book.updatedAt} />
               </Grid>
+              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Grid>
 
-          <Grid gap="4" templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 320px' }}>
-            <Stack as="section" gap="3">
-              <Flex align="end" gap="3" justify="space-between" wrap="wrap">
-                <Stack gap="1">
-                  <SectionEyebrow>Rows</SectionEyebrow>
-                  <Heading as="h2" color="ink.900" fontSize="2xl">
-                    Regional price rows
-                  </Heading>
-                </Stack>
-                <Button
-                  borderRadius="8px"
-                  onClick={() => vm.resetFilters()}
-                  size="sm"
-                  variant="outline"
-                >
-                  Reset filters
-                </Button>
-              </Flex>
+          <Grid
+            alignItems="start"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            overflowX="hidden"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+            w="100%"
+          >
+            <Flex
+              align="end"
+              gap="3"
+              gridColumn={{ xl: 'span 2' }}
+              justify="space-between"
+              minW="0"
+              wrap="wrap"
+            >
+              <Stack gap="1">
+                <SectionEyebrow>Rows</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  Regional price rows
+                </Heading>
+              </Stack>
+              <Button
+                borderRadius="8px"
+                onClick={() => vm.resetFilters()}
+                size="sm"
+                variant="outline"
+              >
+                Reset filters
+              </Button>
+            </Flex>
+
+            <Stack
+              as="section"
+              gap="4"
+              gridColumn={{ xl: 'span 2' }}
+              gridRow={{ xl: '2' }}
+              minW="0"
+              overflowX={{ base: 'auto', md: 'visible' }}
+              pb={{ base: '1', md: '0' }}
+              w="100%"
+            >
               {vm.hasNoMatches ? (
                 <EmptyState
                   actionLabel="Reset filters"
@@ -143,48 +177,64 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                   borderColor="surface.200"
                   borderRadius="8px"
                   borderWidth="1px"
-                  boxShadow="panel"
                   gap="3"
                   key={row.id}
-                  p="4"
-                  templateColumns={{ base: '1fr', lg: 'minmax(0, 1.2fr) 120px 150px 140px' }}
+                  minW={{ base: '760px', md: '0' }}
+                  p="3"
+                  templateColumns="minmax(0, 1fr) 104px 150px 82px auto"
+                  w="100%"
                 >
-                  <Stack gap="1">
-                    <Box asChild color="ink.900" fontWeight="780">
+                  <Stack gap="0" minW="0">
+                    <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
                       <Link to={row.rowHref}>{row.plan.name}</Link>
                     </Box>
-                    <Text color="ink.500" fontSize="sm">
+                    <Text
+                      color="ink.500"
+                      fontSize="sm"
+                      lineHeight="1.4"
+                      minH="10"
+                      overflowWrap="anywhere"
+                    >
                       {row.family} · {row.region.regionLabel} · updated {row.updatedAtDisplay}
                     </Text>
-                    <Flex gap="1.5" wrap="wrap">
+                    <Flex gap="1.5" mt="2" wrap="wrap">
                       <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
                         {row.plan.hardware.cpuCores} cores
                       </Badge>
                       <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
                         {row.plan.hardware.ramGb} GB RAM
                       </Badge>
-                      <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                        score {row.priceEfficiencyScore}
-                      </Badge>
                     </Flex>
                   </Stack>
-                  <Stack gap="0">
-                    <Text color="ink.900" fontWeight="780">
+                  <Stack gap="0" minW="0">
+                    <Text color="ink.900" fontWeight="760">
                       ${row.effectiveMonthlyUsd}/mo
                     </Text>
                     <Text color="ink.500" fontSize="xs">
                       save ${row.yearlySavingsUsd}/yr
                     </Text>
                   </Stack>
-                  <Stack gap="0">
-                    <Text color="ink.900" fontWeight="700">
-                      {row.region.stock} units
+                  <Stack gap="0" minW="0">
+                    <Text color="ink.900" fontWeight="700" overflowWrap="anywhere">
+                      {row.region.regionLabel}
                     </Text>
-                    <Text color="ink.500" fontSize="xs">
+                    <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
                       setup {row.region.setupHours}h
                     </Text>
                   </Stack>
-                  <Flex gap="2" justify={{ base: 'start', lg: 'end' }} wrap="wrap">
+                  <Stack align="end" gap="1" minW="0">
+                    <Badge
+                      bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                      borderRadius="8px"
+                      color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                    >
+                      {row.region.stock} units
+                    </Badge>
+                    <Text color="ink.500" fontSize="xs">
+                      score {row.priceEfficiencyScore}
+                    </Text>
+                  </Stack>
+                  <Flex gap="2" justify="end" minW="0" wrap="wrap">
                     <Button asChild borderRadius="8px" size="sm" variant="outline">
                       <Link to={row.locationHref}>Region</Link>
                     </Button>
@@ -196,33 +246,53 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
               ))}
             </Stack>
 
-            <StickyPanel as="aside">
+            <StickyPanel
+              as="aside"
+              gridColumn={{ xl: '3' }}
+              gridRow={{ xl: '2' }}
+              maxH="none"
+              minW="0"
+              overscrollBehavior="auto"
+              overflowY="visible"
+              pb="0"
+              position={{ xl: 'static' }}
+              pr="0"
+              w="100%"
+            >
               <FilterCard>
                 <SectionEyebrow>Related books</SectionEyebrow>
-                {vm.relatedBooks.map((book) => (
-                  <Grid
-                    alignItems="center"
-                    borderColor="surface.200"
-                    borderRadius="8px"
-                    borderWidth="1px"
-                    gap="3"
-                    key={book.id}
-                    p="3"
-                    templateColumns="minmax(0, 1fr) auto"
-                  >
-                    <Stack gap="0">
-                      <Text color="ink.900" fontSize="sm" fontWeight="760">
-                        {book.title}
-                      </Text>
-                      <Text color="ink.500" fontSize="xs">
-                        {book.status} · effective {book.effectiveFrom}
-                      </Text>
-                    </Stack>
-                    <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <Link to={book.href}>Open</Link>
-                    </Button>
-                  </Grid>
-                ))}
+                <Stack gap="2">
+                  {vm.relatedBooks.map((book) => (
+                    <Grid
+                      alignItems="center"
+                      borderColor="surface.200"
+                      borderRadius="8px"
+                      borderWidth="1px"
+                      gap="3"
+                      key={book.id}
+                      minW="0"
+                      p="3"
+                      templateColumns="minmax(0, 1fr) auto"
+                    >
+                      <Stack gap="0" minW="0">
+                        <Text
+                          color="ink.900"
+                          fontSize="sm"
+                          fontWeight="760"
+                          overflowWrap="anywhere"
+                        >
+                          {book.title}
+                        </Text>
+                        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
+                          {book.status} · effective {book.effectiveFrom}
+                        </Text>
+                      </Stack>
+                      <Button asChild borderRadius="8px" size="xs" variant="outline">
+                        <Link to={book.href}>Open</Link>
+                      </Button>
+                    </Grid>
+                  ))}
+                </Stack>
               </FilterCard>
 
               <FilterCard>

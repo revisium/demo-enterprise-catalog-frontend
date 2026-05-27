@@ -27,7 +27,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
           metrics={vm.summaryMetrics}
           metricsLabel="Resource summary"
           summary="Guides for choosing, pricing, and operating HelioStack servers."
-          title="Knowledge base."
+          title="Knowledge base"
         />
 
         <Grid
@@ -148,7 +148,7 @@ export const ResourcesPage = observer(function ResourcesPage() {
                 borderWidth="1px"
                 gap="4"
                 key={article.id}
-                p={{ base: '4', md: '5' }}
+                p="3"
                 templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 190px' }}
               >
                 <Stack gap="3">

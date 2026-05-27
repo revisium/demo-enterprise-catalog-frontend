@@ -9,9 +9,7 @@ import {
   FieldHint,
   FilterButton,
   FilterCard,
-  MetricGrid,
   PageIntroGrid,
-  QuerySummary,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -20,6 +18,8 @@ import { PricingPageViewModel } from '../../model/PricingPageViewModel';
 
 export const PricingPage = observer(function PricingPage() {
   const [vm] = useState(() => new PricingPageViewModel());
+  const firstSummaryColumn = vm.queryRows.slice(0, 3);
+  const secondSummaryColumn = vm.queryRows.slice(3, 6);
 
   return (
     <Box bg="pagePremiumBg" flex="1">
@@ -29,13 +29,18 @@ export const PricingPage = observer(function PricingPage() {
           metrics={vm.summaryMetrics}
           metricsLabel="Pricing summary"
           summary="Compare monthly and yearly prices by server, region, and stock."
-          title="Regional pricing."
+          title="Regional pricing"
         />
 
         <Grid
           gap={{ base: '4', md: '5' }}
           my={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          alignItems={{ base: 'start', lg: 'stretch' }}
+          templateColumns={{
+            base: '1fr',
+            lg: 'repeat(2, minmax(0, 1fr))',
+            xl: 'repeat(3, minmax(0, 1fr))',
+          }}
         >
           <FilterCard>
             <SectionEyebrow>Commercial view</SectionEyebrow>
@@ -62,12 +67,14 @@ export const PricingPage = observer(function PricingPage() {
                 In stock
               </FilterButton>
             </Flex>
-            <SelectField
-              label="Add-on matching"
-              onChange={(value) => vm.setAddonMatchMode(value)}
-              options={vm.addOnMatchOptions}
-              value={vm.addonMatchMode}
-            />
+            <Box maxW={{ base: '100%', md: '50%', lg: '100%', xl: '100%' }} w="100%">
+              <SelectField
+                label="Add-on matching"
+                onChange={(value) => vm.setAddonMatchMode(value)}
+                options={vm.addOnMatchOptions}
+                value={vm.addonMatchMode}
+              />
+            </Box>
             <ChipGroup
               label="Add-ons"
               onToggle={(id) => vm.toggleAddon(id)}
@@ -84,12 +91,14 @@ export const PricingPage = observer(function PricingPage() {
               options={vm.families}
               selectedIds={vm.selectedFamilyIds}
             />
-            <SelectField
-              label="Minimum memory"
-              onChange={(value) => vm.setMinRamGb(value)}
-              options={vm.minRamOptions}
-              value={String(vm.minRamGb)}
-            />
+            <Box maxW={{ base: '100%', md: '50%', lg: '100%', xl: '100%' }} w="100%">
+              <SelectField
+                label="Minimum memory"
+                onChange={(value) => vm.setMinRamGb(value)}
+                options={vm.minRamOptions}
+                value={String(vm.minRamGb)}
+              />
+            </Box>
           </FilterCard>
 
           <FilterCard>
@@ -106,7 +115,12 @@ export const PricingPage = observer(function PricingPage() {
               options={vm.supportWindows}
               selectedIds={vm.selectedSupportWindows}
             />
-            <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+            <Grid
+              gap="3"
+              maxW={{ base: '100%', md: '50%', lg: '100%', xl: '100%' }}
+              templateColumns="1fr"
+              w="100%"
+            >
               <SelectField
                 label="Max price"
                 onChange={(value) => vm.setMaxMonthlyPrice(value)}
@@ -126,32 +140,89 @@ export const PricingPage = observer(function PricingPage() {
                 value={vm.sortId}
               />
             </Grid>
-            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
+          <Box
+            display="flex"
+            h={{ base: 'auto', lg: '100%' }}
+            alignSelf="stretch"
+            gridColumn={{ base: 'auto', lg: '2', xl: '1 / span 3' }}
+          >
+            <FilterCard h="100%" w="100%">
+              <SectionEyebrow>Query summary</SectionEyebrow>
+              <Grid
+                gap={{ base: '2', xl: '8' }}
+                templateColumns={{ base: '1fr', xl: 'repeat(2, 1fr)' }}
+              >
+                <Stack gap="2">
+                  {firstSummaryColumn.map((row) => (
+                    <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
+                      <Text color="ink.500" fontSize="sm">
+                        {row.label}
+                      </Text>
+                      <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                        {row.value}
+                      </Text>
+                    </Grid>
+                  ))}
+                </Stack>
+                <Stack gap="2">
+                  {secondSummaryColumn.map((row) => (
+                    <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
+                      <Text color="ink.500" fontSize="sm">
+                        {row.label}
+                      </Text>
+                      <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                        {row.value}
+                      </Text>
+                    </Grid>
+                  ))}
+                </Stack>
+              </Grid>
+            </FilterCard>
+          </Box>
         </Grid>
 
         <Grid
           alignItems="start"
-          gap="3"
-          templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
+          gap={{ base: '4', md: '5' }}
+          minW="0"
+          overflowX="hidden"
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          w="100%"
         >
-          <Stack gap="4">
-            <Flex align="end" justify="space-between" gap="3" wrap="wrap">
-              <Stack gap="1">
-                <SectionEyebrow>Price-book rows</SectionEyebrow>
-                <Heading as="h2" color="ink.900" fontSize="2xl">
-                  Regional server prices
-                </Heading>
-              </Stack>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
-            </Flex>
+          <Flex
+            align="end"
+            gap="3"
+            gridColumn={{ xl: 'span 2' }}
+            justify="space-between"
+            minW="0"
+            wrap="wrap"
+          >
+            <Stack gap="1">
+              <SectionEyebrow>Price-book rows</SectionEyebrow>
+              <Heading as="h2" color="ink.900" fontSize="2xl">
+                Regional server prices
+              </Heading>
+            </Stack>
+            <Button
+              borderRadius="8px"
+              onClick={() => vm.resetFilters()}
+              size="sm"
+              variant="outline"
+            >
+              Reset filters
+            </Button>
+          </Flex>
+
+          <Stack
+            gap="4"
+            gridColumn={{ xl: 'span 2' }}
+            gridRow={{ xl: '2' }}
+            minW="0"
+            overflowX={{ base: 'auto', md: 'visible' }}
+            pb={{ base: '1', md: '0' }}
+            w="100%"
+          >
             {vm.hasNoMatches ? (
               <EmptyState
                 actionLabel="Reset filters"
@@ -172,14 +243,22 @@ export const PricingPage = observer(function PricingPage() {
                   borderWidth="1px"
                   gap="3"
                   key={`${row.id}-${vm.billingTermId}`}
-                  p={{ base: '4', md: '5' }}
-                  templateColumns={{ base: '1fr', lg: 'minmax(0, 1.3fr) 120px 180px 130px 132px' }}
+                  minW={{ base: '720px', md: '0' }}
+                  p="3"
+                  templateColumns="minmax(0, 1fr) 104px 150px 82px auto"
+                  w="100%"
                 >
-                  <Stack gap="0">
+                  <Stack gap="0" minW="0">
                     <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
                       <RouterLink to={row.detailHref}>{row.plan.name}</RouterLink>
                     </Box>
-                    <Text color="ink.500" fontSize="sm">
+                    <Text
+                      color="ink.500"
+                      fontSize="sm"
+                      lineHeight="1.4"
+                      minH="10"
+                      overflowWrap="anywhere"
+                    >
                       {row.family} · {row.plan.hardware.cpuCores} vCPU · {row.plan.hardware.ramGb}{' '}
                       GB RAM
                     </Text>
@@ -198,7 +277,7 @@ export const PricingPage = observer(function PricingPage() {
                       ))}
                     </Flex>
                   </Stack>
-                  <Stack gap="0">
+                  <Stack gap="0" minW="0">
                     <Text color="ink.900" fontWeight="760">
                       ${row.billingTermPrice}/mo
                     </Text>
@@ -206,15 +285,15 @@ export const PricingPage = observer(function PricingPage() {
                       save ${row.yearlySavingsUsd}/yr
                     </Text>
                   </Stack>
-                  <Stack gap="0">
-                    <Text color="ink.900" fontWeight="700">
+                  <Stack gap="0" minW="0">
+                    <Text color="ink.900" fontWeight="700" overflowWrap="anywhere">
                       {row.region.regionLabel}
                     </Text>
-                    <Text color="ink.500" fontSize="xs">
+                    <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
                       {row.region.supportWindow} · setup {row.region.setupHours}h
                     </Text>
                   </Stack>
-                  <Stack align={{ base: 'start', lg: 'end' }} gap="1">
+                  <Stack align="end" gap="1" minW="0">
                     <Badge
                       bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
                       borderRadius="8px"
@@ -229,7 +308,7 @@ export const PricingPage = observer(function PricingPage() {
                   <Button
                     aria-pressed={selected}
                     borderRadius="8px"
-                    justifySelf={{ base: 'start', lg: 'end' }}
+                    justifySelf="end"
                     onClick={() => vm.toggleRow(row.id)}
                     size="sm"
                     variant={selected ? 'solid' : 'outline'}
@@ -241,7 +320,19 @@ export const PricingPage = observer(function PricingPage() {
             })}
           </Stack>
 
-          <StickyPanel as="aside">
+          <StickyPanel
+            as="aside"
+            overscrollBehavior="auto"
+            overflowY="visible"
+            position={{ xl: 'static' }}
+            gridColumn={{ xl: '3' }}
+            gridRow={{ xl: '2' }}
+            maxH="none"
+            minW="0"
+            pb="0"
+            pr="0"
+            w="100%"
+          >
             <FilterCard>
               <SectionEyebrow>Price books</SectionEyebrow>
               <FieldHint>
@@ -255,14 +346,15 @@ export const PricingPage = observer(function PricingPage() {
                     borderWidth="1px"
                     gap="3"
                     key={book.id}
+                    minW="0"
                     p="3"
                     templateColumns="minmax(0, 1fr) auto"
                   >
-                    <Stack gap="0">
-                      <Text color="ink.900" fontSize="sm" fontWeight="760">
+                    <Stack gap="0" minW="0">
+                      <Text color="ink.900" fontSize="sm" fontWeight="760" overflowWrap="anywhere">
                         {book.title}
                       </Text>
-                      <Text color="ink.500" fontSize="xs">
+                      <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
                         {book.status} · effective {book.effectiveFrom}
                       </Text>
                     </Stack>
@@ -279,7 +371,18 @@ export const PricingPage = observer(function PricingPage() {
               <FieldHint>
                 Select regional rows to prepare the server list that will move into the quote flow.
               </FieldHint>
-              <MetricGrid ariaLabel="Quote draft summary" metrics={vm.quoteSummary} />
+              <Stack gap="2">
+                {vm.quoteSummary.map((row) => (
+                  <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
+                    <Text color="ink.500" fontSize="sm">
+                      {row.label}
+                    </Text>
+                    <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
+                      {row.value}
+                    </Text>
+                  </Grid>
+                ))}
+              </Stack>
               <Stack gap="2">
                 {vm.selectedRows.length === 0 ? (
                   <Text color="ink.500" fontSize="sm">
@@ -289,20 +392,16 @@ export const PricingPage = observer(function PricingPage() {
                 {vm.selectedRows.map((row) => (
                   <Grid
                     alignItems="center"
-                    bg="panelGlassBg"
-                    borderColor="surface.200"
-                    borderRadius="8px"
-                    borderWidth="1px"
                     gap="2"
                     key={row.id}
-                    p="3"
-                    templateColumns="1fr auto"
+                    minW="0"
+                    templateColumns="minmax(0, 1fr) auto"
                   >
-                    <Stack gap="0">
-                      <Text color="ink.900" fontSize="sm" fontWeight="760">
+                    <Stack gap="0" minW="0">
+                      <Text color="ink.900" fontSize="sm" fontWeight="760" overflowWrap="anywhere">
                         {row.plan.name}
                       </Text>
-                      <Text color="ink.500" fontSize="xs">
+                      <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
                         {row.region.regionLabel} · ${row.billingTermPrice}/mo
                       </Text>
                     </Stack>
