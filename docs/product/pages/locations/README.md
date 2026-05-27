@@ -16,7 +16,23 @@ Prototype typed mock data from the shared catalog snapshot.
 - readiness filter models a computed field constraint;
 - sort covers total stock, fastest setup, computed readiness score, plan count,
   region name, and latest related plan update;
-- rows group nested availability records by region.
+- rows group nested availability records by region;
+- the customer-facing filter summary shows visible regions, stock threshold,
+  support window, and sort label without exposing source-table or mock details.
+
+## Layout Contract
+
+- first screen uses the same premium public-page shell as pricing and catalog:
+  compact intro, three filter/summary panels, and no marketing-only hero;
+- results use a two-column desktop layout: region capacity rows on the left and
+  a right-side shortlist with the best visible capacity match;
+- each region row shows data-center codes, family chips, stock/setup/family
+  coverage/support metrics, and up to four related server-plan rows;
+- mobile keeps filters stacked and lets each region capacity card shrink to a
+  compact readable width before horizontal scrolling, matching pricing table
+  behavior instead of collapsing the plan rows into a broken narrow stack;
+- public copy must stay customer-facing: no source widgets, row IDs, internal
+  table names, or mock-state labels.
 
 ## Computed Fields
 
@@ -56,7 +72,7 @@ stable page order from the current grouped region list.
 ## Related Lists
 
 Each location row shows related server plan rows with data-center code, monthly
-price, efficiency score, and a link to the server detail page.
+price, stock, and a link to the server detail page.
 
 Each location row also links to Location Detail, where the selected region
 becomes an item page with related plan filters, computed-field sorting, and

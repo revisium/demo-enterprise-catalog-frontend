@@ -18,7 +18,25 @@ snapshot.
   plan rows;
 - related plan sort supports computed fields, schema fields, and system fields;
 - related region list ranks alternative regions by shared families, readiness,
-  and total stock.
+  and total stock;
+- the active-view summary remains customer-facing and shows region, visible
+  plans, stock threshold, support window, and sort label.
+
+## Layout Contract
+
+- top area behaves like a region item page, with a product-facing intro panel
+  and a dark snapshot panel for readiness, stock, setup, and family coverage;
+- controls sit below the intro in a compact grid, matching pricing-detail
+  density;
+- regional server plans render as readable price-row-style records with plan
+  summary, hardware badges, monthly price, stock, setup window, server link, and
+  quote action;
+- secondary columns stay compact, server and quote actions stack vertically,
+  and mobile lets rows shrink to a readable compact width before horizontal
+  scrolling;
+- the right-side panel highlights the best visible plan and related regions;
+- public UI must not expose internal revisions, source-table proof, mock labels,
+  or route fallback mechanics.
 
 ## Computed Fields
 
@@ -33,7 +51,8 @@ snapshot.
 
 - server plans available in the selected region;
 - alternative regions that share server families with the selected region;
-- each related plan links to Product Detail.
+- each related plan links to Product Detail and can start a quote scoped to the
+  selected region.
 
 ## Future Contract
 

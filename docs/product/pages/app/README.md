@@ -55,8 +55,14 @@ that sets backend-owned cookies.
 
 - Use the visible label `Console` for the customer workspace.
 - Prefer short page copy and prominent page titles.
-- Keep navigation panels sticky on desktop when they control a dense list or
-  workspace section.
+- Use the shared three-column rail on desktop: primary customer work spans the
+  first two columns and workspace navigation, preferences, actions, and activity
+  stay aligned in the right column.
+- Keep saved-plan and quote detail routes in the same item-detail pattern as the
+  catalog pages: light intro panel spans two columns, dark summary panel uses the
+  third column, and follow-up actions live in the right rail below.
+- On mobile, stack rail cards after the primary content and keep row internals
+  allowed to scroll or wrap rather than forcing unreadable compression.
 - Runtime actions should feel like normal customer actions. Do not expose
   Revisium project/table mechanics in the console layout.
 

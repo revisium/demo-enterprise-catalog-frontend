@@ -7,9 +7,10 @@ import type { PortalDemoSession } from 'src/entities/portal';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   FieldHint,
   FilterCard,
-  PageIntroGrid,
   ProductVisual,
   SectionEyebrow,
   StickyPanel,
@@ -53,16 +54,48 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
         <Stack gap={{ base: '4', md: '5' }}>
           <BackNavButton fallbackTo="/app" />
 
-          <PageIntroGrid
-            eyebrow={vm.organization.name}
-            metrics={vm.metrics}
-            metricsLabel="Saved plan summary"
-            summary={`${savedPlan.plan} in ${savedPlan.region} is prepared for quote work and customer review.`}
-            title={savedPlan.name}
-          />
+          <Grid
+            alignItems="stretch"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          >
+            <DetailHeroPanel
+              actions={
+                <Flex gap="2" wrap="wrap">
+                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                    {savedPlan.status}
+                  </Badge>
+                  <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
+                    {vm.product.supportTier} support
+                  </Badge>
+                  <Badge bg="successBg" borderRadius="8px" color="successText">
+                    ${savedPlan.monthlyUsd}/mo
+                  </Badge>
+                </Flex>
+              }
+              eyebrow={vm.organization.name}
+              summary={`${savedPlan.plan} in ${savedPlan.region} is prepared for quote work and customer review.`}
+              title={savedPlan.name}
+            />
 
-          <Grid gap="4" templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}>
-            <Stack gap="4">
+            <DarkSummaryPanel
+              eyebrow="Saved plan summary"
+              factVariant="glass"
+              metrics={vm.metrics}
+              summary="monthly estimate for the selected saved server package."
+              value={`$${savedPlan.monthlyUsd}`}
+            />
+          </Grid>
+
+          <Grid
+            alignItems="start"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+            w="100%"
+          >
+            <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
               <FilterCard>
                 <Grid gap="4" templateColumns={{ base: '1fr', md: '120px minmax(0, 1fr)' }}>
                   <ProductVisual
@@ -174,7 +207,17 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
               </FilterCard>
             </Stack>
 
-            <StickyPanel as="aside">
+            <StickyPanel
+              as="aside"
+              gridColumn={{ xl: '3' }}
+              maxH="none"
+              overscrollBehavior="auto"
+              overflowY="visible"
+              pb="0"
+              position={{ xl: 'static' }}
+              pr="0"
+              w="100%"
+            >
               <FilterCard>
                 <SectionEyebrow>Account context</SectionEyebrow>
                 <FieldHint>

@@ -480,6 +480,14 @@ const messageEntries = {
     'Переключить язык интерфейса',
     'Cambiar idioma de la interfaz',
   ],
+  'nav.brand.subtitle': [
+    'Cloud servers',
+    'خوادم سحابية',
+    '云服务器',
+    'Serveurs cloud',
+    'Облачные серверы',
+    'Servidores cloud',
+  ],
   'nav.compare': ['Compare', 'مقارنة', '比较', 'Comparer', 'Сравнение', 'Comparar'],
   'nav.locations': ['Locations', 'المواقع', '位置', 'Sites', 'Локации', 'Ubicaciones'],
   'nav.menu.close': [

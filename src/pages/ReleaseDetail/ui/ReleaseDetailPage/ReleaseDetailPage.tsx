@@ -6,9 +6,10 @@ import { Link, useLocation, useParams } from 'react-router';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   FieldHint,
   FilterCard,
-  PageIntroGrid,
   SectionEyebrow,
   StickyPanel,
 } from 'src/shared/ui';
@@ -27,37 +28,59 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '4', md: '5' }}>
+        <Stack gap={{ base: '5', md: '6' }}>
           <BackNavButton fallbackTo="/releases" />
 
-          <PageIntroGrid
-            eyebrow={`${vm.update.type} update`}
-            metrics={vm.metrics}
-            metricsLabel="Update summary"
-            summary={vm.update.summary}
-            title={vm.update.title}
-          />
-
-          <Grid gap="4" templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 330px' }}>
-            <Stack gap="4">
-              <FilterCard>
+          <Grid
+            alignItems="stretch"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          >
+            <DetailHeroPanel
+              actions={
                 <Flex gap="2" wrap="wrap">
                   <Badge bg="brand.50" borderRadius="8px" color="brand.500">
                     {vm.update.type}
                   </Badge>
                   <Badge
-                    bg={vm.update.priority === 'Important' ? 'amberBg' : 'panelGlassBg'}
+                    bg={vm.update.priority === 'Important' ? 'amberBg' : 'panelSubtleBg'}
                     borderRadius="8px"
                     color={vm.update.priority === 'Important' ? 'amberText' : 'ink.700'}
                   >
                     {vm.update.priority}
                   </Badge>
                   {vm.update.tags.map((tag) => (
-                    <Badge bg="surface.100" borderRadius="8px" color="ink.700" key={tag}>
+                    <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={tag}>
                       {tag}
                     </Badge>
                   ))}
                 </Flex>
+              }
+              eyebrow={`${vm.update.type} update`}
+              summary={vm.update.summary}
+              title={vm.update.title}
+            />
+
+            <DarkSummaryPanel
+              eyebrow="Update summary"
+              factVariant="compact"
+              metrics={vm.metrics}
+              summary="priority for customers affected by this release note."
+              value={vm.update.priority}
+            />
+          </Grid>
+
+          <Grid
+            alignItems="start"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+            w="100%"
+          >
+            <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
+              <FilterCard>
+                <SectionEyebrow>Impact detail</SectionEyebrow>
                 <Stack bg="panelGlassBg" borderRadius="8px" gap="1" p="3">
                   <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
                     Customer impact
@@ -68,8 +91,10 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
                 </Stack>
                 {vm.detailSections.map((section) => (
                   <Stack gap="1" key={section.title}>
-                    <SectionEyebrow>{section.title}</SectionEyebrow>
-                    <Text color="ink.700" fontSize="sm">
+                    <Text color="ink.900" fontSize="lg" fontWeight="780">
+                      {section.title}
+                    </Text>
+                    <Text color="ink.700" fontSize="sm" lineHeight="1.55">
                       {section.body}
                     </Text>
                   </Stack>
@@ -109,7 +134,17 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
               </FilterCard>
             </Stack>
 
-            <StickyPanel as="aside">
+            <StickyPanel
+              as="aside"
+              gridColumn={{ xl: '3' }}
+              maxH="none"
+              overscrollBehavior="auto"
+              overflowY="visible"
+              pb="0"
+              position={{ xl: 'static' }}
+              pr="0"
+              w="100%"
+            >
               <FilterCard>
                 <SectionEyebrow>Update actions</SectionEyebrow>
                 <FieldHint>

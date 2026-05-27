@@ -29,6 +29,7 @@ interface LocationPlanRow {
   readonly plan: CatalogProduct;
   readonly planHref: string;
   readonly priceEfficiencyScore: number;
+  readonly quoteHref: string;
   readonly setupHours: number;
   readonly stock: number;
   readonly supportWindow: string;
@@ -115,6 +116,20 @@ export class LocationDetailPageViewModel {
     );
   }
 
+  get featuredPlanRow(): LocationPlanRow | undefined {
+    return [...this.filteredPlanRows].sort((left, right) => {
+      if (right.priceEfficiencyScore !== left.priceEfficiencyScore) {
+        return right.priceEfficiencyScore - left.priceEfficiencyScore;
+      }
+
+      if (right.stock !== left.stock) {
+        return right.stock - left.stock;
+      }
+
+      return left.setupHours - right.setupHours;
+    })[0];
+  }
+
   get relatedRegions() {
     const selectedFamilies = new Set(this.regionSummary.families);
 
@@ -175,23 +190,36 @@ export class LocationDetailPageViewModel {
         value: this.regionSummary.regionLabel,
       },
       {
-        label: 'Filters',
-        value: this.getActiveFilterLabels().join(', ') || 'none',
+        label: 'Plans shown',
+        value: `${this.filteredPlanRows.length} / ${this.regionPlanRows.length}`,
       },
       {
-        label: 'Plan sort',
-        value: this.sortId === 'price-efficiency' ? 'price efficiency' : 'not selected',
+        label: 'Stock threshold',
+        value: this.minStock === 0 ? 'Any stock' : `${this.minStock}+ units`,
       },
       {
-        label: 'Catalog sort',
-        value:
-          this.sortId === 'display-order' || this.sortId === 'recently-updated' ? 'active' : 'none',
+        label: 'Support window',
+        value: this.getOptionLabel(supportOptions, this.selectedSupportWindowId),
+      },
+      {
+        label: 'Sort',
+        value: this.getOptionLabel(sortOptions, this.sortId),
       },
     ];
   }
 
   formatSupportWindow(value: string) {
-    return value === '24/7' ? '24/7' : 'Business hours';
+    const normalized = normalizeSupportWindowId(value);
+
+    if (normalized === '24-7') {
+      return '24/7';
+    }
+
+    if (normalized === 'business-hours') {
+      return 'Business hours';
+    }
+
+    return value;
   }
 
   resetFilters() {
@@ -252,6 +280,7 @@ export class LocationDetailPageViewModel {
           plan,
           planHref: `/catalog/${plan.id}`,
           priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
+          quoteHref: `/quote?plan=${plan.id}&region=${availability.regionId}`,
           setupHours: availability.setupHours,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
@@ -319,16 +348,12 @@ export class LocationDetailPageViewModel {
     return right.priceEfficiencyScore - left.priceEfficiencyScore;
   }
 
-  private getActiveFilterLabels() {
-    return [
-      this.selectedFamilyIds.length > 0 ? 'family' : undefined,
-      this.minStock > 0 ? 'stock' : undefined,
-      this.selectedSupportWindowId === 'all' ? undefined : 'support window',
-    ].filter((label): label is string => typeof label === 'string');
-  }
-
   private getUniqueSorted(values: readonly string[]) {
     return [...new Set(values)].sort((left, right) => left.localeCompare(right));
+  }
+
+  private getOptionLabel(options: readonly CatalogFilterOption[], id: string) {
+    return options.find((option) => option.id === id)?.label ?? id;
   }
 
   private isSortId(value: string): value is LocationPlanSortId {

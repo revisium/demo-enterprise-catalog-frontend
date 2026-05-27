@@ -146,6 +146,24 @@ export class LocationsPageViewModel {
     );
   }
 
+  get featuredLocation(): LocationRow | undefined {
+    return [...this.filteredLocations].sort((left, right) => {
+      if (right.readinessScore !== left.readinessScore) {
+        return right.readinessScore - left.readinessScore;
+      }
+
+      if (right.totalStock !== left.totalStock) {
+        return right.totalStock - left.totalStock;
+      }
+
+      return left.fastestSetupHours - right.fastestSetupHours;
+    })[0];
+  }
+
+  get filteredTotalStock() {
+    return this.filteredLocations.reduce((total, location) => total + location.totalStock, 0);
+  }
+
   get families(): readonly CatalogFilterOption[] {
     return [...new Set(this.products.map((product) => product.family))].map((family) => ({
       id: family,
@@ -178,9 +196,7 @@ export class LocationsPageViewModel {
       { label: 'Regions', value: String(this.filteredLocations.length) },
       {
         label: 'Total stock',
-        value: String(
-          this.filteredLocations.reduce((total, location) => total + location.totalStock, 0),
-        ),
+        value: String(this.filteredTotalStock),
       },
       {
         label: 'Plan rows',
@@ -203,23 +219,20 @@ export class LocationsPageViewModel {
   get queryRows() {
     return [
       {
-        label: 'Computed filter',
-        value:
-          this.selectedReadinessBandId === 'all'
-            ? 'not constrained'
-            : `${this.getReadinessThreshold()}+ readiness`,
+        label: 'Regions shown',
+        value: `${this.filteredLocations.length} / ${this.locations.length}`,
       },
       {
-        label: 'Nested source',
-        value: 'regional availability rows',
+        label: 'Stock threshold',
+        value: this.minStock === 0 ? 'Any stock' : `${this.minStock}+ units`,
       },
       {
-        label: 'Related plans',
-        value: this.selectedFamilyIds.length > 0 ? 'family constrained' : 'all families',
+        label: 'Support window',
+        value: this.getOptionLabel(supportOptions, this.selectedSupportWindowId),
       },
       {
-        label: 'Computed sort',
-        value: this.sortId === 'readiness-score' ? 'readiness score' : 'not selected',
+        label: 'Sort',
+        value: this.getOptionLabel(sortOptions, this.sortId),
       },
     ];
   }
@@ -229,6 +242,20 @@ export class LocationsPageViewModel {
       day: 'numeric',
       month: 'short',
     }).format(new Date(value));
+  }
+
+  formatSupportWindow(value: string) {
+    const normalized = normalizeSupportWindowId(value);
+
+    if (normalized === '24-7') {
+      return '24/7 support';
+    }
+
+    if (normalized === 'business-hours') {
+      return 'Business hours';
+    }
+
+    return value;
   }
 
   setMinStock(value: string) {
@@ -322,6 +349,10 @@ export class LocationsPageViewModel {
     }
 
     return 0;
+  }
+
+  private getOptionLabel(options: readonly CatalogFilterOption[], id: string) {
+    return options.find((option) => option.id === id)?.label ?? id;
   }
 
   private parseNonNegativeNumber(value: string) {

@@ -7,17 +7,18 @@ import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   ChipGroup,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   EmptyState,
   FieldHint,
   FilterCard,
-  PageIntroGrid,
-  ProductVisual,
   QuerySummary,
   SectionEyebrow,
   SelectField,
   StickyPanel,
 } from 'src/shared/ui';
 import { LocationDetailPageViewModel } from '../../model/LocationDetailPageViewModel';
+import { PlanRow } from '../PlanRow/PlanRow';
 
 export const LocationDetailPage = observer(function LocationDetailPage() {
   const location = useLocation();
@@ -25,6 +26,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   const [vm] = useState(() => new LocationDetailPageViewModel(params.regionId));
   const returnState = createReturnState(location);
   const { regionSummary } = vm;
+  const featuredPlan = vm.featuredPlanRow;
 
   useEffect(() => {
     vm.setRouteRegionId(params.regionId);
@@ -33,91 +35,156 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <Stack gap={{ base: '4', md: '5' }}>
+        <Stack gap={{ base: '5', md: '6' }}>
           <BackNavButton fallbackTo="/locations" />
 
-          <PageIntroGrid
-            eyebrow="Location detail"
-            metrics={vm.summaryMetrics}
-            metricsLabel="Region summary"
-            summary={`Compare every server plan available in ${regionSummary.regionLabel} by stock, setup speed, support window, price efficiency, and recent catalog updates.`}
-            title={`${regionSummary.regionLabel} capacity workspace`}
-          />
+          <Grid
+            alignItems="stretch"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          >
+            <DetailHeroPanel
+              actions={
+                <Stack gap="3">
+                  <Flex gap="2" wrap="wrap">
+                    {regionSummary.dataCenterCodes.map((code) => (
+                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={code}>
+                        {code}
+                      </Badge>
+                    ))}
+                    {regionSummary.supportWindows.map((supportWindow) => (
+                      <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={supportWindow}>
+                        {vm.formatSupportWindow(supportWindow)}
+                      </Badge>
+                    ))}
+                  </Flex>
+                  <Flex gap="2" wrap="wrap">
+                    {featuredPlan ? (
+                      <Button asChild bg="ctaBg" borderRadius="8px" color="white">
+                        <Link state={returnState} to={featuredPlan.quoteHref}>
+                          Start quote
+                        </Link>
+                      </Button>
+                    ) : null}
+                    <Button asChild borderRadius="8px" variant="outline">
+                      <Link state={returnState} to="/locations">
+                        All locations
+                      </Link>
+                    </Button>
+                  </Flex>
+                </Stack>
+              }
+              eyebrow="Location detail"
+              summary="Compare available server plans, stock, setup windows, support coverage, and regional alternatives before starting a quote."
+              title={`${regionSummary.regionLabel} capacity`}
+            />
+
+            <DarkSummaryPanel
+              eyebrow="Region snapshot"
+              metrics={[
+                { label: 'Server plans', value: String(regionSummary.planCount) },
+                { label: 'Total stock', value: String(regionSummary.totalStock) },
+                { label: 'Fastest setup', value: `${regionSummary.fastestSetupHours}h` },
+                { label: 'Family coverage', value: `${regionSummary.familyCoveragePercent}%` },
+              ]}
+              summary="readiness score across stock, setup speed, family coverage, and support."
+              value={regionSummary.readinessScore}
+            />
+          </Grid>
 
           <Grid
-            gap="3"
-            templateColumns={{ base: '1fr', xl: 'minmax(0, 1.05fr) minmax(320px, 0.95fr)' }}
+            alignItems="stretch"
+            gap={{ base: '4', md: '5' }}
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           >
-            <FilterCard>
-              <SectionEyebrow>Plan filters</SectionEyebrow>
-              <FieldHint>
-                Filter related server plans for this region without leaving the location item.
-              </FieldHint>
+            <FilterCard gridColumn={{ xl: 'span 2' }}>
+              <SectionEyebrow>Plan controls</SectionEyebrow>
+              <FieldHint>Filter regional plan rows without leaving this location.</FieldHint>
               <ChipGroup
                 label="Families"
                 onToggle={(id) => vm.toggleFamily(id)}
                 options={vm.familyOptions}
                 selectedIds={vm.selectedFamilyIds}
               />
-              <Grid gap="3" templateColumns={{ base: '1fr', md: '1fr 1fr' }}>
+              <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
                 <SelectField
+                  compact
                   label="Stock"
                   onChange={(value) => vm.setMinStock(value)}
                   options={vm.stockOptions}
                   value={String(vm.minStock)}
                 />
                 <SelectField
+                  compact
                   label="Support"
                   onChange={(value) => vm.setSupportWindow(value)}
                   options={vm.supportOptions}
                   value={vm.selectedSupportWindowId}
                 />
+                <SelectField
+                  compact
+                  label="Sort"
+                  onChange={(value) => vm.setSort(value)}
+                  options={vm.sortOptions}
+                  value={vm.sortId}
+                />
               </Grid>
-              <SelectField
-                label="Sort"
-                onChange={(value) => vm.setSort(value)}
-                options={vm.sortOptions}
-                value={vm.sortId}
-              />
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
 
             <FilterCard>
-              <SectionEyebrow>Region profile</SectionEyebrow>
-              <Grid gap="2" templateColumns={{ base: '1fr 1fr', md: 'repeat(4, 1fr)' }}>
-                <ProfileMetric label="Readiness" value={String(regionSummary.readinessScore)} />
-                <ProfileMetric
-                  label="Family coverage"
-                  value={`${regionSummary.familyCoveragePercent}%`}
-                />
-                <ProfileMetric
-                  label="Enterprise support"
-                  value={`${regionSummary.enterpriseCoveragePercent}%`}
-                />
-                <ProfileMetric
-                  label="Data centers"
-                  value={String(regionSummary.dataCenterCodes.length)}
-                />
-              </Grid>
-              <Flex gap="2" wrap="wrap">
-                {regionSummary.dataCenterCodes.map((code) => (
-                  <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={code}>
-                    {code}
-                  </Badge>
-                ))}
-              </Flex>
-              <Flex gap="2" wrap="wrap">
-                {regionSummary.supportWindows.map((window) => (
-                  <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={window}>
-                    {vm.formatSupportWindow(window)}
-                  </Badge>
-                ))}
-              </Flex>
+              <SectionEyebrow>Active view</SectionEyebrow>
+              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Grid>
 
-          <Grid gap={{ base: '4', lg: '5' }} templateColumns={{ base: '1fr', lg: '1fr 320px' }}>
-            <Stack as="section" aria-label="Plans in region" gap="3">
+          <Grid
+            alignItems="start"
+            gap={{ base: '4', md: '5' }}
+            minW="0"
+            overflowX="hidden"
+            templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+            w="100%"
+          >
+            <Flex
+              align="end"
+              gap="3"
+              gridColumn={{ xl: 'span 2' }}
+              justify="space-between"
+              minW="0"
+              wrap="wrap"
+            >
+              <Stack gap="1">
+                <SectionEyebrow>Available plans</SectionEyebrow>
+                <Heading as="h2" color="ink.900" fontSize="2xl">
+                  Regional server plans
+                </Heading>
+                <Text color="ink.500" fontSize="sm">
+                  {vm.filteredPlanRows.length} plans ·{' '}
+                  {vm.filteredPlanRows.reduce((total, row) => total + row.stock, 0)} units visible
+                </Text>
+              </Stack>
+              <Button
+                borderRadius="8px"
+                onClick={() => vm.resetFilters()}
+                size="sm"
+                variant="outline"
+              >
+                Reset filters
+              </Button>
+            </Flex>
+
+            <Stack
+              as="section"
+              aria-label="Plans in region"
+              gap="4"
+              gridColumn={{ xl: 'span 2' }}
+              gridRow={{ xl: '2' }}
+              minW="0"
+              overflowX={{ base: 'auto', md: 'visible' }}
+              pb={{ base: '1', md: '0' }}
+              w="100%"
+            >
               {vm.hasNoMatches ? (
                 <EmptyState
                   actionLabel="Reset filters"
@@ -127,110 +194,95 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                 />
               ) : null}
               {vm.filteredPlanRows.map((row) => (
-                <Grid
-                  alignItems="stretch"
-                  bg="white"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  boxShadow="panel"
-                  gap="4"
-                  key={row.plan.id}
-                  p="3"
-                  templateColumns={{
-                    base: '1fr',
-                    md: '96px minmax(0, 1fr) minmax(180px, auto)',
-                  }}
-                >
-                  <ProductVisual
-                    alt={row.plan.imageAlt}
-                    minH="28"
-                    radius="control"
-                    tone={row.plan.visualTone}
-                  />
-                  <Stack gap="3">
-                    <Flex align="center" gap="2" justify="space-between" wrap="wrap">
-                      <Stack gap="0">
-                        <Heading as="h2" color="ink.900" fontSize="xl">
-                          {row.plan.name}
-                        </Heading>
-                        <Text color="ink.500" fontSize="sm">
-                          {row.plan.family} · {row.dataCenterCode} · updated{' '}
-                          {row.displayUpdatedDate}
-                        </Text>
-                      </Stack>
-                      <Badge bg="successBg" borderRadius="8px" color="successText">
-                        {row.priceEfficiencyScore} efficiency
-                      </Badge>
-                    </Flex>
-                    <Text color="ink.500" fontSize="sm">
-                      {row.plan.summary}
-                    </Text>
-                    <Flex gap="2" wrap="wrap">
-                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                        {row.plan.hardware.cpuCores} cores
-                      </Badge>
-                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                        {row.plan.hardware.ramGb} GB RAM
-                      </Badge>
-                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                        {row.plan.supportTier}
-                      </Badge>
-                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                        revision {row.plan.system.revision}
-                      </Badge>
-                    </Flex>
-                  </Stack>
-                  <Stack align="start" color="ink.500" fontSize="sm" gap="2">
-                    <Text color="ink.900" fontSize="2xl" fontWeight="780" lineHeight="1">
-                      ${row.effectiveMonthlyPrice}/mo
-                    </Text>
-                    <Text>{row.stock} units available</Text>
-                    <Text>
-                      setup {row.setupHours}h · {vm.formatSupportWindow(row.supportWindow)}
-                    </Text>
-                    <Button asChild borderRadius="8px" mt="2" variant="outline">
-                      <Link state={returnState} to={row.planHref}>
-                        Open server
-                      </Link>
-                    </Button>
-                  </Stack>
-                </Grid>
+                <PlanRow key={row.plan.id} returnState={returnState} row={row} vm={vm} />
               ))}
             </Stack>
 
-            <StickyPanel as="aside">
+            <StickyPanel
+              as="aside"
+              gridColumn={{ xl: '3' }}
+              gridRow={{ xl: '2' }}
+              maxH="none"
+              minW="0"
+              overscrollBehavior="auto"
+              overflowY="visible"
+              pb="0"
+              position={{ xl: 'static' }}
+              pr="0"
+              w="100%"
+            >
+              <FilterCard>
+                <SectionEyebrow>Best visible plan</SectionEyebrow>
+                {featuredPlan ? (
+                  <Stack gap="3">
+                    <Stack gap="1">
+                      <Text color="ink.900" fontSize="lg" fontWeight="780">
+                        {featuredPlan.plan.name}
+                      </Text>
+                      <Text color="ink.500" fontSize="sm">
+                        {featuredPlan.dataCenterCode} · ${featuredPlan.effectiveMonthlyPrice}/mo ·{' '}
+                        {featuredPlan.stock} units
+                      </Text>
+                    </Stack>
+                    <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
+                      <RegionFact
+                        label="Efficiency"
+                        value={String(featuredPlan.priceEfficiencyScore)}
+                      />
+                      <RegionFact label="Setup" value={`${featuredPlan.setupHours}h`} />
+                    </Grid>
+                    <Flex gap="2" wrap="wrap">
+                      <Button asChild borderRadius="8px" size="sm" variant="outline">
+                        <Link state={returnState} to={featuredPlan.planHref}>
+                          Open server
+                        </Link>
+                      </Button>
+                      <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="sm">
+                        <Link state={returnState} to={featuredPlan.quoteHref}>
+                          Quote
+                        </Link>
+                      </Button>
+                    </Flex>
+                  </Stack>
+                ) : (
+                  <FieldHint>Reset filters to restore the regional plan shortlist.</FieldHint>
+                )}
+              </FilterCard>
+
               <FilterCard>
                 <SectionEyebrow>Related regions</SectionEyebrow>
                 <FieldHint>
-                  Alternative regions are ranked by shared server families, readiness, and stock.
+                  Alternatives are ranked by shared server families, readiness, and stock.
                 </FieldHint>
-                {vm.relatedRegions.map((region) => (
-                  <Grid
-                    alignItems="center"
-                    borderColor="surface.200"
-                    borderRadius="8px"
-                    borderWidth="1px"
-                    gap="3"
-                    key={region.regionId}
-                    p="3"
-                    templateColumns="minmax(0, 1fr) auto"
-                  >
-                    <Stack gap="0">
-                      <Text color="ink.900" fontWeight="760">
-                        {region.regionLabel}
-                      </Text>
-                      <Text color="ink.500" fontSize="sm">
-                        {region.matchingFamilyCount} shared families · {region.totalStock} units
-                      </Text>
-                    </Stack>
-                    <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <Link state={returnState} to={region.href}>
-                        Open
-                      </Link>
-                    </Button>
-                  </Grid>
-                ))}
+                <Stack gap="2">
+                  {vm.relatedRegions.map((region) => (
+                    <Grid
+                      alignItems="center"
+                      borderColor="surface.200"
+                      borderRadius="8px"
+                      borderWidth="1px"
+                      gap="3"
+                      key={region.regionId}
+                      minW="0"
+                      p="3"
+                      templateColumns="minmax(0, 1fr) auto"
+                    >
+                      <Stack gap="0" minW="0">
+                        <Text color="ink.900" fontWeight="760">
+                          {region.regionLabel}
+                        </Text>
+                        <Text color="ink.500" fontSize="sm" overflowWrap="anywhere">
+                          {region.matchingFamilyCount} shared families · {region.totalStock} units
+                        </Text>
+                      </Stack>
+                      <Button asChild borderRadius="8px" size="xs" variant="outline">
+                        <Link state={returnState} to={region.href}>
+                          Open
+                        </Link>
+                      </Button>
+                    </Grid>
+                  ))}
+                </Stack>
               </FilterCard>
             </StickyPanel>
           </Grid>
@@ -240,7 +292,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   );
 });
 
-function ProfileMetric({ label, value }: { readonly label: string; readonly value: string }) {
+function RegionFact({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <Stack
       bg="panelGlassBg"
@@ -248,9 +300,9 @@ function ProfileMetric({ label, value }: { readonly label: string; readonly valu
       borderRadius="8px"
       borderWidth="1px"
       gap="1"
-      p="3"
+      p="2.5"
     >
-      <Text color="ink.900" fontSize="2xl" fontWeight="780" lineHeight="1">
+      <Text color="ink.900" fontSize="xl" fontWeight="780" lineHeight="1">
         {value}
       </Text>
       <Text color="ink.500" fontSize="xs">

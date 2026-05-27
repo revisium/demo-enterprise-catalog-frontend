@@ -26,6 +26,16 @@ UI contract.
   plans, favorites, and preferences continue in `/app`;
 - show a local confirmation state without connecting to a backend.
 
+## Layout Contract
+
+- Keep the public quote form as the primary work surface.
+- On desktop, use the shared three-column rail: form content spans the first two
+  columns, while request preview, commercial review, readiness, regional fit,
+  review path, and next-step cards share the right column.
+- Use one compact dark card for the live request preview.
+- On mobile, stack the form and rail cards without squeezing individual form
+  controls below readable widths.
+
 ## Query Shape
 
 - `plan` accepts a catalog product id;

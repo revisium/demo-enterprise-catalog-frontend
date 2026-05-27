@@ -38,6 +38,9 @@ iteration, not to freeze a brand too early.
 - White cards and framed white control blocks use compact `12px` internal
   padding by default; larger spacing should stay reserved for true intro or
   feature panels.
+- Dense summary micro-panels such as query summaries may use `8px` internal
+  padding when the content is label/value rows and sits inside a larger control
+  block.
 - Public route intro blocks align their eyebrow and H1 from the same top rail
   across navigation tabs; push/replace route changes without hash targets reset
   document scroll to avoid preserved-position title jumps, while hash targets
@@ -51,6 +54,9 @@ iteration, not to freeze a brand too early.
   removed intentionally before publishing the next PR.
 - Product, catalog, quote, and planned pages use `recommendationBg` for the main
   intro panel and `surface.900` for compact dark status/action panels.
+- Locations use the pricing/catalog density pattern: compact filter panels,
+  white result rows, a single dark capacity/snapshot panel, and customer-facing
+  availability language.
 - Footer: constrained product summary plus grouped links for explore,
   resources, and account actions.
 - Text inside buttons must wrap inside the control. Use stable min-heights for
@@ -90,3 +96,6 @@ hierarchy are accepted.
   instead of stretching across the viewport.
 - Tables can start as card-like rows until a real dense table pattern is chosen.
 - Text must not overlap or depend on viewport-width font scaling.
+- Compare, resources, releases, quote, and customer-console pages use the same
+  third-column rail pattern as locations so featured summaries, saved lists,
+  previews, and actions align vertically with the main two-column content area.

@@ -39,5 +39,13 @@ export function getFastestSetupHours(setupHours: readonly number[]) {
 }
 
 export function normalizeSupportWindowId(value: string) {
-  return value === '24/7' ? '24-7' : 'business-hours';
+  if (value === '24/7' || value === '24-7') {
+    return '24-7';
+  }
+
+  if (value === 'business hours' || value === 'business-hours') {
+    return 'business-hours';
+  }
+
+  return value;
 }
