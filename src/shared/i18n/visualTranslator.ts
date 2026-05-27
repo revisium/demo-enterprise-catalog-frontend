@@ -5,7 +5,12 @@ const skippedTextSelector = 'script, style, noscript, svg, code, pre, [data-i18n
 const skippedAttributeSelector = 'script, style, noscript, svg, [data-i18n-skip]';
 const translatedAttributeNames = ['aria-label', 'alt', 'placeholder', 'title'] as const;
 
-const originalTextNodes = new WeakMap<Text, string>();
+interface TextTranslationState {
+  readonly source: string;
+  readonly translated: string;
+}
+
+const translatedTextNodes = new WeakMap<Text, TextTranslationState>();
 const originalElementAttributes = new WeakMap<Element, Map<string, string>>();
 
 export function startVisualTranslator(locale: LocaleCode) {
@@ -77,15 +82,22 @@ function translateTextNode(node: Text, locale: LocaleCode) {
     return;
   }
 
-  const originalText = originalTextNodes.get(node) ?? node.nodeValue ?? '';
+  const currentText = node.nodeValue ?? '';
+  const previousState = translatedTextNodes.get(node);
+  const sourceText =
+    previousState &&
+    (currentText === previousState.source || currentText === previousState.translated)
+      ? previousState.source
+      : currentText;
 
-  if (!originalTextNodes.has(node)) {
-    originalTextNodes.set(node, originalText);
-  }
+  const nextText = locale === defaultLocale ? sourceText : localizeVisualText(locale, sourceText);
 
-  const nextText = locale === defaultLocale ? originalText : localizeVisualText(locale, originalText);
+  translatedTextNodes.set(node, {
+    source: sourceText,
+    translated: nextText,
+  });
 
-  if (node.nodeValue !== nextText) {
+  if (currentText !== nextText) {
     node.nodeValue = nextText;
   }
 }

@@ -100,6 +100,7 @@ export function FilterButton({ children, onClick, selected, tone = 'brand' }: Fi
       borderWidth="1px"
       color={color}
       onClick={onClick}
+      px="2"
       size="sm"
       variant="ghost"
     >
@@ -207,7 +208,7 @@ export function PageIntroGrid({
 }: PageIntroGridProps) {
   return (
     <Grid
-      alignItems="end"
+      alignItems="start"
       gap={{ base: '5', md: '8' }}
       pb={{ base: '2', md: '3' }}
       templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 340px' }}

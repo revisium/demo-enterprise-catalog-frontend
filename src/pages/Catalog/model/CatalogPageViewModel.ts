@@ -92,6 +92,14 @@ export class CatalogPageViewModel {
     );
   }
 
+  get filteredTotalStock() {
+    return this.filteredProducts.reduce((total, product) => total + product.totalStock, 0);
+  }
+
+  get hasNoMatches() {
+    return this.filteredProducts.length === 0;
+  }
+
   get families(): readonly FilterOption[] {
     return [...new Set(this.products.map((product) => product.family))].map((family) => ({
       id: family,
@@ -147,30 +155,18 @@ export class CatalogPageViewModel {
       this.selectedSupportTierIds.length +
       (this.minRamGb > 0 ? 1 : 0) +
       (this.maxMonthlyPrice > 0 ? 1 : 0) +
-      (this.stockOnly ? 1 : 0) +
       (this.requireCompliance ? 1 : 0)
     );
   }
 
-  get hasNoMatches() {
-    return this.filteredProducts.length === 0;
-  }
-
-  get summaryMetrics() {
-    return [
-      { label: 'Matches', value: String(this.filteredProducts.length) },
-      { label: 'Active filters', value: String(this.activeFilterCount) },
-      {
-        label: 'Total stock',
-        value: String(
-          this.filteredProducts.reduce((total, product) => total + product.totalStock, 0),
-        ),
-      },
-    ];
+  get hasUserFilters() {
+    return this.activeFilterCount > 0;
   }
 
   get queryRows() {
     const groupModeLabel = this.filterMode === 'any' ? 'any selected group' : 'all selected groups';
+    const sortLabel =
+      sortOptions.find((option) => option.id === this.sortId)?.label ?? 'Catalog order';
 
     return [
       {
@@ -178,17 +174,16 @@ export class CatalogPageViewModel {
         value: groupModeLabel,
       },
       {
-        label: 'Nested fields',
-        value: this.selectedRegionIds.length > 0 ? 'regional availability' : 'not constrained',
+        label: 'Availability view',
+        value: this.stockOnly ? 'In stock' : 'Any stock',
       },
       {
-        label: 'Schema fields',
-        value: this.getSelectedSchemaFieldLabels().join(', ') || 'not constrained',
+        label: 'Documents',
+        value: this.requireCompliance ? 'Docs' : 'All',
       },
       {
-        label: 'System sort',
-        value:
-          this.sortId === 'display-order' || this.sortId === 'recently-updated' ? 'active' : 'none',
+        label: 'Sort',
+        value: sortLabel,
       },
     ];
   }
@@ -363,19 +358,6 @@ export class CatalogPageViewModel {
       this.selectedSupportTierIds.length === 0 ||
       this.selectedSupportTierIds.includes(product.supportTier)
     );
-  }
-
-  private getSelectedSchemaFieldLabels() {
-    return [
-      this.selectedFamilyIds.length > 0 ? 'family' : undefined,
-      this.selectedAddonIds.length > 0 ? 'add-ons' : undefined,
-      this.selectedLifecycleIds.length > 0 ? 'lifecycle' : undefined,
-      this.selectedSupportTierIds.length > 0 ? 'support tier' : undefined,
-      this.minRamGb > 0 ? 'memory' : undefined,
-      this.maxMonthlyPrice > 0 ? 'monthly price' : undefined,
-      this.requireCompliance ? 'compliance' : undefined,
-      this.stockOnly ? 'stock' : undefined,
-    ].filter((label): label is string => typeof label === 'string');
   }
 
   private parseNonNegativeNumber(value: string) {

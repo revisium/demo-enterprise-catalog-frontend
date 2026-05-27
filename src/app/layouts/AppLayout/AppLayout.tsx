@@ -15,7 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useEffect, type ChangeEvent } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, NavigationType, useLocation, useNavigationType } from 'react-router';
 
 import { isLocaleCode, supportedLocales, useI18n, type TranslationKey } from 'src/shared/i18n';
 
@@ -88,6 +88,7 @@ const keyboardFocusKeys = new Set([
 
 export function AppLayout({ children }: AppLayoutProps) {
   useFocusModality();
+  useRouteScrollReset();
 
   const { direction, locale, setLocale, t } = useI18n();
 
@@ -301,6 +302,19 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Box>
     </Box>
   );
+}
+
+function useRouteScrollReset() {
+  const { hash, pathname } = useLocation();
+  const navigationType = useNavigationType();
+
+  useEffect(() => {
+    if (hash || navigationType === NavigationType.Pop) {
+      return;
+    }
+
+    window.scrollTo({ left: 0, top: 0 });
+  }, [hash, navigationType, pathname]);
 }
 
 function LanguageSelect({

@@ -8,12 +8,9 @@ import {
   EmptyState,
   FilterButton,
   FilterCard,
-  PageIntroGrid,
-  ProductVisual,
   QuerySummary,
   SectionEyebrow,
   SelectField,
-  StickyPanel,
 } from 'src/shared/ui';
 import { CatalogPageViewModel } from '../../model/CatalogPageViewModel';
 
@@ -23,22 +20,29 @@ export const CatalogPage = observer(function CatalogPage() {
   return (
     <Box bg="pagePremiumBg" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
-        <PageIntroGrid
-          eyebrow="Servers"
-          metrics={vm.summaryMetrics}
-          metricsLabel="Catalog summary"
-          summary="Filter server plans by region, stock, price, docs, and hardware."
-          title="Server catalog."
-        />
+        <Stack as="header" gap={{ base: '3', md: '4' }} maxW="820px" pb={{ base: '2', md: '3' }}>
+          <SectionEyebrow>Servers</SectionEyebrow>
+          <Heading
+            as="h1"
+            color="ink.900"
+            fontSize={{ base: '4xl', md: '6xl' }}
+            lineHeight="0.98"
+          >
+            Server catalog.
+          </Heading>
+          <Text color="ink.600" fontSize={{ base: 'sm', md: 'md' }} maxW="620px">
+            Filter server plans by region, stock, price, docs, and hardware.
+          </Text>
+        </Stack>
 
         <Grid
           alignItems="start"
           gap={{ base: '5', xl: '6' }}
-          mt={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: '340px minmax(0, 1fr)' }}
+          mt={{ base: '3', md: '4' }}
+          templateColumns={{ base: '1fr', lg: '390px minmax(0, 1fr)' }}
         >
-          <StickyPanel aria-label="Catalog filters" as="aside">
-            <FilterCard>
+          <Stack alignSelf="start" aria-label="Catalog filters" as="aside" gap="3">
+            <FilterCard p="3">
               <Stack gap="3">
                 <SectionEyebrow>Filters</SectionEyebrow>
                 <Heading as="h2" color="ink.900" fontSize="xl">
@@ -82,7 +86,7 @@ export const CatalogPage = observer(function CatalogPage() {
               />
             </FilterCard>
 
-            <FilterCard>
+            <FilterCard p="3">
               <SectionEyebrow>Specs</SectionEyebrow>
               <SelectField
                 label="Memory"
@@ -122,15 +126,32 @@ export const CatalogPage = observer(function CatalogPage() {
 
               <QuerySummary rows={vm.queryRows} />
             </FilterCard>
-          </StickyPanel>
+          </Stack>
 
           <Stack as="section" aria-label="Catalog products" gap="4">
             <Flex align="end" justify="space-between" gap="3" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Results</SectionEyebrow>
                 <Heading as="h2" color="ink.900" fontSize="2xl">
-                  {vm.filteredProducts.length} server plans
+                  Server plans
                 </Heading>
+                <Flex color="ink.500" fontSize="sm" gap="2" wrap="wrap">
+                  <Text as="span">Matches</Text>
+                  <Text as="span">{vm.filteredProducts.length}</Text>
+                  {vm.hasNoMatches ? null : (
+                    <>
+                      <Text as="span">Stock</Text>
+                      <Text as="span">{vm.filteredTotalStock}</Text>
+                      <Text as="span">units</Text>
+                    </>
+                  )}
+                  {vm.hasUserFilters ? (
+                    <>
+                      <Text as="span">Active filters</Text>
+                      <Text as="span">{vm.activeFilterCount}</Text>
+                    </>
+                  ) : null}
+                </Flex>
               </Stack>
               <Button
                 borderRadius="8px"
@@ -159,22 +180,21 @@ export const CatalogPage = observer(function CatalogPage() {
                 boxShadow="panel"
                 gap="4"
                 key={product.id}
-                p={{ base: '4', md: '5' }}
-                templateColumns={{ base: '1fr', md: '112px minmax(0, 1fr) minmax(220px, auto)' }}
+                p="3"
+                templateColumns={{
+                  base: '1fr',
+                  md: 'minmax(355px, 1fr) minmax(0, 1fr)',
+                }}
               >
-                <ProductVisual
-                  alt={product.imageAlt}
-                  minH="32"
-                  radius="control"
-                  tone={product.visualTone}
-                />
                 <Stack gap="3">
                   <Flex
                     align="center"
                     color="ink.500"
                     fontSize="sm"
                     fontWeight="700"
-                    justify="space-between"
+                    gap="2"
+                    minW="0"
+                    wrap="wrap"
                   >
                     <Text>{product.category}</Text>
                     <Badge bg="successBg" borderRadius="8px" color="successText">
@@ -184,7 +204,7 @@ export const CatalogPage = observer(function CatalogPage() {
                   <Heading as="h3" color="ink.900" fontSize="xl">
                     {product.name}
                   </Heading>
-                  <Text color="ink.500" fontSize="sm">
+                  <Text color="ink.500" fontSize="sm" minH={{ md: '12' }}>
                     {product.summary}
                   </Text>
                   <Flex gap="2" wrap="wrap">
@@ -195,8 +215,8 @@ export const CatalogPage = observer(function CatalogPage() {
                     ))}
                   </Flex>
                 </Stack>
-                <Stack align="start" color="ink.500" fontSize="sm" gap="2" minW="0">
-                  <Text>{product.availability}</Text>
+                <Stack align="start" color="ink.500" fontSize="sm" gap="2" h="100%" minW="0">
+                  <Text minH={{ md: '10' }}>{product.availability}</Text>
                   <Text>
                     {product.hardware.cpuCores} cores · {product.hardware.ramGb} GB RAM ·{' '}
                     {product.hardware.networkGbps} Gbps
@@ -204,7 +224,7 @@ export const CatalogPage = observer(function CatalogPage() {
                   <Text>
                     ${product.pricing.monthlyUsd}/mo · {product.totalStock} units
                   </Text>
-                  <Button asChild borderRadius="8px" mt="2" variant="outline">
+                  <Button asChild alignSelf="end" borderRadius="8px" mt="auto" variant="outline">
                     <Link to={product.detailHref}>Open</Link>
                   </Button>
                 </Stack>
