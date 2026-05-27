@@ -26,6 +26,21 @@ Typed mock CMS update data plus local saved/like state.
   workspaces, reactions, and related updates;
 - keep saved announcements for follow-up planning.
 
+## Layout Contract
+
+- Releases uses the same public-page grid as resources and locations: filters
+  span two columns and the latest visible update occupies the right rail;
+- update rows stay dense and scan-friendly, with date, type, audience, priority,
+  summary, tags, customer impact, reactions, save, and open actions visible in
+  one record;
+- saved updates and feed mix stay in the aligned third-column rail rather than
+  using a separate narrow sidebar width;
+- Release Detail uses an item-page layout with the update intro spanning two
+  columns, a dark summary card on the right, and impact detail/affected
+  workspaces separated from update actions and related updates;
+- public update copy must stay customer-facing and must not expose source-layer
+  revision proof until the secondary explainer surface is connected.
+
 ## Future Contract
 
 - Revisium project: `helio-cms`.

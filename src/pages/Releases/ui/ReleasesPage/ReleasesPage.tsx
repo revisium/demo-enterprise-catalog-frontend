@@ -36,11 +36,12 @@ export const ReleasesPage = observer(function ReleasesPage() {
         />
 
         <Grid
+          alignItems="stretch"
           gap={{ base: '4', md: '5' }}
           my={{ base: '6', md: '8' }}
-          templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 360px' }}
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
         >
-          <FilterCard>
+          <FilterCard gridColumn={{ xl: 'span 2' }}>
             <SectionEyebrow>Feed filters</SectionEyebrow>
             <Flex gap="2" wrap="wrap">
               {vm.typeOptions.map((type) => (
@@ -56,18 +57,21 @@ export const ReleasesPage = observer(function ReleasesPage() {
             </Flex>
             <Grid gap="3" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
               <SelectField
+                compact
                 label="Audience"
                 onChange={(value) => vm.selectAudience(value)}
                 options={vm.audienceOptions}
                 value={vm.selectedAudience}
               />
               <SelectField
+                compact
                 label="Priority"
                 onChange={(value) => vm.selectPriority(value)}
                 options={vm.priorityOptions}
                 value={vm.selectedPriority}
               />
               <SelectField
+                compact
                 label="Sort"
                 onChange={(value) => vm.selectSort(value)}
                 options={vm.sortOptions}
@@ -77,11 +81,11 @@ export const ReleasesPage = observer(function ReleasesPage() {
             <QuerySummary rows={vm.queryRows} />
           </FilterCard>
 
-          <FilterCard bg="surface.900" color="white">
+          <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white">
             <Text
               color="darkPanelMutedText"
               fontSize="xs"
-              fontWeight="760"
+              fontWeight="800"
               textTransform="uppercase"
             >
               Latest visible update
@@ -105,7 +109,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                     {latest.audience}
                   </Badge>
                 </Flex>
-                <Button asChild borderRadius="8px" color="ink.900" size="sm" variant="solid">
+                <Button asChild bg="reserveButtonBg" borderRadius="8px" color="ink.900" size="sm">
                   <Link state={returnState} to={`/releases/${latest.id}`}>
                     Open update
                   </Link>
@@ -119,8 +123,14 @@ export const ReleasesPage = observer(function ReleasesPage() {
           </FilterCard>
         </Grid>
 
-        <Grid gap="4" templateColumns={{ base: '1fr', xl: 'minmax(0, 1fr) 320px' }}>
-          <Stack gap="4">
+        <Grid
+          alignItems="start"
+          gap={{ base: '4', md: '5' }}
+          minW="0"
+          templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
+          w="100%"
+        >
+          <Stack gap="4" gridColumn={{ xl: 'span 2' }} minW="0">
             <Flex align="end" gap="3" justify="space-between" wrap="wrap">
               <Stack gap="1">
                 <SectionEyebrow>Update feed</SectionEyebrow>
@@ -155,8 +165,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 borderWidth="1px"
                 gap="4"
                 key={update.id}
+                minW="0"
                 p="3"
-                templateColumns={{ base: '1fr', lg: '136px minmax(0, 1fr) 230px' }}
+                templateColumns={{ base: '1fr', lg: '112px minmax(0, 1fr) 190px' }}
               >
                 <Stack gap="2">
                   <Text color="ink.500" fontSize="sm" fontWeight="760">
@@ -178,12 +189,12 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   </Badge>
                 </Stack>
 
-                <Stack gap="3">
+                <Stack gap="3" minW="0">
                   <Stack gap="1">
-                    <Heading as="h3" color="ink.900" fontSize="2xl">
+                    <Heading as="h3" color="ink.900" fontSize="xl">
                       {update.title}
                     </Heading>
-                    <Text color="ink.600" fontSize="sm">
+                    <Text color="ink.600" fontSize="sm" lineHeight="1.45">
                       {update.summary}
                     </Text>
                   </Stack>
@@ -224,7 +235,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   </Flex>
                 </Stack>
 
-                <Stack bg="surface.50" borderRadius="8px" gap="1.5" p="3">
+                <Stack bg="surface.50" borderRadius="8px" gap="1.5" minW="0" p="3">
                   <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
                     Customer impact
                   </Text>
@@ -236,7 +247,17 @@ export const ReleasesPage = observer(function ReleasesPage() {
             ))}
           </Stack>
 
-          <StickyPanel as="aside">
+          <StickyPanel
+            as="aside"
+            gridColumn={{ xl: '3' }}
+            maxH="none"
+            overscrollBehavior="auto"
+            overflowY="visible"
+            pb="0"
+            position={{ xl: 'static' }}
+            pr="0"
+            w="100%"
+          >
             <FilterCard>
               <SectionEyebrow>Saved updates</SectionEyebrow>
               {vm.savedUpdates.map((update) => (
