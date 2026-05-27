@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Button, Container, Flex, Grid, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -6,6 +6,8 @@ import { Link, useLocation, useParams } from 'react-router';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   FieldHint,
   FilterCard,
   SectionEyebrow,
@@ -35,87 +37,38 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
             minW="0"
             templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           >
-            <Stack
-              bg="recommendationBg"
-              borderColor="panelBorderStrong"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              gap="4"
-              gridColumn={{ xl: 'span 2' }}
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="3">
-                <SectionEyebrow>{vm.update.type} update</SectionEyebrow>
-                <Heading
-                  as="h1"
-                  color="ink.900"
-                  fontSize={{ base: '3xl', md: '5xl' }}
-                  lineHeight="1"
-                >
-                  {vm.update.title}
-                </Heading>
-                <Text color="ink.700" fontSize="md" maxW="760px">
-                  {vm.update.summary}
-                </Text>
-              </Stack>
-              <Flex gap="2" wrap="wrap">
-                <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                  {vm.update.type}
-                </Badge>
-                <Badge
-                  bg={vm.update.priority === 'Important' ? 'amberBg' : 'panelSubtleBg'}
-                  borderRadius="8px"
-                  color={vm.update.priority === 'Important' ? 'amberText' : 'ink.700'}
-                >
-                  {vm.update.priority}
-                </Badge>
-                {vm.update.tags.map((tag) => (
-                  <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={tag}>
-                    {tag}
+            <DetailHeroPanel
+              actions={
+                <Flex gap="2" wrap="wrap">
+                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                    {vm.update.type}
                   </Badge>
-                ))}
-              </Flex>
-            </Stack>
+                  <Badge
+                    bg={vm.update.priority === 'Important' ? 'amberBg' : 'panelSubtleBg'}
+                    borderRadius="8px"
+                    color={vm.update.priority === 'Important' ? 'amberText' : 'ink.700'}
+                  >
+                    {vm.update.priority}
+                  </Badge>
+                  {vm.update.tags.map((tag) => (
+                    <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={tag}>
+                      {tag}
+                    </Badge>
+                  ))}
+                </Flex>
+              }
+              eyebrow={`${vm.update.type} update`}
+              summary={vm.update.summary}
+              title={vm.update.title}
+            />
 
-            <Stack
-              bg="panelDarkBg"
-              borderColor="darkPanelBorder"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              color="white"
-              gap="4"
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="1">
-                <Text
-                  color="darkPanelMutedText"
-                  fontSize="xs"
-                  fontWeight="800"
-                  textTransform="uppercase"
-                >
-                  Update summary
-                </Text>
-                <Text color="white" fontSize="5xl" fontWeight="800" lineHeight="1">
-                  {vm.update.priority}
-                </Text>
-                <Text color="darkPanelText" fontSize="sm">
-                  priority for customers affected by this release note.
-                </Text>
-              </Stack>
-              <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
-                {vm.metrics.map((metric) => (
-                  <DarkFact key={metric.label} label={metric.label} value={metric.value} />
-                ))}
-              </Grid>
-            </Stack>
+            <DarkSummaryPanel
+              eyebrow="Update summary"
+              factVariant="compact"
+              metrics={vm.metrics}
+              summary="priority for customers affected by this release note."
+              value={vm.update.priority}
+            />
           </Grid>
 
           <Grid
@@ -251,23 +204,3 @@ export const ReleaseDetailPage = observer(function ReleaseDetailPage() {
     </Box>
   );
 });
-
-function DarkFact({ label, value }: { readonly label: string; readonly value: string }) {
-  return (
-    <Stack
-      bg="darkBadgeBg"
-      borderColor="darkPanelBorder"
-      borderRadius="8px"
-      borderWidth="1px"
-      gap="1"
-      p="2"
-    >
-      <Text color="white" fontSize="lg" fontWeight="800" lineHeight="1.1" overflowWrap="anywhere">
-        {value}
-      </Text>
-      <Text color="darkPanelMutedText" fontSize="xs">
-        {label}
-      </Text>
-    </Stack>
-  );
-}

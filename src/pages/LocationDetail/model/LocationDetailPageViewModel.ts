@@ -116,7 +116,7 @@ export class LocationDetailPageViewModel {
     );
   }
 
-  get featuredPlanRow() {
+  get featuredPlanRow(): LocationPlanRow | undefined {
     return [...this.filteredPlanRows].sort((left, right) => {
       if (right.priceEfficiencyScore !== left.priceEfficiencyScore) {
         return right.priceEfficiencyScore - left.priceEfficiencyScore;
@@ -209,7 +209,17 @@ export class LocationDetailPageViewModel {
   }
 
   formatSupportWindow(value: string) {
-    return value === '24/7' ? '24/7' : 'Business hours';
+    const normalized = normalizeSupportWindowId(value);
+
+    if (normalized === '24-7') {
+      return '24/7';
+    }
+
+    if (normalized === 'business-hours') {
+      return 'Business hours';
+    }
+
+    return value;
   }
 
   resetFilters() {

@@ -5,192 +5,41 @@ import visualTextEntriesJson from './visualTranslations.data.json';
 type LocaleTupleIndex = 0 | 1 | 2 | 3 | 4 | 5;
 type TranslationTuple = readonly [string, string, string, string, string, string];
 
-const resourceDetailTextEntries = {
+const resourceDetailTextEntries = buildRussianTranslationEntries({
   'Use organization-scoped keys for availability checks, quote lookup, and finance export jobs. Keep write scopes separate from read-only integrations.':
-    [
-      'Use organization-scoped keys for availability checks, quote lookup, and finance export jobs. Keep write scopes separate from read-only integrations.',
-      'استخدم مفاتيح على مستوى المؤسسة لفحوص التوفر، والبحث عن العروض، ومهام تصدير المالية. افصل صلاحيات الكتابة عن تكاملات القراءة فقط.',
-      '使用组织级密钥执行可用性检查、报价查询和财务导出任务。将写入权限与只读集成分开。',
-      "Utilisez des cles limitees a l'organisation pour les verifications de disponibilite, la recherche de devis et les exports finance. Gardez les droits d'ecriture separes des integrations en lecture seule.",
-      'Используйте ключи уровня организации для проверки наличия, поиска расчетов и финансового экспорта. Отделяйте права записи от интеграций только для чтения.',
-      'Usa claves de organizacion para comprobaciones de disponibilidad, busqueda de ofertas y exportaciones financieras. Manten los permisos de escritura separados de las integraciones de solo lectura.',
-    ],
-  'Recommended integration shape': [
-    'Recommended integration shape',
-    'الشكل الموصى به للتكامل',
-    '推荐的集成形态',
-    'Forme d integration recommandee',
-    'Рекомендуемая схема интеграции',
-    'Forma de integracion recomendada',
-  ],
+    'Используйте ключи уровня организации для проверки наличия, поиска расчетов и финансового экспорта. Отделяйте права записи от интеграций только для чтения.',
+  'Recommended integration shape': 'Рекомендуемая схема интеграции',
   'Start with availability and price reads, then add quote writes only after the buying workflow is approved by the account owner.':
-    [
-      'Start with availability and price reads, then add quote writes only after the buying workflow is approved by the account owner.',
-      'ابدأ بقراءة التوفر والأسعار، ثم أضف كتابة العروض فقط بعد اعتماد مسار الشراء من مالك الحساب.',
-      '先读取可用性和价格，只有在账户所有者批准采购流程后再加入报价写入。',
-      "Commencez par lire disponibilite et prix, puis ajoutez l'ecriture de devis seulement apres validation du parcours d'achat par le proprietaire du compte.",
-      'Начните с чтения наличия и цен, затем добавляйте запись расчетов только после согласования процесса покупки владельцем аккаунта.',
-      'Empieza leyendo disponibilidad y precios; anade escritura de ofertas solo cuando el propietario apruebe el flujo de compra.',
-    ],
-  'Rollout sequence': [
-    'Rollout sequence',
-    'تسلسل الإطلاق',
-    '上线顺序',
-    'Sequence de deploiement',
-    'Порядок запуска',
-    'Secuencia de despliegue',
-  ],
+    'Начните с чтения наличия и цен, затем добавляйте запись расчетов только после согласования процесса покупки владельцем аккаунта.',
+  'Rollout sequence': 'Порядок запуска',
   'Confirm public IPv4, private VLAN, bandwidth, firewall ownership, and support coverage before a server plan is shared with operations.':
-    [
-      'Confirm public IPv4, private VLAN, bandwidth, firewall ownership, and support coverage before a server plan is shared with operations.',
-      'أكد IPv4 العام وVLAN الخاصة والنطاق وملكية الجدار الناري وتغطية الدعم قبل مشاركة خطة الخادم مع العمليات.',
-      '在把服务器方案交给运维前，确认公网 IPv4、私有 VLAN、带宽、防火墙归属和支持覆盖。',
-      "Confirmez IPv4 public, VLAN prive, bande passante, responsabilite pare-feu et couverture support avant de partager le plan serveur avec les operations.",
-      'Подтвердите публичный IPv4, приватный VLAN, пропускную способность, владельца фаервола и поддержку до передачи плана серверов в эксплуатацию.',
-      'Confirma IPv4 publica, VLAN privada, ancho de banda, responsable del firewall y cobertura de soporte antes de compartir el plan con operaciones.',
-    ],
+    'Подтвердите публичный IPv4, приватный VLAN, пропускную способность, владельца фаервола и поддержку до передачи плана серверов в эксплуатацию.',
   'Prefer a nearby alternative region when the primary location has longer setup windows or lower stock for the same server family.':
-    [
-      'Prefer a nearby alternative region when the primary location has longer setup windows or lower stock for the same server family.',
-      'فضل منطقة بديلة قريبة عندما تكون نافذة الإعداد أطول أو المخزون أقل في الموقع الأساسي لنفس عائلة الخوادم.',
-      '当主位置同系列服务器开通更慢或库存更低时，优先选择附近的替代区域。',
-      'Preferez une region alternative proche quand le site principal a des delais plus longs ou moins de stock pour la meme famille de serveurs.',
-      'Выбирайте ближайший запасной регион, если в основной локации дольше подготовка или меньше запас по тому же семейству серверов.',
-      'Prefiere una region alternativa cercana cuando la ubicacion principal tenga mayor plazo o menos stock para la misma familia.',
-    ],
-  'Understand public IPv4, private VLAN, bandwidth, firewall, and regional support rules.': [
-    'Understand public IPv4, private VLAN, bandwidth, firewall, and regional support rules.',
-    'افهم قواعد IPv4 العام وVLAN الخاصة والنطاق والجدار الناري والدعم الإقليمي.',
-    '了解公网 IPv4、私有 VLAN、带宽、防火墙和区域支持规则。',
-    'Comprenez IPv4 public, VLAN prive, bande passante, pare-feu et regles de support regional.',
+    'Выбирайте ближайший запасной регион, если в основной локации дольше подготовка или меньше запас по тому же семейству серверов.',
+  'Understand public IPv4, private VLAN, bandwidth, firewall, and regional support rules.':
     'Разберите публичный IPv4, приватный VLAN, пропускную способность, фаервол и правила региональной поддержки.',
-    'Entiende IPv4 publica, VLAN privada, ancho de banda, firewall y reglas de soporte regional.',
-  ],
-  'Retention windows, restore requests, monitoring add-ons, and customer responsibilities.': [
-    'Retention windows, restore requests, monitoring add-ons, and customer responsibilities.',
-    'فترات الاحتفاظ وطلبات الاستعادة وإضافات المراقبة ومسؤوليات العميل.',
-    '保留窗口、恢复请求、监控附加项和客户责任。',
-    'Durees de retention, demandes de restauration, options de supervision et responsabilites client.',
+  'Retention windows, restore requests, monitoring add-ons, and customer responsibilities.':
     'Сроки хранения, запросы на восстановление, мониторинг и ответственность клиента.',
-    'Ventanas de retencion, solicitudes de restauracion, extras de monitorizacion y responsabilidades del cliente.',
-  ],
-  'Review members, quote approvers, billing contacts, and audit history before renewal.': [
-    'Review members, quote approvers, billing contacts, and audit history before renewal.',
-    'راجع الأعضاء ومعتمدي العروض وجهات الفوترة وسجل التدقيق قبل التجديد.',
-    '续约前检查成员、报价审批人、账单联系人和审计历史。',
-    "Verifiez les membres, approbateurs de devis, contacts de facturation et historique d'audit avant renouvellement.",
+  'Review members, quote approvers, billing contacts, and audit history before renewal.':
     'Проверьте участников, согласующих расчет, платежные контакты и историю аудита перед продлением.',
-    'Revisa miembros, aprobadores, contactos de facturacion e historial de auditoria antes de renovar.',
-  ],
   'Define restore ownership, monitoring alerts, retention windows, and escalation contacts before the plan reaches production.':
-    [
-      'Define restore ownership, monitoring alerts, retention windows, and escalation contacts before the plan reaches production.',
-      'حدد مالك الاستعادة وتنبيهات المراقبة وفترات الاحتفاظ وجهات التصعيد قبل وصول الخطة إلى الإنتاج.',
-      '在方案进入生产前，定义恢复负责人、监控告警、保留窗口和升级联系人。',
-      "Definissez le responsable de restauration, les alertes de supervision, les durees de retention et les contacts d'escalade avant la production.",
-      'Определите ответственного за восстановление, алерты мониторинга, сроки хранения и контакты эскалации до выхода плана в боевую среду.',
-      'Define responsable de restauracion, alertas de monitorizacion, ventanas de retencion y contactos de escalado antes de produccion.',
-    ],
-  'Operating model': [
-    'Operating model',
-    'نموذج التشغيل',
-    '运营模型',
-    'Modele operationnel',
-    'Операционная модель',
-    'Modelo operativo',
-  ],
+    'Определите ответственного за восстановление, алерты мониторинга, сроки хранения и контакты эскалации до выхода плана в боевую среду.',
+  'Operating model': 'Операционная модель',
   'Attach backup policy and support terms to quote approvals so finance and operations review the same operating assumptions.':
-    [
-      'Attach backup policy and support terms to quote approvals so finance and operations review the same operating assumptions.',
-      'ارفق سياسة النسخ الاحتياطي وشروط الدعم بموافقات العروض حتى تراجع المالية والعمليات نفس افتراضات التشغيل.',
-      '把备份策略和支持条款附到报价审批中，让财务和运维检查相同的运营假设。',
-      "Joignez la politique de sauvegarde et les conditions de support aux validations de devis pour que finance et operations relisent les memes hypotheses.",
-      'Прикладывайте политику бэкапов и условия поддержки к согласованию расчета, чтобы финансы и операции проверяли одинаковые предположения.',
-      'Adjunta politica de backup y terminos de soporte a las aprobaciones para que finanzas y operaciones revisen las mismas premisas.',
-    ],
-  'Approval packet': [
-    'Approval packet',
-    'حزمة الموافقة',
-    '审批包',
-    'Dossier de validation',
-    'Пакет согласования',
-    'Paquete de aprobacion',
-  ],
+    'Прикладывайте политику бэкапов и условия поддержки к согласованию расчета, чтобы финансы и операции проверяли одинаковые предположения.',
+  'Approval packet': 'Пакет согласования',
   'Review account members, billing recipients, and quote approvers before every renewal or regional expansion.':
-    [
-      'Review account members, billing recipients, and quote approvers before every renewal or regional expansion.',
-      'راجع أعضاء الحساب ومستلمي الفواتير ومعتمدي العروض قبل كل تجديد أو توسع إقليمي.',
-      '每次续约或区域扩展前，检查账户成员、账单接收人和报价审批人。',
-      'Verifiez les membres du compte, les destinataires de facturation et les approbateurs de devis avant chaque renouvellement ou extension regionale.',
-      'Проверяйте участников аккаунта, получателей счетов и согласующих расчет перед каждым продлением или расширением региона.',
-      'Revisa miembros de cuenta, destinatarios de facturacion y aprobadores antes de cada renovacion o expansion regional.',
-    ],
+    'Проверяйте участников аккаунта, получателей счетов и согласующих расчет перед каждым продлением или расширением региона.',
   'Use audit history and saved account notes to explain who changed quotes, favorites, and organization settings.':
-    [
-      'Use audit history and saved account notes to explain who changed quotes, favorites, and organization settings.',
-      'استخدم سجل التدقيق وملاحظات الحساب المحفوظة لتوضيح من غيّر العروض والمفضلات وإعدادات المؤسسة.',
-      '使用审计历史和保存的账户备注，说明谁更改了报价、收藏和组织设置。',
-      "Utilisez l'historique d'audit et les notes de compte pour expliquer qui a modifie devis, favoris et reglages d'organisation.",
-      'Используйте историю аудита и сохраненные заметки аккаунта, чтобы объяснить, кто менял расчеты, избранное и настройки организации.',
-      'Usa historial de auditoria y notas guardadas para explicar quien cambio ofertas, favoritos y ajustes de organizacion.',
-    ],
-  'Limit quote writes to trusted systems': [
-    'Limit quote writes to trusted systems',
-    'اقصر كتابة العروض على الأنظمة الموثوقة',
-    '仅允许可信系统写入报价',
-    'Limiter l ecriture de devis aux systemes fiables',
-    'Разрешайте запись расчетов только доверенным системам',
-    'Limita la escritura de ofertas a sistemas de confianza',
-  ],
-  'Check bandwidth expectations': [
-    'Check bandwidth expectations',
-    'تحقق من توقعات النطاق',
-    '检查带宽预期',
-    'Verifier les attentes de bande passante',
-    'Проверьте требования к пропускной способности',
-    'Revisa expectativas de ancho de banda',
-  ],
-  'Validate regional setup time': [
-    'Validate regional setup time',
-    'تحقق من وقت الإعداد الإقليمي',
-    '验证区域开通时间',
-    'Valider le delai de mise en service regional',
-    'Проверьте срок подготовки в регионе',
-    'Valida el plazo de configuracion regional',
-  ],
-  'Choose backup retention': [
-    'Choose backup retention',
-    'اختر مدة الاحتفاظ بالنسخ',
-    '选择备份保留期',
-    'Choisir la retention des sauvegardes',
-    'Выберите срок хранения бэкапов',
-    'Elige retencion de backup',
-  ],
-  'Assign restore owner': [
-    'Assign restore owner',
-    'عيّن مالك الاستعادة',
-    '指定恢复负责人',
-    'Designer le responsable de restauration',
-    'Назначьте ответственного за восстановление',
-    'Asigna responsable de restauracion',
-  ],
-  'Review members': [
-    'Review members',
-    'راجع الأعضاء',
-    '检查成员',
-    'Verifier les membres',
-    'Проверьте участников',
-    'Revisa miembros',
-  ],
-  'Check quote approvers': [
-    'Check quote approvers',
-    'تحقق من معتمدي العروض',
-    '检查报价审批人',
-    'Verifier les approbateurs de devis',
-    'Проверьте согласующих расчет',
-    'Revisa aprobadores de ofertas',
-  ],
-} as const satisfies Record<string, TranslationTuple>;
+    'Используйте историю аудита и сохраненные заметки аккаунта, чтобы объяснить, кто менял расчеты, избранное и настройки организации.',
+  'Limit quote writes to trusted systems': 'Разрешайте запись расчетов только доверенным системам',
+  'Check bandwidth expectations': 'Проверьте требования к пропускной способности',
+  'Validate regional setup time': 'Проверьте срок подготовки в регионе',
+  'Choose backup retention': 'Выберите срок хранения бэкапов',
+  'Assign restore owner': 'Назначьте ответственного за восстановление',
+  'Review members': 'Проверьте участников',
+  'Check quote approvers': 'Проверьте согласующих расчет',
+});
 
 const ruOnlyVisualTextEntries = {
   '/mo': '/мес',
@@ -211,7 +60,7 @@ const ruOnlyVisualTextEntries = {
     'Дата запуска APAC подтверждена. Оставьте мониторинг и бэкап в первом предложении.',
   'Alternatives are ranked by shared server families, readiness, and stock.':
     'Альтернативы ранжируются по общим семействам серверов, готовности и наличию.',
-  'any': 'любой',
+  any: 'любой',
   'any add-on': 'любое дополнение',
   'any family': 'любое семейство',
   'any memory': 'любая память',
@@ -296,8 +145,9 @@ const ruOnlyVisualTextEntries = {
   in: 'в',
   'in stock only': 'только в наличии',
   ipv4: 'IPv4',
-  'Inspect current and upcoming commercial rows.': 'Проверьте текущие и будущие коммерческие строки.',
-  'Language': 'Язык',
+  'Inspect current and upcoming commercial rows.':
+    'Проверьте текущие и будущие коммерческие строки.',
+  Language: 'Язык',
   'lifecycle-rules': 'правила жизненного цикла',
   'Managed firewall available': 'управляемый фаервол доступен',
   'Mark updates as useful or keep them saved for the account planning thread.':
@@ -377,7 +227,7 @@ const ruOnlyVisualTextEntries = {
   'Sales will validate the final bundle after reply.':
     'Продажи проверят финальный пакет после ответа.',
   'Save the update for an account workspace.': 'Сохраните обновление в рабочей области аккаунта.',
-  'score': 'балл',
+  score: 'балл',
   security: 'безопасность',
   'Secure cookie': 'Защищенная куки',
   'Select regional rows to prepare the server list that will move into the quote flow.':
@@ -504,11 +354,27 @@ function getTupleValue(tuple: TranslationTuple, locale: LocaleCode) {
   return tuple[localeIndexes[locale]];
 }
 
+function buildRussianTranslationEntries(entries: Record<string, string>) {
+  return Object.fromEntries(
+    Object.entries(entries).map(([source, russian]) => [
+      source,
+      [source, source, source, source, russian, source] as TranslationTuple,
+    ]),
+  ) as Record<string, TranslationTuple>;
+}
+
 function buildRussianOverrideTuple(source: string, russian: string): TranslationTuple {
   const existingTuple = baseVisualTextEntries[source];
 
   return existingTuple
-    ? [existingTuple[0], existingTuple[1], existingTuple[2], existingTuple[3], russian, existingTuple[5]]
+    ? [
+        existingTuple[0],
+        existingTuple[1],
+        existingTuple[2],
+        existingTuple[3],
+        russian,
+        existingTuple[5],
+      ]
     : [source, source, source, source, russian, source];
 }
 

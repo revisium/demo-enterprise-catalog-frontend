@@ -7,6 +7,8 @@ import type { PortalDemoSession } from 'src/entities/portal';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   FieldHint,
   FilterCard,
   ProductVisual,
@@ -58,82 +60,32 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
             minW="0"
             templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           >
-            <Stack
-              bg="recommendationBg"
-              borderColor="panelBorderStrong"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              gap="4"
-              gridColumn={{ xl: 'span 2' }}
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="3">
-                <SectionEyebrow>{vm.organization.name}</SectionEyebrow>
-                <Heading
-                  as="h1"
-                  color="ink.900"
-                  fontSize={{ base: '3xl', md: '5xl' }}
-                  lineHeight="1"
-                >
-                  {savedPlan.name}
-                </Heading>
-                <Text color="ink.700" fontSize="md" maxW="760px">
-                  {savedPlan.plan} in {savedPlan.region} is prepared for quote work and customer
-                  review.
-                </Text>
-              </Stack>
-              <Flex gap="2" wrap="wrap">
-                <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                  {savedPlan.status}
-                </Badge>
-                <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                  {vm.product.supportTier} support
-                </Badge>
-                <Badge bg="successBg" borderRadius="8px" color="successText">
-                  ${savedPlan.monthlyUsd}/mo
-                </Badge>
-              </Flex>
-            </Stack>
+            <DetailHeroPanel
+              actions={
+                <Flex gap="2" wrap="wrap">
+                  <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                    {savedPlan.status}
+                  </Badge>
+                  <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
+                    {vm.product.supportTier} support
+                  </Badge>
+                  <Badge bg="successBg" borderRadius="8px" color="successText">
+                    ${savedPlan.monthlyUsd}/mo
+                  </Badge>
+                </Flex>
+              }
+              eyebrow={vm.organization.name}
+              summary={`${savedPlan.plan} in ${savedPlan.region} is prepared for quote work and customer review.`}
+              title={savedPlan.name}
+            />
 
-            <Stack
-              bg="panelDarkBg"
-              borderColor="darkPanelBorder"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              color="white"
-              gap="4"
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="1">
-                <Text
-                  color="darkPanelMutedText"
-                  fontSize="xs"
-                  fontWeight="800"
-                  textTransform="uppercase"
-                >
-                  Saved plan summary
-                </Text>
-                <Text color="white" fontSize="5xl" fontWeight="800" lineHeight="1">
-                  ${savedPlan.monthlyUsd}
-                </Text>
-                <Text color="darkPanelText" fontSize="sm">
-                  monthly estimate for the selected saved server package.
-                </Text>
-              </Stack>
-              <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
-                {vm.metrics.map((metric) => (
-                  <DarkFact key={metric.label} label={metric.label} value={metric.value} />
-                ))}
-              </Grid>
-            </Stack>
+            <DarkSummaryPanel
+              eyebrow="Saved plan summary"
+              factVariant="glass"
+              metrics={vm.metrics}
+              summary="monthly estimate for the selected saved server package."
+              value={`$${savedPlan.monthlyUsd}`}
+            />
           </Grid>
 
           <Grid
@@ -332,26 +284,6 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
     </Box>
   );
 });
-
-function DarkFact({ label, value }: { readonly label: string; readonly value: string }) {
-  return (
-    <Stack
-      bg="rgba(255,255,255,0.08)"
-      borderColor="rgba(255,255,255,0.12)"
-      borderRadius="8px"
-      borderWidth="1px"
-      gap="1"
-      p="3"
-    >
-      <Text color="darkPanelMutedText" fontSize="xs">
-        {label}
-      </Text>
-      <Text color="white" fontSize="sm" fontWeight="800">
-        {value}
-      </Text>
-    </Stack>
-  );
-}
 
 function PlanFact({ label, value }: { readonly label: string; readonly value: string }) {
   return (

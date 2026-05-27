@@ -146,7 +146,7 @@ export class LocationsPageViewModel {
     );
   }
 
-  get featuredLocation() {
+  get featuredLocation(): LocationRow | undefined {
     return [...this.filteredLocations].sort((left, right) => {
       if (right.readinessScore !== left.readinessScore) {
         return right.readinessScore - left.readinessScore;
@@ -158,6 +158,10 @@ export class LocationsPageViewModel {
 
       return left.fastestSetupHours - right.fastestSetupHours;
     })[0];
+  }
+
+  get filteredTotalStock() {
+    return this.filteredLocations.reduce((total, location) => total + location.totalStock, 0);
   }
 
   get families(): readonly CatalogFilterOption[] {
@@ -192,9 +196,7 @@ export class LocationsPageViewModel {
       { label: 'Regions', value: String(this.filteredLocations.length) },
       {
         label: 'Total stock',
-        value: String(
-          this.filteredLocations.reduce((total, location) => total + location.totalStock, 0),
-        ),
+        value: String(this.filteredTotalStock),
       },
       {
         label: 'Plan rows',
@@ -243,7 +245,17 @@ export class LocationsPageViewModel {
   }
 
   formatSupportWindow(value: string) {
-    return value === '24/7' ? '24/7 support' : 'Business hours';
+    const normalized = normalizeSupportWindowId(value);
+
+    if (normalized === '24-7') {
+      return '24/7 support';
+    }
+
+    if (normalized === 'business-hours') {
+      return 'Business hours';
+    }
+
+    return value;
   }
 
   setMinStock(value: string) {

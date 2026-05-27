@@ -1,12 +1,14 @@
 import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   ChipGroup,
+  DarkSummaryPanel,
+  DetailHeroPanel,
   EmptyState,
   FieldHint,
   FilterCard,
@@ -16,9 +18,7 @@ import {
   StickyPanel,
 } from 'src/shared/ui';
 import { LocationDetailPageViewModel } from '../../model/LocationDetailPageViewModel';
-
-type PlanResult = LocationDetailPageViewModel['filteredPlanRows'][number];
-type ReturnState = ReturnType<typeof createReturnState>;
+import { PlanRow } from '../PlanRow/PlanRow';
 
 export const LocationDetailPage = observer(function LocationDetailPage() {
   const location = useLocation();
@@ -44,104 +44,53 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
             minW="0"
             templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
           >
-            <Stack
-              bg="recommendationBg"
-              borderColor="panelBorderStrong"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              gap="4"
-              gridColumn={{ xl: 'span 2' }}
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="3">
-                <SectionEyebrow>Location detail</SectionEyebrow>
-                <Heading
-                  as="h1"
-                  color="ink.900"
-                  fontSize={{ base: '3xl', md: '5xl' }}
-                  lineHeight="1"
-                >
-                  {regionSummary.regionLabel} capacity
-                </Heading>
-                <Text color="ink.700" fontSize="md" maxW="700px">
-                  Compare available server plans, stock, setup windows, support coverage, and
-                  regional alternatives before starting a quote.
-                </Text>
-              </Stack>
-
-              <Stack gap="3">
-                <Flex gap="2" wrap="wrap">
-                  {regionSummary.dataCenterCodes.map((code) => (
-                    <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={code}>
-                      {code}
-                    </Badge>
-                  ))}
-                  {regionSummary.supportWindows.map((supportWindow) => (
-                    <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={supportWindow}>
-                      {vm.formatSupportWindow(supportWindow)}
-                    </Badge>
-                  ))}
-                </Flex>
-                <Flex gap="2" wrap="wrap">
-                  {featuredPlan ? (
-                    <Button asChild bg="ctaBg" borderRadius="8px" color="white">
-                      <Link state={returnState} to={featuredPlan.quoteHref}>
-                        Start quote
+            <DetailHeroPanel
+              actions={
+                <Stack gap="3">
+                  <Flex gap="2" wrap="wrap">
+                    {regionSummary.dataCenterCodes.map((code) => (
+                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700" key={code}>
+                        {code}
+                      </Badge>
+                    ))}
+                    {regionSummary.supportWindows.map((supportWindow) => (
+                      <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={supportWindow}>
+                        {vm.formatSupportWindow(supportWindow)}
+                      </Badge>
+                    ))}
+                  </Flex>
+                  <Flex gap="2" wrap="wrap">
+                    {featuredPlan ? (
+                      <Button asChild bg="ctaBg" borderRadius="8px" color="white">
+                        <Link state={returnState} to={featuredPlan.quoteHref}>
+                          Start quote
+                        </Link>
+                      </Button>
+                    ) : null}
+                    <Button asChild borderRadius="8px" variant="outline">
+                      <Link state={returnState} to="/locations">
+                        All locations
                       </Link>
                     </Button>
-                  ) : null}
-                  <Button asChild borderRadius="8px" variant="outline">
-                    <Link state={returnState} to="/locations">
-                      All locations
-                    </Link>
-                  </Button>
-                </Flex>
-              </Stack>
-            </Stack>
+                  </Flex>
+                </Stack>
+              }
+              eyebrow="Location detail"
+              summary="Compare available server plans, stock, setup windows, support coverage, and regional alternatives before starting a quote."
+              title={`${regionSummary.regionLabel} capacity`}
+            />
 
-            <Stack
-              bg="panelDarkBg"
-              borderColor="darkPanelBorder"
-              borderRadius="8px"
-              borderWidth="1px"
-              boxShadow="panel"
-              color="white"
-              gap="4"
-              h="100%"
-              justify="space-between"
-              minW="0"
-              p="3"
-            >
-              <Stack gap="1">
-                <Text
-                  color="darkPanelMutedText"
-                  fontSize="xs"
-                  fontWeight="800"
-                  textTransform="uppercase"
-                >
-                  Region snapshot
-                </Text>
-                <Text fontSize="5xl" fontWeight="800" lineHeight="1">
-                  {regionSummary.readinessScore}
-                </Text>
-                <Text color="darkPanelText" fontSize="sm">
-                  readiness score across stock, setup speed, family coverage, and support.
-                </Text>
-              </Stack>
-              <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
-                <DarkFact label="Server plans" value={String(regionSummary.planCount)} />
-                <DarkFact label="Total stock" value={String(regionSummary.totalStock)} />
-                <DarkFact label="Fastest setup" value={`${regionSummary.fastestSetupHours}h`} />
-                <DarkFact
-                  label="Family coverage"
-                  value={`${regionSummary.familyCoveragePercent}%`}
-                />
-              </Grid>
-            </Stack>
+            <DarkSummaryPanel
+              eyebrow="Region snapshot"
+              metrics={[
+                { label: 'Server plans', value: String(regionSummary.planCount) },
+                { label: 'Total stock', value: String(regionSummary.totalStock) },
+                { label: 'Fastest setup', value: `${regionSummary.fastestSetupHours}h` },
+                { label: 'Family coverage', value: `${regionSummary.familyCoveragePercent}%` },
+              ]}
+              summary="readiness score across stock, setup speed, family coverage, and support."
+              value={regionSummary.readinessScore}
+            />
           </Grid>
 
           <Grid
@@ -343,92 +292,6 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   );
 });
 
-interface PlanRowProps {
-  readonly returnState: ReturnState;
-  readonly row: PlanResult;
-  readonly vm: LocationDetailPageViewModel;
-}
-
-function PlanRow({ returnState, row, vm }: PlanRowProps) {
-  return (
-    <Grid
-      alignItems="center"
-      bg="white"
-      borderColor="surface.200"
-      borderRadius="8px"
-      borderWidth="1px"
-      boxShadow="panel"
-      gap="3"
-      minW={{ base: '680px', sm: '720px', md: '0' }}
-      p="3"
-      templateColumns="minmax(0, 1fr) 82px 68px 72px 78px"
-      w="100%"
-    >
-      <Stack gap="1" minW="0">
-        <Box asChild alignSelf="start" color="ink.900" fontWeight="780">
-          <Link state={returnState} to={row.planHref}>
-            {row.plan.name}
-          </Link>
-        </Box>
-        <Text color="ink.500" fontSize="sm" lineHeight="1.4" minH="10" overflowWrap="anywhere">
-          {row.plan.summary}
-        </Text>
-        <Flex gap="1.5" wrap="wrap">
-          <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-            {row.plan.family}
-          </Badge>
-          <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-            {row.plan.hardware.cpuCores} cores
-          </Badge>
-          <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-            {row.plan.hardware.ramGb} GB RAM
-          </Badge>
-        </Flex>
-      </Stack>
-      <Stack gap="0" minW="0">
-        <Text color="ink.900" fontWeight="760">
-          ${row.effectiveMonthlyPrice}/mo
-        </Text>
-        <Text color="ink.500" fontSize="xs">
-          score {row.priceEfficiencyScore}
-        </Text>
-      </Stack>
-      <Stack align="start" gap="1" minW="0">
-        <Badge
-          bg={row.stock > 0 ? 'successBg' : 'amberBg'}
-          borderRadius="8px"
-          color={row.stock > 0 ? 'successText' : 'amberText'}
-        >
-          {row.stock} units
-        </Badge>
-        <Text color="ink.500" fontSize="xs">
-          {row.dataCenterCode}
-        </Text>
-      </Stack>
-      <Stack gap="0" minW="0">
-        <Text color="ink.900" fontWeight="700">
-          {row.setupHours}h
-        </Text>
-        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-          {vm.formatSupportWindow(row.supportWindow)}
-        </Text>
-      </Stack>
-      <Stack align="stretch" gap="2" minW="0">
-        <Button asChild borderRadius="8px" size="xs" variant="outline">
-          <Link state={returnState} to={row.planHref}>
-            Open
-          </Link>
-        </Button>
-        <Button asChild bg="ctaBg" borderRadius="8px" color="white" size="xs">
-          <Link state={returnState} to={row.quoteHref}>
-            Quote
-          </Link>
-        </Button>
-      </Stack>
-    </Grid>
-  );
-}
-
 function RegionFact({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <Stack
@@ -443,26 +306,6 @@ function RegionFact({ label, value }: { readonly label: string; readonly value: 
         {value}
       </Text>
       <Text color="ink.500" fontSize="xs">
-        {label}
-      </Text>
-    </Stack>
-  );
-}
-
-function DarkFact({ label, value }: { readonly label: string; readonly value: ReactNode }) {
-  return (
-    <Stack
-      bg="darkBadgeBg"
-      borderColor="darkPanelBorder"
-      borderRadius="8px"
-      borderWidth="1px"
-      gap="1"
-      p="3"
-    >
-      <Text color="white" fontSize="2xl" fontWeight="800" lineHeight="1">
-        {value}
-      </Text>
-      <Text color="darkPanelMutedText" fontSize="xs">
         {label}
       </Text>
     </Stack>
