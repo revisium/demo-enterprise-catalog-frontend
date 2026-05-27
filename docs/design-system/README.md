@@ -35,10 +35,20 @@ iteration, not to freeze a brand too early.
 - Public sections use the same page shell: `pagePremiumBg`, `1240px`
   constrained content, `8px` panels, `surface.200` borders, and blue
   `brand.50`/`brand.500` badges.
+- White cards and framed white control blocks use compact `12px` internal
+  padding by default; larger spacing should stay reserved for true intro or
+  feature panels.
 - Public route intro blocks align their eyebrow and H1 from the same top rail
   across navigation tabs; push/replace route changes without hash targets reset
   document scroll to avoid preserved-position title jumps, while hash targets
   and back/forward navigation preserve browser scroll behavior.
+- Public route intro H1 text uses restrained display sizing (`3xl` on compact
+  screens and `5xl` from desktop/tablet layouts) so section titles stay calm
+  next to dense catalog controls. Do not add terminal periods to these display
+  headings.
+- Public intro metric summaries are temporarily hidden during density review;
+  keep their data and component wiring in place so they can be restored or
+  removed intentionally before publishing the next PR.
 - Product, catalog, quote, and planned pages use `recommendationBg` for the main
   intro panel and `surface.900` for compact dark status/action panels.
 - Footer: constrained product summary plus grouped links for explore,

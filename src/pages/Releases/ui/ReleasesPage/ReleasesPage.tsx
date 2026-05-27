@@ -27,7 +27,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
           metrics={vm.summaryMetrics}
           metricsLabel="Update summary"
           summary="Catalog, region, pricing, and documentation changes in one feed."
-          title="Product updates."
+          title="Product updates"
         />
 
         <Grid
@@ -148,7 +148,7 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 borderWidth="1px"
                 gap="4"
                 key={update.id}
-                p={{ base: '4', md: '5' }}
+                p="3"
                 templateColumns={{ base: '1fr', lg: '136px minmax(0, 1fr) 230px' }}
               >
                 <Stack gap="2">

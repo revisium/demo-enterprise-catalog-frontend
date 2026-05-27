@@ -139,7 +139,7 @@ export function EmptyState({ actionLabel, onAction, summary, title }: EmptyState
       borderRadius="8px"
       borderWidth="1px"
       gap="3"
-      p={{ base: '4', md: '5' }}
+      p="3"
     >
       <Stack gap="1">
         <Heading as="h2" color="ink.900" fontSize="xl">
@@ -165,8 +165,9 @@ export function FilterCard({ children, ...props }: Readonly<FilterCardProps>) {
       borderColor="surface.200"
       borderRadius="8px"
       borderWidth="1px"
-      gap={{ base: '4', md: '5' }}
-      p={{ base: '4', md: '5' }}
+      gap="3"
+      minW="0"
+      p="3"
       {...props}
     >
       {children}
@@ -176,20 +177,21 @@ export function FilterCard({ children, ...props }: Readonly<FilterCardProps>) {
 
 export function MetricGrid({ ariaLabel, metrics }: MetricGridProps) {
   return (
-    <SimpleGrid aria-label={ariaLabel} columns={{ base: 2, sm: 3 }} gap="2">
+    <SimpleGrid aria-label={ariaLabel} columns={{ base: 2, sm: 3 }} gap="1.5" minW="0">
       {metrics.map((metric) => (
         <Box
           bg="panelGlassBg"
           borderColor="surface.200"
-          borderRadius="8px"
+          borderRadius="6px"
           borderWidth="1px"
           key={metric.label}
-          p="3"
+          minW="0"
+          p="2.5"
         >
-          <Text color="ink.900" fontSize="2xl" fontWeight="780" lineHeight="1">
+          <Text color="ink.900" fontSize="xl" fontWeight="760" lineHeight="1">
             {metric.value}
           </Text>
-          <Text color="ink.500" fontSize="xs">
+          <Text color="ink.500" fontSize="xs" lineHeight="1.25">
             {metric.label}
           </Text>
         </Box>
@@ -218,8 +220,8 @@ export function PageIntroGrid({
         <Heading
           as="h1"
           color="ink.900"
-          fontSize={{ base: '4xl', md: '6xl' }}
-          lineHeight="0.98"
+          fontSize={{ base: '3xl', md: '5xl' }}
+          lineHeight="1"
           maxW="820px"
         >
           {title}
@@ -229,7 +231,9 @@ export function PageIntroGrid({
         </Text>
       </Stack>
 
-      <MetricGrid ariaLabel={metricsLabel} metrics={metrics} />
+      <Box display="none">
+        <MetricGrid ariaLabel={metricsLabel} metrics={metrics} />
+      </Box>
       {children ?? null}
     </Grid>
   );
@@ -303,8 +307,8 @@ export function StickyPanel({
 
 export function SelectField({ label, onChange, options, value }: SelectFieldProps) {
   return (
-    <Stack as="label" gap="1.5">
-      <Text color="ink.700" fontWeight="650">
+    <Stack as="label" gap="1.5" minW="0" w="100%">
+      <Text color="ink.700" fontWeight="650" lineHeight="1.25" overflowWrap="anywhere">
         {label}
       </Text>
       <chakra.select
@@ -312,9 +316,14 @@ export function SelectField({ label, onChange, options, value }: SelectFieldProp
         borderColor="surface.200"
         borderRadius="8px"
         borderWidth="1px"
+        minW="0"
         onChange={(event) => onChange(event.currentTarget.value)}
-        p="2.5"
+        pb="2.5"
+        pl="2.5"
+        pr="9"
+        pt="2.5"
         value={value}
+        w="100%"
       >
         {options.map((option) => (
           <option key={option.id} value={option.id}>

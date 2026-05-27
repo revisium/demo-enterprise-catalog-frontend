@@ -25,10 +25,10 @@ export const CatalogPage = observer(function CatalogPage() {
           <Heading
             as="h1"
             color="ink.900"
-            fontSize={{ base: '4xl', md: '6xl' }}
-            lineHeight="0.98"
+            fontSize={{ base: '3xl', md: '5xl' }}
+            lineHeight="1"
           >
-            Server catalog.
+            Server catalog
           </Heading>
           <Text color="ink.600" fontSize={{ base: 'sm', md: 'md' }} maxW="620px">
             Filter server plans by region, stock, price, docs, and hardware.

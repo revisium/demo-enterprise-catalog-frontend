@@ -238,7 +238,7 @@ export const HomePage = observer(function HomePage() {
                 borderRadius="8px"
                 borderWidth="1px"
                 gap="3"
-                p={{ base: '4', md: '5', lg: '3' }}
+                p="3"
               >
                 <Flex align="center" justify="space-between" gap="3" wrap="wrap">
                   <Stack gap="0">

@@ -67,7 +67,7 @@ export function PlaceholderPage({ title, summary }: PlaceholderPageProps) {
               borderWidth="1px"
               gap="2"
               key={item}
-              p="4"
+              p="3"
             >
               <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
                 Next

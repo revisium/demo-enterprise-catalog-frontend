@@ -45,10 +45,20 @@ export function localizeVisualText(locale: LocaleCode, source: string): string {
     return source;
   }
 
-  const exactTranslation = exactTextTranslations.get(normalizeText(source));
+  const normalizedSource = normalizeText(source);
+  const exactTranslation = exactTextTranslations.get(normalizedSource);
 
   if (exactTranslation) {
     return preserveOuterWhitespace(source, getTupleValue(exactTranslation, locale));
+  }
+
+  const terminalPeriodTranslation = exactTextTranslations.get(`${normalizedSource}.`);
+
+  if (terminalPeriodTranslation) {
+    return preserveOuterWhitespace(
+      source,
+      removeTerminalPeriod(getTupleValue(terminalPeriodTranslation, locale)),
+    );
   }
 
   return phraseTextEntries.reduce((text, tuple) => {
@@ -84,6 +94,31 @@ function preserveOuterWhitespace(source: string, translated: string) {
   const trailing = getTrailingWhitespace(source);
 
   return `${leading}${translated}${trailing}`;
+}
+
+function removeTerminalPeriod(source: string) {
+  let endIndex = source.length;
+
+  while (endIndex > 0) {
+    const codePoint = source.codePointAt(endIndex - 1) ?? 0;
+
+    if (!isTerminalPeriod(codePoint)) {
+      break;
+    }
+
+    endIndex -= codePoint > 0xffff ? 2 : 1;
+  }
+
+  return endIndex === source.length ? source : source.slice(0, endIndex);
+}
+
+function isTerminalPeriod(characterCode: number) {
+  return (
+    characterCode === 46 ||
+    characterCode === 0x3002 ||
+    characterCode === 0xff0e ||
+    characterCode === 0xff61
+  );
 }
 
 function getLeadingWhitespace(source: string) {

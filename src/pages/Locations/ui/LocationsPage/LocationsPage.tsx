@@ -26,7 +26,7 @@ export const LocationsPage = observer(function LocationsPage() {
           metrics={vm.summaryMetrics}
           metricsLabel="Location summary"
           summary="Pick a region by available inventory, setup speed, support coverage, and server families."
-          title="Choose a data-center region."
+          title="Choose a data-center region"
         />
 
         <Grid
@@ -105,7 +105,7 @@ export const LocationsPage = observer(function LocationsPage() {
               boxShadow="panel"
               gap="4"
               key={location.regionId}
-              p="4"
+              p="3"
               templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 180px 180px' }}
             >
               <Stack gap="3">
