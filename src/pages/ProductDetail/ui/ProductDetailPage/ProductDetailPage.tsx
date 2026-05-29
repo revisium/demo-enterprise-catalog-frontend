@@ -9,6 +9,7 @@ import {
   BackNavButton,
   EmptyState,
   FilterButton,
+  InteractiveListCard,
   PageSectionSurface,
   MetricGrid,
   ProductVisual,
@@ -409,7 +410,8 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               templateColumns={{ base: '1fr', lg: 'repeat(2, minmax(0, 1fr))' }}
             >
               {vm.alternativeRows.map((row) => (
-                <Grid
+                <InteractiveListCard
+                  ariaLabel={`Open server plan: ${row.plan.name}`}
                   alignItems="stretch"
                   bg="panelGlassBg"
                   borderColor="surface.200"
@@ -421,32 +423,11 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                   minW={{ base: '560px', md: '0' }}
                   overflow="hidden"
                   p="3"
+                  returnState={returnState}
                   position="relative"
                   templateColumns="88px minmax(0, 1fr) auto"
-                  transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
-                  _hover={{
-                    borderColor: 'activeBorder',
-                    boxShadow: '0 18px 50px rgba(16, 24, 40, 0.12)',
-                    transform: 'translateY(-1px)',
-                  }}
+                  to={row.detailHref}
                 >
-                  <Box
-                    asChild
-                    borderRadius="8px"
-                    inset="0"
-                    position="absolute"
-                    zIndex="1"
-                    _focusVisible={{
-                      boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
-                      outline: 'none',
-                    }}
-                  >
-                    <Link
-                      aria-label={`Open server plan: ${row.plan.name}`}
-                      state={returnState}
-                      to={row.detailHref}
-                    />
-                  </Box>
                   <ProductVisual
                     alt={row.plan.imageAlt}
                     minH="24"
@@ -485,7 +466,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                       </Link>
                     </Button>
                   </Stack>
-                </Grid>
+                </InteractiveListCard>
               ))}
             </Grid>
           </Stack>

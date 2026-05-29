@@ -10,6 +10,7 @@ import {
   EmptyState,
   FilterButton,
   FilterCard,
+  InteractiveListCard,
   PageSectionSurface,
   PageIntroGrid,
   QuerySummary,
@@ -129,30 +130,15 @@ export const ReleasesPage = observer(function ReleasesPage() {
                       templateColumns={{ base: '1fr', lg: '56px minmax(0, 1fr)' }}
                       w="100%"
                     >
-                      <Stack align="center" gap="0" minW="56px" position="relative">
-                        <Badge
-                          alignSelf="start"
-                          bg={timelineBadgeBg}
-                          borderRadius="999px"
-                          color={isImportant ? 'amberText' : 'ink.700'}
-                          fontSize="xs"
-                          minW="24px"
-                          px="0"
-                        >
-                          {index + 1}
-                        </Badge>
-                        {index !== vm.filteredUpdates.length - 1 ? (
-                          <Box
-                            bg="surface.200"
-                            borderRadius="999px"
-                            h="100%"
-                            w="2px"
-                            my="1"
-                          />
-                        ) : null}
-                      </Stack>
+                      <ReleaseTimelineNode
+                        badgeColor={isImportant ? 'amberText' : 'ink.700'}
+                        hasConnector={index !== vm.filteredUpdates.length - 1}
+                        number={index + 1}
+                        tone={timelineBadgeBg}
+                      />
 
-                      <Grid
+                      <InteractiveListCard
+                        ariaLabel={`Open update: ${update.title}`}
                         alignItems="stretch"
                         bg={vm.isSaved(update.id) ? 'brand.50' : 'white'}
                         borderColor="surface.200"
@@ -164,33 +150,12 @@ export const ReleasesPage = observer(function ReleasesPage() {
                         overflow="hidden"
                         p="3"
                         position="relative"
+                        returnState={returnState}
                         templateColumns={{ base: '1fr', lg: '112px minmax(0, 1fr) 190px' }}
-                        transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
-                        _hover={{
-                          borderColor: 'activeBorder',
-                          boxShadow: '0 18px 50px rgba(16, 24, 40, 0.12)',
-                          transform: 'translateY(-1px)',
-                        }}
+                        to={`/releases/${update.id}`}
                       >
-                        <Box
-                          asChild
-                          borderRadius="8px"
-                          inset="0"
-                          position="absolute"
-                          zIndex="1"
-                          _focusVisible={{
-                            boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
-                            outline: 'none',
-                          }}
-                        >
-                          <Link
-                            aria-label={`Open update: ${update.title}`}
-                            state={returnState}
-                            to={`/releases/${update.id}`}
-                          />
-                        </Box>
 
-                        <Stack gap="2" pointerEvents="none">
+                        <Stack gap="2" pointerEvents="none" position="relative" zIndex={2}>
                           <Text color="ink.500" fontSize="sm" fontWeight="760">
                             {update.date}
                           </Text>
@@ -259,7 +224,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                         </Stack>
 
                         <Stack
+                          position="relative"
                           bg="surface.50"
+                          zIndex={2}
                           borderRadius="8px"
                           borderLeftColor="surface.200"
                           borderLeftWidth="1px"
@@ -274,9 +241,9 @@ export const ReleasesPage = observer(function ReleasesPage() {
                           <Text color="ink.800" fontSize="sm">
                             {update.impact}
                           </Text>
-                        </Stack>
+                          </Stack>
+                        </InteractiveListCard>
                       </Grid>
-                    </Grid>
                   );
                 })}
             </Stack>
@@ -425,6 +392,31 @@ export const ReleasesPage = observer(function ReleasesPage() {
           </StickyPanel>
         </Grid>
       </Container>
-    </PageSectionSurface>
+  </PageSectionSurface>
   );
 });
+
+interface ReleaseTimelineNodeProps {
+  readonly badgeColor: string;
+  readonly hasConnector: boolean;
+  readonly number: number;
+  readonly tone: string;
+}
+
+function ReleaseTimelineNode({
+  badgeColor,
+  hasConnector,
+  number,
+  tone,
+}: Readonly<ReleaseTimelineNodeProps>) {
+  return (
+    <Stack align="center" gap="0" minW="56px" position="relative">
+      <Badge alignSelf="start" bg={tone} borderRadius="999px" color={badgeColor} fontSize="xs" minW="24px" px="0">
+        {number}
+      </Badge>
+      {hasConnector ? (
+        <Box bg="surface.200" borderRadius="999px" h="100%" w="2px" my="1" />
+      ) : null}
+    </Stack>
+  );
+}

@@ -6,6 +6,9 @@ export { DarkFact } from './DarkFact/DarkFact';
 export { DarkSummaryPanel } from './DarkSummaryPanel/DarkSummaryPanel';
 export { DetailHeroPanel } from './DetailHeroPanel/DetailHeroPanel';
 export { PageSectionSurface } from './PageSectionSurface/PageSectionSurface';
+export { PortalDetailPageLayout } from './PortalDetailPageLayout/PortalDetailPageLayout';
+export { InteractiveListCard } from './InteractiveListCard/InteractiveListCard';
+export { LinkedSummaryCard } from './LinkedSummaryCard/LinkedSummaryCard';
 export {
   ChipGroup,
   EmptyState,
