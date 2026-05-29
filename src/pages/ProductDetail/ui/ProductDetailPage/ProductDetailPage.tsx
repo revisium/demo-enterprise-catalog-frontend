@@ -1,4 +1,14 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Button,
+  Container,
+  Flex,
+  Grid,
+  Heading,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { type ReactNode, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -13,6 +23,7 @@ import {
   PageSectionSurface,
   MetricGrid,
   ProductVisual,
+  PanelHeroCallout,
   SelectField,
 } from 'src/shared/ui';
 import {
@@ -111,32 +122,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                 columns={{ base: 2, sm: 2 }}
                 metrics={vm.summaryMetrics}
               />
-              <Stack
-                bg="surface.900"
-                borderRadius="8px"
-                boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
-                color="white"
-                gap="2"
-                p="3"
-              >
-                <Text
-                  color="darkPanelMutedText"
-                  fontSize="xs"
-                  fontWeight="700"
-                  textTransform="uppercase"
-                >
-                  Commercial summary
-                </Text>
-                <Text fontSize="2xl" fontWeight="800" lineHeight="1">
-                  ${vm.product.pricing.monthlyUsd}/mo
-                </Text>
+              <PanelHeroCallout eyebrow="Commercial summary" title={`$${vm.product.pricing.monthlyUsd}/mo`}>
                 <Text color="darkPanelText" fontSize="sm">
                   {vm.commercialTermLabel}
                 </Text>
                 <Text color="darkPanelText" fontSize="sm">
                   {vm.product.customerNote}
                 </Text>
-              </Stack>
+              </PanelHeroCallout>
             </Stack>
           </Grid>
 

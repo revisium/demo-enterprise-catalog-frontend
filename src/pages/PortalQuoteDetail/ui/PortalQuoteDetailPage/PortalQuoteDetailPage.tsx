@@ -11,7 +11,8 @@ import {
   FieldHint,
   FilterCard,
   LinkedSummaryCard,
-  PortalDetailPageLayout,
+  PortalEntityBadges,
+  PortalEntityPageLayout,
   SectionEyebrow,
 } from 'src/shared/ui';
 import { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
@@ -41,9 +42,8 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
     return <QuoteAccessState vm={vm} />;
   }
 
-  return (
-    <PortalDetailPageLayout
-      aside={
+  return PortalEntityPageLayout({
+      aside: (
         <>
           <FilterCard>
             <SectionEyebrow>Quote actions</SectionEyebrow>
@@ -98,29 +98,22 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
             ))}
           </FilterCard>
         </>
-      }
-      backFallback="/app"
-      heroPanel={
+      ),
+      heroPanel: (
         <DetailHeroPanel
           actions={
-            <Flex gap="2" wrap="wrap">
-              <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                {quote.status}
-              </Badge>
-              <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                updated {quote.updatedAt}
-              </Badge>
-              <Badge bg="successBg" borderRadius="8px" color="successText">
-                ${quote.monthlyUsd}/mo
-              </Badge>
-            </Flex>
+            <PortalEntityBadges
+              left={quote.status}
+              middle={`updated ${quote.updatedAt}`}
+              right={`$${quote.monthlyUsd}/mo`}
+            />
           }
           eyebrow={vm.organization.name}
           summary={quote.summary}
           title={`${quote.plan} in ${quote.region}`}
         />
-      }
-      summaryPanel={
+      ),
+      summaryPanel: (
         <DarkSummaryPanel
           eyebrow="Quote summary"
           factVariant="glass"
@@ -128,20 +121,15 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
           summary="monthly estimate with status, due date, and comment activity."
           value={`$${quote.monthlyUsd}`}
         />
-      }
-    >
+      ),
+    children: (
+      <>
       <FilterCard>
-        <Flex align="center" gap="2" wrap="wrap">
-          <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-            {quote.status}
-          </Badge>
-          <Badge bg="surface.100" borderRadius="8px" color="ink.700">
-            updated {quote.updatedAt}
-          </Badge>
-          <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-            {vm.organization.supportPlan} support
-          </Badge>
-        </Flex>
+        <PortalEntityBadges
+          left={quote.status}
+          middle={`updated ${quote.updatedAt}`}
+          right={`${vm.organization.supportPlan} support`}
+        />
         <Grid as="dl" gap="2" templateColumns={{ base: '1fr', md: '170px minmax(0, 1fr)' }}>
           <Text as="dt" color="ink.500">
             Organization
@@ -226,6 +214,7 @@ export const PortalQuoteDetailPage = observer(function PortalQuoteDetailPage({
           </Stack>
         ))}
       </FilterCard>
-    </PortalDetailPageLayout>
-  );
+      </>
+    ),
+  });
 });

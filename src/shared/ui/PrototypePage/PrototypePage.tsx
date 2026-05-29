@@ -1,6 +1,6 @@
 import { Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 
-import { PageSectionSurface } from 'src/shared/ui';
+import { PageSectionSurface, PanelHeroCallout } from 'src/shared/ui';
 
 interface PrototypePageProps {
   readonly asideSummary: string;
@@ -44,29 +44,16 @@ export function PrototypePage({
               {summary}
             </Text>
           </Stack>
-          <Stack
-            bg="surface.900"
-            borderRadius="8px"
-            boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
-            color="white"
-            gap="2"
-            p="4"
+          <PanelHeroCallout
+            eyebrow="Focus"
+            eyebrowFontSize="xs"
+            title={asideTitle}
+            titleFontSize="2xl"
           >
-            <Text
-              color="darkPanelMutedText"
-              fontSize="xs"
-              fontWeight="700"
-              textTransform="uppercase"
-            >
-              Focus
-            </Text>
-            <Text fontSize="2xl" fontWeight="800" lineHeight="1.1">
-              {asideTitle}
-            </Text>
             <Text color="darkPanelText" fontSize="sm">
               {asideSummary}
             </Text>
-          </Stack>
+          </PanelHeroCallout>
         </Grid>
         {children}
       </Container>

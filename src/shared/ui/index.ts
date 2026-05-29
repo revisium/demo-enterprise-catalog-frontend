@@ -6,7 +6,12 @@ export { DarkFact } from './DarkFact/DarkFact';
 export { DarkSummaryPanel } from './DarkSummaryPanel/DarkSummaryPanel';
 export { DetailHeroPanel } from './DetailHeroPanel/DetailHeroPanel';
 export { PageSectionSurface } from './PageSectionSurface/PageSectionSurface';
+export { PanelHeroCallout } from './PanelHeroCallout/PanelHeroCallout';
+export { PrototypeFeatureCard } from './PrototypeFeatureCard/PrototypeFeatureCard';
+export { PortalEntityBadges } from './PortalEntityBadges/PortalEntityBadges';
 export { PortalDetailPageLayout } from './PortalDetailPageLayout/PortalDetailPageLayout';
+export { PortalAppLayout } from './PortalAppLayout/PortalAppLayout';
+export { PortalEntityPageLayout } from './PortalEntityPageLayout/PortalEntityPageLayout';
 export { InteractiveListCard } from './InteractiveListCard/InteractiveListCard';
 export { LinkedSummaryCard } from './LinkedSummaryCard/LinkedSummaryCard';
 export {

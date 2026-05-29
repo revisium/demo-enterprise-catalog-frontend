@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useMemo } from 'react';
 import { Link, useFetcher, useLocation, useParams } from 'react-router';
@@ -12,8 +12,9 @@ import {
   FilterCard,
   ProductVisual,
   LinkedSummaryCard,
+  PortalEntityBadges,
   SectionEyebrow,
-  PortalDetailPageLayout,
+  PortalEntityPageLayout,
 } from 'src/shared/ui';
 import { PortalSavedPlanDetailPageViewModel } from '../../model/PortalSavedPlanDetailPageViewModel';
 import { SavedPlanAccessState } from '../SavedPlanAccessState/SavedPlanAccessState';
@@ -48,9 +49,8 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
     return <SavedPlanAccessState vm={vm} />;
   }
 
-  return (
-    <PortalDetailPageLayout
-      aside={
+  return PortalEntityPageLayout({
+      aside: (
         <>
           <FilterCard>
             <SectionEyebrow>Account context</SectionEyebrow>
@@ -102,29 +102,22 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
             ))}
           </FilterCard>
         </>
-      }
-      backFallback="/app"
-      heroPanel={
+      ),
+      heroPanel: (
         <DetailHeroPanel
           actions={
-            <Flex gap="2" wrap="wrap">
-              <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                {savedPlan.status}
-              </Badge>
-              <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
-                {vm.product.supportTier} support
-              </Badge>
-              <Badge bg="successBg" borderRadius="8px" color="successText">
-                ${savedPlan.monthlyUsd}/mo
-              </Badge>
-            </Flex>
+            <PortalEntityBadges
+              left={savedPlan.status}
+              middle={`${vm.product.supportTier} support`}
+              right={`$${savedPlan.monthlyUsd}/mo`}
+            />
           }
           eyebrow={vm.organization.name}
           summary={`${savedPlan.plan} in ${savedPlan.region} is prepared for quote work and customer review.`}
           title={savedPlan.name}
         />
-      }
-      summaryPanel={
+      ),
+      summaryPanel: (
         <DarkSummaryPanel
           eyebrow="Saved plan summary"
           factVariant="glass"
@@ -132,9 +125,15 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
           summary="monthly estimate for the selected saved server package."
           value={`$${savedPlan.monthlyUsd}`}
         />
-      }
-    >
+      ),
+    children: (
+      <>
       <FilterCard>
+        <PortalEntityBadges
+          left={savedPlan.status}
+          middle={`${vm.product.supportTier} support`}
+          right={`$${savedPlan.monthlyUsd}/mo`}
+        />
         <Grid gap="4" templateColumns={{ base: '1fr', md: '120px minmax(0, 1fr)' }}>
           <ProductVisual
             alt={vm.product.imageAlt}
@@ -143,17 +142,6 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
             tone={vm.product.visualTone}
           />
           <Stack gap="3">
-            <Flex align="center" gap="2" wrap="wrap">
-              <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                {savedPlan.status}
-              </Badge>
-              <Badge bg="panelGlassBg" borderRadius="8px" color="ink.700">
-                {vm.product.supportTier} support
-              </Badge>
-              <Badge bg="successBg" borderRadius="8px" color="successText">
-                ${savedPlan.monthlyUsd}/mo
-              </Badge>
-            </Flex>
             <Heading as="h2" color="ink.900" fontSize="2xl">
               {savedPlan.plan}
             </Heading>
@@ -232,8 +220,9 @@ export const PortalSavedPlanDetailPage = observer(function PortalSavedPlanDetail
           </LinkedSummaryCard>
         ))}
       </FilterCard>
-    </PortalDetailPageLayout>
-  );
+      </>
+    ),
+  });
 });
 
 function PlanFact({ label, value }: { readonly label: string; readonly value: string }) {
