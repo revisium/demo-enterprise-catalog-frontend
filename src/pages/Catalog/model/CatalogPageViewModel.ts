@@ -15,6 +15,7 @@ type CatalogSortId =
 type CatalogProductRow = CatalogProduct & {
   readonly detailHref: string;
   readonly displayUpdatedDate: string;
+  readonly documentCount: number;
   readonly effectivePrice: number;
   readonly maxSetupHours: number;
   readonly totalStock: number;
@@ -61,9 +62,9 @@ export class CatalogPageViewModel {
   filterMode: CatalogFilterMode = 'all';
   maxMonthlyPrice = 0;
   minRamGb = 0;
-  requireCompliance = false;
+  requireDocuments = false;
   sortId: CatalogSortId = 'display-order';
-  stockOnly = true;
+  stockOnly = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -77,6 +78,7 @@ export class CatalogPageViewModel {
         day: 'numeric',
         month: 'short',
       }).format(new Date(product.system.updatedAt)),
+      documentCount: product.documents.length,
       effectivePrice: product.pricing.monthlyUsd,
       maxSetupHours: product.availabilityByRegion.reduce(
         (max, region) => Math.max(max, region.setupHours),
@@ -155,12 +157,15 @@ export class CatalogPageViewModel {
       this.selectedSupportTierIds.length +
       (this.minRamGb > 0 ? 1 : 0) +
       (this.maxMonthlyPrice > 0 ? 1 : 0) +
-      (this.requireCompliance ? 1 : 0)
+      (this.stockOnly ? 1 : 0) +
+      (this.requireDocuments ? 1 : 0)
     );
   }
 
   get hasUserFilters() {
-    return this.activeFilterCount > 0;
+    return (
+      this.activeFilterCount > 0 || this.filterMode !== 'all' || this.sortId !== 'display-order'
+    );
   }
 
   get queryRows() {
@@ -179,7 +184,7 @@ export class CatalogPageViewModel {
       },
       {
         label: 'Documents',
-        value: this.requireCompliance ? 'Docs' : 'All',
+        value: this.requireDocuments ? 'Docs' : 'All',
       },
       {
         label: 'Sort',
@@ -201,9 +206,9 @@ export class CatalogPageViewModel {
     this.filterMode = 'all';
     this.maxMonthlyPrice = 0;
     this.minRamGb = 0;
-    this.requireCompliance = false;
+    this.requireDocuments = false;
     this.sortId = 'display-order';
-    this.stockOnly = true;
+    this.stockOnly = false;
   }
 
   setMaxMonthlyPrice(value: string) {
@@ -214,8 +219,8 @@ export class CatalogPageViewModel {
     this.minRamGb = this.parseNonNegativeNumber(value);
   }
 
-  setRequireCompliance(value: boolean) {
-    this.requireCompliance = value;
+  setRequireDocuments(value: boolean) {
+    this.requireDocuments = value;
   }
 
   setSort(sortId: string) {
@@ -295,7 +300,7 @@ export class CatalogPageViewModel {
       this.matchesRam(product),
       this.matchesPrice(product),
       this.matchesStock(product),
-      this.matchesCompliance(product),
+      this.matchesDocuments(product),
     ];
 
     if (groupedRules.length === 0) {
@@ -316,8 +321,8 @@ export class CatalogPageViewModel {
     return this.selectedAddonIds.some((addonId) => product.addons.includes(addonId));
   }
 
-  private matchesCompliance(product: CatalogProductRow) {
-    return !this.requireCompliance || product.compliance.length > 0;
+  private matchesDocuments(product: CatalogProductRow) {
+    return !this.requireDocuments || product.documentCount > 0;
   }
 
   private matchesFamily(product: CatalogProductRow) {

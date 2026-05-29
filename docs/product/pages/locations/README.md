@@ -24,6 +24,8 @@ Prototype typed mock data from the shared catalog snapshot.
 
 - first screen uses the same premium public-page shell as pricing and catalog:
   compact intro, three filter/summary panels, and no marketing-only hero;
+- show a compact desktop-only raster intro visual that signals global regional
+  capacity without replacing the operational filters;
 - results use a two-column desktop layout: region capacity rows on the left and
   a right-side shortlist with the best visible capacity match;
 - each region row shows data-center codes, family chips, stock/setup/family
@@ -31,6 +33,10 @@ Prototype typed mock data from the shared catalog snapshot.
 - mobile keeps filters stacked and lets each region capacity card shrink to a
   compact readable width before horizontal scrolling, matching pricing table
   behavior instead of collapsing the plan rows into a broken narrow stack;
+- show the primary reset action only while filters or sort differ from the
+  default query, and hide it after reset;
+- make region shortlist items and related plan rows clickable with hover
+  feedback instead of rendering small `Open` or `View capacity` buttons;
 - public copy must stay customer-facing: no source widgets, row IDs, internal
   table names, or mock-state labels.
 

@@ -15,7 +15,8 @@ Typed mock product records.
   filters;
 - `Match all` applies AND across selected groups;
 - `Match any` applies OR across selected groups;
-- memory, monthly price, stock, and compliance are always AND constraints;
+- memory, monthly price, stock, and document availability are always AND
+  constraints;
 - region filtering reads nested regional availability rows;
 - sorting covers schema fields and system fields such as display order and
   updated time.
@@ -23,8 +24,8 @@ Typed mock product records.
 ## UX Scope
 
 - keep the catalog as the primary high-density browsing surface;
-- keep browse cards text-first during density review; decorative product
-  visuals belong on detail or later approved asset surfaces;
+- keep browse cards text-first during density review, while allowing one
+  decorative raster intro visual to distinguish the server catalog section;
 - align browse-card content to stable internal columns and use compact `12px`
   card padding;
 - let the plan-description and commercial availability columns shrink together
@@ -39,9 +40,15 @@ Typed mock product records.
   metric band above the catalog;
 - render result counts as separate metadata values so language switching does
   not reuse stale combined count labels;
+- show stock and document counts as result-row badges because both can be active
+  filter criteria;
 - hide stock and active-filter result metadata when the filtered list is empty;
-- treat the default in-stock availability view as a baseline, not a
-  user-applied active filter;
+- start stock and document quick filters inactive so first load shows the full
+  default catalog;
+- show the primary reset action only while filters, sort, match mode, or
+  quick-filter state differ from the default query, and hide it after reset;
+- make each server result row a clickable item with hover feedback instead of
+  rendering a separate `Open` button;
 - keep the filter column in document scroll without an internal scrollbar;
 - use a wider desktop filter rail with compact `12px` filter-card padding during
   density review;

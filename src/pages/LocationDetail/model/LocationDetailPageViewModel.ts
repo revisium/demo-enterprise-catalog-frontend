@@ -174,6 +174,15 @@ export class LocationDetailPageViewModel {
     return this.filteredPlanRows.length === 0;
   }
 
+  get hasUserFilters() {
+    return (
+      this.minStock > 0 ||
+      this.selectedFamilyIds.length > 0 ||
+      this.selectedSupportWindowId !== 'all' ||
+      this.sortId !== 'price-efficiency'
+    );
+  }
+
   get summaryMetrics() {
     return [
       { label: 'Plans', value: String(this.regionSummary.planCount) },

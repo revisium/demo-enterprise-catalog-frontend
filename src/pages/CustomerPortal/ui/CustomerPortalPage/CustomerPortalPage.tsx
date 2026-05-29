@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Link, useFetcher, useLocation } from 'react-router';
 
 import type { PortalDemoSession } from 'src/entities/portal';
+import { customerProfileIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   FieldHint,
   FilterButton,
   FilterCard,
+  PageSectionSurface,
   PageIntroGrid,
   SectionEyebrow,
   StickyPanel,
@@ -37,11 +39,12 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
   const primaryQuote = vm.primaryQuote;
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="app" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Customer console"
+          image={{ src: customerProfileIntroImage }}
           metrics={vm.metrics}
           metricsLabel="Workspace summary"
           summary="Saved plans, quotes, favorites, preferences, and activity for the signed-in user."
@@ -297,7 +300,7 @@ export const CustomerPortalPage = observer(function CustomerPortalPage({
           </StickyPanel>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

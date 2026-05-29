@@ -15,7 +15,7 @@ import { NavLink, useLocation } from 'react-router';
 
 import { useI18n } from 'src/shared/i18n';
 import { createReturnState } from 'src/shared/routing';
-import { BackNavButton, StickyPanel } from 'src/shared/ui';
+import { BackNavButton, PageSectionSurface, StickyPanel } from 'src/shared/ui';
 import { HomePageViewModel } from '../../model/HomePageViewModel';
 import { CompactQuerySummary } from '../CompactQuerySummary/CompactQuerySummary';
 
@@ -29,7 +29,7 @@ export const HomePage = observer(function HomePage() {
   const metricRows = vm.getMetricRows(t);
 
   return (
-    <Box bg="pagePremiumBg" color="ink.900" data-i18n-skip flex="1">
+    <PageSectionSurface color="ink.900" data-i18n-skip flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <Grid
@@ -257,7 +257,7 @@ export const HomePage = observer(function HomePage() {
                       {t('home.matchingPlans')}
                     </Text>
                     <Heading as="h2" fontSize="xl">
-                      {t('home.chooseAnotherServer')}
+                      {t('home.chooseServer')}
                     </Heading>
                   </Stack>
                   <Button asChild borderRadius="8px" size="sm" variant="outline">
@@ -315,7 +315,7 @@ export const HomePage = observer(function HomePage() {
           </Stack>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

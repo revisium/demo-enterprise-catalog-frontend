@@ -49,7 +49,13 @@ export function PlansPanel({ returnState, vm }: PlansPanelProps) {
               {plan.plan} · {plan.region} · ${plan.monthlyUsd}/mo
             </Text>
           </Stack>
-          <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
+          <Badge
+            alignSelf="start"
+            bg="brand.50"
+            borderRadius="8px"
+            color="brand.500"
+            justifySelf="start"
+          >
             {plan.status}
           </Badge>
           <Button asChild borderRadius="8px" size="sm" variant="outline">

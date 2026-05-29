@@ -205,6 +205,7 @@ const ruOnlyVisualTextEntries = {
   'Q3 contract draft price book': 'Черновик контрактного прайсбука Q3',
   quote: 'расчет',
   quotes: 'расчеты',
+  'Quote comment accepted by backend mock.': 'Комментарий к расчету принят (backend mock).',
   'Quick start': 'Быстрый старт',
   'Request preview': 'Предпросмотр запроса',
   'Recommended follow-up': 'Рекомендуемое действие',

@@ -53,6 +53,15 @@ export class ReleasesPageViewModel {
     return this.filteredUpdates.length === 0;
   }
 
+  get hasUserFilters() {
+    return (
+      this.selectedAudience !== 'All' ||
+      this.selectedPriority !== 'All' ||
+      this.selectedType !== 'All' ||
+      this.sortId !== 'latest'
+    );
+  }
+
   get latestUpdate() {
     return this.filteredUpdates[0];
   }

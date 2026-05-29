@@ -8,8 +8,8 @@ iteration, not to freeze a brand too early.
 - Premium Apple-like B2B palette: white surfaces, soft blue-tinted page
   background, restrained cyan/blue accents, dark graphite text, and occasional
   dark contrast panels for price or purchase actions. Chakra theme tokens encode
-  this as blue `brand`, graphite `ink` (`500`, `600`, `700`, `900`), and cool
-  neutral `surface` scales.
+  this as blue `brand`, copper amber `accent`, graphite `ink` (`500`, `600`,
+  `700`, `900`), and cool neutral `surface` scales.
 - Layout should feel spacious and product-grade, not like an infrastructure
   terminal. Use fewer panels with more breathing room before adding density.
 - Cards use `0.5rem` radius or less.
@@ -31,7 +31,8 @@ iteration, not to freeze a brand too early.
   major widgets.
 - Home layout: left configurator and right recommendation column scroll
   together in the document flow, with compact selection summary, short
-  matching-plan suggestions, and concise next-step links.
+  matching-plan suggestions that keep row order stable while visibly
+  highlighting the selected plan, and concise next-step links.
 - Public sections use the same page shell: `pagePremiumBg`, `1240px`
   constrained content, `8px` panels, `surface.200` borders, and blue
   `brand.50`/`brand.500` badges.
@@ -49,6 +50,12 @@ iteration, not to freeze a brand too early.
   screens and `5xl` from desktop/tablet layouts) so section titles stay calm
   next to dense catalog controls. Do not add terminal periods to these display
   headings.
+- Public route intro blocks may include a compact raster page visual on desktop
+  to give each section a recognizable subject without turning the page into a
+  marketing hero. Keep these visuals decorative, text-free, hidden on mobile
+  until the compact layout is separately tuned, rendered as isolated objects
+  without framed cards or background plates, and anchored by the restrained
+  copper amber accent rather than introducing one-off page colors.
 - Public intro metric summaries are temporarily hidden during density review;
   keep their data and component wiring in place so they can be restored or
   removed intentionally before publishing the next PR.

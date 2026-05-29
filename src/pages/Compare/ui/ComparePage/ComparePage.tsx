@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router';
 
+import { compareIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
@@ -11,6 +12,7 @@ import {
   FieldHint,
   FilterButton,
   FilterCard,
+  PageSectionSurface,
   PageIntroGrid,
   QuerySummary,
   SectionEyebrow,
@@ -28,11 +30,12 @@ export const ComparePage = observer(function ComparePage() {
   const comparisonMinWidth = `${180 + vm.comparedProducts.length * 164}px`;
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="compare" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Server comparison"
+          image={{ src: compareIntroImage }}
           metrics={vm.highlights}
           metricsLabel="Comparison summary"
           summary="Choose up to four server plans, narrow them to a region, then compare price, hardware, stock, and setup time before sending a quote request."
@@ -178,25 +181,24 @@ export const ComparePage = observer(function ComparePage() {
               minW={{ base: comparisonMinWidth, lg: '0' }}
               overflow="hidden"
             >
-              <Flex
-                align="center"
+              <Grid
+                bg="surface.50"
                 borderBottomColor="surface.200"
                 borderBottomWidth="1px"
                 gap="3"
-                justify="space-between"
                 p="3"
-                wrap="wrap"
+                templateColumns="minmax(0, 1fr) auto"
               >
-                <Stack gap="1">
+                <Stack gap="1" minW="0">
                   <SectionEyebrow>Comparison matrix</SectionEyebrow>
                   <Heading as="h2" color="ink.900" fontSize="2xl">
                     Plan differences
                   </Heading>
                 </Stack>
-                <Text color="ink.500" fontSize="sm">
+                <Text color="ink.500" fontSize="sm" textAlign="right">
                   Ranked by {vm.selectedScenarioLabel.toLowerCase()}
                 </Text>
-              </Flex>
+              </Grid>
               <Grid
                 bg="surface.50"
                 borderBottomColor="surface.200"
@@ -234,8 +236,9 @@ export const ComparePage = observer(function ComparePage() {
                 ))}
               </Grid>
 
-              {vm.metrics.map((metric) => (
+              {vm.metrics.map((metric, metricIndex) => (
                 <Grid
+                  bg={metricIndex % 2 === 0 ? 'panelGlassBg' : 'white'}
                   borderBottomColor="surface.200"
                   borderBottomWidth="1px"
                   gap="0"
@@ -256,7 +259,7 @@ export const ComparePage = observer(function ComparePage() {
                       minH="14"
                       p="3"
                     >
-                      <Text color="ink.900" fontWeight="760" overflowWrap="anywhere">
+                      <Text color="ink.900" fontSize="sm" fontWeight="760" overflowWrap="anywhere">
                         {value}
                       </Text>
                     </Flex>
@@ -274,40 +277,65 @@ export const ComparePage = observer(function ComparePage() {
           templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
         >
           <Stack gap="2" gridColumn={{ xl: 'span 2' }} overflowX={{ base: 'auto', md: 'visible' }}>
-            {vm.bestFitRows.map((row) => (
+            <Stack borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="0">
               <Grid
-                alignItems="center"
-                bg="white"
-                borderColor="surface.200"
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="3"
-                key={row.id}
+                bg="surface.50"
+                borderBottomColor="surface.200"
+                borderBottomWidth="1px"
+                gap="0"
                 minW={{ base: '680px', md: '0' }}
-                p="3"
-                templateColumns="minmax(0, 1fr) 82px 106px 146px"
+                p="2.5"
+                templateColumns="minmax(0, 1fr) 96px 108px 124px"
+                w="100%"
               >
-                <Stack gap="0" minW="0">
-                  <Box asChild color="ink.900" fontWeight="760">
-                    <RouterLink state={returnState} to={row.detailHref}>
-                      {row.label}
-                    </RouterLink>
-                  </Box>
-                  <Text color="ink.500" fontSize="sm">
-                    Best region: {row.bestRegionLabel}
-                  </Text>
-                </Stack>
-                <Text color="ink.900" fontSize="sm" fontWeight="760">
-                  score {row.fitScore}
+                <Text color="ink.500" fontSize="xs" fontWeight="760">
+                  Plan
                 </Text>
-                <Text color="ink.700" fontSize="sm" fontWeight="650">
-                  {row.stockLabel}
+                <Text color="ink.500" fontSize="xs" fontWeight="760">
+                  Score
                 </Text>
-                <Text color="ink.500" fontSize="sm">
-                  {row.setupLabel} · {row.monthlyPriceLabel}
+                <Text color="ink.500" fontSize="xs" fontWeight="760">
+                  Stock
+                </Text>
+                <Text color="ink.500" fontSize="xs" fontWeight="760">
+                  Setup / Monthly
                 </Text>
               </Grid>
-            ))}
+              {vm.bestFitRows.map((row, index) => (
+                <Grid
+                  alignItems="center"
+                  bg={index % 2 === 0 ? 'panelGlassBg' : 'white'}
+                  borderBottomColor="surface.200"
+                  borderBottomWidth="1px"
+                  gap="0"
+                  key={row.id}
+                  minW={{ base: '680px', md: '0' }}
+                  p="3"
+                  templateColumns="minmax(0, 1fr) 96px 108px 124px"
+                  w="100%"
+                >
+                  <Stack gap="0" minW="0">
+                    <Box asChild color="ink.900" fontWeight="760">
+                      <RouterLink state={returnState} to={row.detailHref}>
+                        {row.label}
+                      </RouterLink>
+                    </Box>
+                    <Text color="ink.500" fontSize="xs">
+                      Best region: {row.bestRegionLabel}
+                    </Text>
+                  </Stack>
+                  <Text color="ink.900" fontSize="sm" fontWeight="760">
+                    {row.fitScore}
+                  </Text>
+                  <Text color="ink.700" fontSize="sm" fontWeight="650">
+                    {row.stockLabel}
+                  </Text>
+                  <Text color="ink.500" fontSize="sm">
+                    {row.setupLabel} · {row.monthlyPriceLabel}
+                  </Text>
+                </Grid>
+              ))}
+            </Stack>
           </Stack>
 
           <StickyPanel
@@ -333,7 +361,7 @@ export const ComparePage = observer(function ComparePage() {
           </StickyPanel>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

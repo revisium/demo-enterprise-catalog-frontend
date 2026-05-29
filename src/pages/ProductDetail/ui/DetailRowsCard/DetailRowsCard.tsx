@@ -8,6 +8,7 @@ interface KeyValueRow {
 interface DetailRowsCardProps {
   readonly keyPrefix: string;
   readonly rows: readonly KeyValueRow[];
+  readonly skipTranslation?: boolean;
   readonly title: string;
 }
 
@@ -18,9 +19,22 @@ const sectionHeadingProps = {
   textTransform: 'uppercase',
 } as const;
 
-export function DetailRowsCard({ keyPrefix, rows, title }: DetailRowsCardProps) {
+export function DetailRowsCard({
+  keyPrefix,
+  rows,
+  skipTranslation = false,
+  title,
+}: DetailRowsCardProps) {
   return (
-    <Stack bg="white" borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="2" p="3">
+    <Stack
+      bg="white"
+      borderColor="surface.200"
+      borderRadius="8px"
+      borderWidth="1px"
+      data-i18n-skip={skipTranslation ? true : undefined}
+      gap="2"
+      p="3"
+    >
       <Heading as="h2" {...sectionHeadingProps}>
         {title}
       </Heading>

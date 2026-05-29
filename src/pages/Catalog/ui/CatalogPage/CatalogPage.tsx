@@ -1,8 +1,9 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
+import { serversIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
@@ -10,6 +11,9 @@ import {
   EmptyState,
   FilterButton,
   FilterCard,
+  ResetButton,
+  PageSectionSurface,
+  PageIntroVisual,
   QuerySummary,
   SectionEyebrow,
   SelectField,
@@ -22,23 +26,37 @@ export const CatalogPage = observer(function CatalogPage() {
   const returnState = createReturnState(location);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="servers" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
-        <Stack as="header" gap={{ base: '3', md: '4' }} maxW="820px" pb={{ base: '2', md: '3' }}>
-          <SectionEyebrow>Servers</SectionEyebrow>
-          <Heading
-            as="h1"
-            color="ink.900"
-            fontSize={{ base: '3xl', md: '5xl' }}
-            lineHeight="1"
-          >
-            Server catalog
-          </Heading>
-          <Text color="ink.600" fontSize={{ base: 'sm', md: 'md' }} maxW="620px">
-            Filter server plans by region, stock, price, docs, and hardware.
-          </Text>
-        </Stack>
+        <Grid
+          alignItems="start"
+          gap={{ base: '3', md: '5' }}
+          pb={{ base: '2', md: '3' }}
+          templateColumns={{
+            base: '1fr',
+            md: 'minmax(0, 1fr) minmax(260px, 320px)',
+            lg: 'minmax(0, 1fr) 360px',
+          }}
+        >
+          <Stack as="header" gap={{ base: '3', md: '4' }} maxW="820px">
+            <SectionEyebrow>Servers</SectionEyebrow>
+            <PageIntroVisual
+              display={{ base: 'block', md: 'none' }}
+              image={{ src: serversIntroImage }}
+              alignSelf="center"
+              maxW="clamp(280px, 78vw, 400px)"
+              w="fit-content"
+            />
+            <Heading as="h1" color="ink.900" fontSize={{ base: '3xl', md: '5xl' }} lineHeight="1">
+              Server catalog
+            </Heading>
+            <Text color="ink.600" fontSize={{ base: 'sm', md: 'md' }} maxW="620px">
+              Filter server plans by region, stock, price, docs, and hardware.
+            </Text>
+          </Stack>
+          <PageIntroVisual image={{ src: serversIntroImage }} />
+        </Grid>
 
         <Grid
           alignItems="start"
@@ -121,8 +139,8 @@ export const CatalogPage = observer(function CatalogPage() {
                   In stock
                 </FilterButton>
                 <FilterButton
-                  onClick={() => vm.setRequireCompliance(!vm.requireCompliance)}
-                  selected={vm.requireCompliance}
+                  onClick={() => vm.setRequireDocuments(!vm.requireDocuments)}
+                  selected={vm.requireDocuments}
                   tone="success"
                 >
                   Docs
@@ -150,7 +168,7 @@ export const CatalogPage = observer(function CatalogPage() {
                       <Text as="span">units</Text>
                     </>
                   )}
-                  {vm.hasUserFilters ? (
+                  {vm.activeFilterCount > 0 ? (
                     <>
                       <Text as="span">Active filters</Text>
                       <Text as="span">{vm.activeFilterCount}</Text>
@@ -158,14 +176,11 @@ export const CatalogPage = observer(function CatalogPage() {
                   ) : null}
                 </Flex>
               </Stack>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
+              {vm.hasUserFilters ? (
+                <ResetButton onClick={() => vm.resetFilters()}>
+                  Reset filters
+                </ResetButton>
+              ) : null}
             </Flex>
             {vm.hasNoMatches ? (
               <EmptyState
@@ -177,69 +192,92 @@ export const CatalogPage = observer(function CatalogPage() {
             ) : null}
             {vm.filteredProducts.map((product) => (
               <Grid
+                asChild
                 alignItems="stretch"
                 bg="white"
                 borderColor="surface.200"
                 borderRadius="8px"
                 borderWidth="1px"
                 boxShadow="panel"
+                color="inherit"
+                cursor="pointer"
                 gap="4"
                 key={product.id}
                 p="3"
+                textDecoration="none"
                 templateColumns={{
                   base: '1fr',
                   md: 'minmax(355px, 1fr) minmax(0, 1fr)',
                 }}
+                transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
+                _focusVisible={{
+                  boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
+                  outline: 'none',
+                }}
+                _hover={{
+                  borderColor: 'activeBorder',
+                  boxShadow: '0 18px 50px rgba(16, 24, 40, 0.12)',
+                  transform: 'translateY(-1px)',
+                }}
               >
-                <Stack gap="3">
-                  <Flex
-                    align="center"
-                    color="ink.500"
-                    fontSize="sm"
-                    fontWeight="700"
-                    gap="2"
-                    minW="0"
-                    wrap="wrap"
-                  >
-                    <Text>{product.category}</Text>
-                    <Badge bg="successBg" borderRadius="8px" color="successText">
-                      {product.lifecycle}
-                    </Badge>
-                  </Flex>
-                  <Heading as="h3" color="ink.900" fontSize="xl">
-                    {product.name}
-                  </Heading>
-                  <Text color="ink.500" fontSize="sm" minH={{ md: '12' }}>
-                    {product.summary}
-                  </Text>
-                  <Flex gap="2" wrap="wrap">
-                    {product.protocols.map((protocol) => (
-                      <Badge bg="panelSubtleBg" color="ink.700" key={protocol}>
-                        {protocol}
+                <Link state={returnState} to={product.detailHref}>
+                  <Stack gap="3">
+                    <Flex
+                      align="center"
+                      color="ink.500"
+                      fontSize="sm"
+                      fontWeight="700"
+                      gap="2"
+                      minW="0"
+                      wrap="wrap"
+                    >
+                      <Text>{product.category}</Text>
+                      <Badge bg="successBg" borderRadius="8px" color="successText">
+                        {product.lifecycle}
                       </Badge>
-                    ))}
-                  </Flex>
-                </Stack>
-                <Stack align="start" color="ink.500" fontSize="sm" gap="2" h="100%" minW="0">
-                  <Text minH={{ md: '10' }}>{product.availability}</Text>
-                  <Text>
-                    {product.hardware.cpuCores} cores · {product.hardware.ramGb} GB RAM ·{' '}
-                    {product.hardware.networkGbps} Gbps
-                  </Text>
-                  <Text>
-                    ${product.pricing.monthlyUsd}/mo · {product.totalStock} units
-                  </Text>
-                  <Button asChild alignSelf="end" borderRadius="8px" mt="auto" variant="outline">
-                    <Link state={returnState} to={product.detailHref}>
-                      Open
-                    </Link>
-                  </Button>
-                </Stack>
+                    </Flex>
+                    <Heading as="h3" color="ink.900" fontSize="xl">
+                      {product.name}
+                    </Heading>
+                    <Text color="ink.500" fontSize="sm" minH={{ md: '12' }}>
+                      {product.summary}
+                    </Text>
+                    <Flex gap="2" wrap="wrap">
+                      {product.protocols.map((protocol) => (
+                        <Badge bg="panelSubtleBg" color="ink.700" key={protocol}>
+                          {protocol}
+                        </Badge>
+                      ))}
+                    </Flex>
+                  </Stack>
+                  <Stack align="start" color="ink.500" fontSize="sm" gap="2" h="100%" minW="0">
+                    <Text minH={{ md: '10' }}>{product.availability}</Text>
+                    <Text>
+                      {product.hardware.cpuCores} cores · {product.hardware.ramGb} GB RAM ·{' '}
+                      {product.hardware.networkGbps} Gbps
+                    </Text>
+                    <Text>${product.pricing.monthlyUsd}/mo</Text>
+                    <Flex gap="2" wrap="wrap">
+                      <Badge
+                        bg={product.totalStock > 0 ? 'successBg' : 'amberBg'}
+                        borderRadius="8px"
+                        color={product.totalStock > 0 ? 'successText' : 'amberText'}
+                      >
+                        {product.totalStock} units
+                      </Badge>
+                      {product.documentCount > 0 ? (
+                        <Badge bg="brand.50" borderRadius="8px" color="brand.700">
+                          {product.documentCount} docs
+                        </Badge>
+                      ) : null}
+                    </Flex>
+                  </Stack>
+                </Link>
               </Grid>
             ))}
           </Stack>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });

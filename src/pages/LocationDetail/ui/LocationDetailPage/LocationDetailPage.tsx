@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Badge, Button, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
@@ -12,7 +12,9 @@ import {
   EmptyState,
   FieldHint,
   FilterCard,
+  PageSectionSurface,
   QuerySummary,
+  ResetButton,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -33,7 +35,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
   }, [params.regionId, vm]);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '5', md: '6' }}>
           <BackNavButton fallbackTo="/locations" />
@@ -54,7 +56,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                       </Badge>
                     ))}
                     {regionSummary.supportWindows.map((supportWindow) => (
-                      <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={supportWindow}>
+                    <Badge bg="brand.50" borderRadius="8px" color="brand.500" key={supportWindow}>
                         {vm.formatSupportWindow(supportWindow)}
                       </Badge>
                     ))}
@@ -164,14 +166,11 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                   {vm.filteredPlanRows.reduce((total, row) => total + row.stock, 0)} units visible
                 </Text>
               </Stack>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
+              {vm.hasUserFilters ? (
+                <ResetButton onClick={() => vm.resetFilters()}>
+                  Reset filters
+                </ResetButton>
+              ) : null}
             </Flex>
 
             <Stack
@@ -288,7 +287,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
 

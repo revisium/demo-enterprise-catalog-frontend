@@ -1,11 +1,11 @@
-import { Box, Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { Container, Grid, Heading, Stack, Text } from '@chakra-ui/react';
 
-import { BackNavButton, FieldHint, FilterCard, SectionEyebrow } from 'src/shared/ui';
+import { BackNavButton, FieldHint, FilterCard, PageSectionSurface, SectionEyebrow } from 'src/shared/ui';
 import type { PortalQuoteDetailPageViewModel } from '../../model/PortalQuoteDetailPageViewModel';
 
 export function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageViewModel }) {
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <Stack gap={{ base: '4', md: '5' }}>
           <BackNavButton fallbackTo="/app" />
@@ -26,7 +26,7 @@ export function QuoteAccessState({ vm }: { readonly vm: PortalQuoteDetailPageVie
           </FilterCard>
         </Stack>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 }
 

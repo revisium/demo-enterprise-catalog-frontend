@@ -3,14 +3,18 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
+import { updatesIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
   EmptyState,
   FilterButton,
   FilterCard,
+  InteractiveListCard,
+  PageSectionSurface,
   PageIntroGrid,
   QuerySummary,
+  ResetButton,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -24,11 +28,12 @@ export const ReleasesPage = observer(function ReleasesPage() {
   const returnState = createReturnState(location);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="releases" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Product updates"
+          image={{ src: updatesIntroImage }}
           metrics={vm.summaryMetrics}
           metricsLabel="Update summary"
           summary="Catalog, region, pricing, and documentation changes in one feed."
@@ -91,14 +96,11 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   Customer-facing announcements
                 </Heading>
               </Stack>
-              <Button
-                borderRadius="8px"
-                onClick={() => vm.resetFilters()}
-                size="sm"
-                variant="outline"
-              >
-                Reset filters
-              </Button>
+              {vm.hasUserFilters ? (
+                <ResetButton onClick={() => vm.resetFilters()}>
+                  Reset filters
+                </ResetButton>
+              ) : null}
             </Flex>
 
             {vm.hasNoMatches ? (
@@ -109,95 +111,142 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 title="No updates found"
               />
             ) : null}
+              <Stack gap="3">
+              {vm.filteredUpdates.map((update, index) => {
+                let timelineBadgeBg = 'surface.100';
+                const isImportant = update.priority === 'Important';
 
-            {vm.filteredUpdates.map((update) => (
-              <Grid
-                bg="white"
-                borderColor={vm.isSaved(update.id) ? 'activeBorder' : 'surface.200'}
-                borderRadius="8px"
-                borderWidth="1px"
-                gap="4"
-                key={update.id}
-                minW="0"
-                p="3"
-                templateColumns={{ base: '1fr', lg: '112px minmax(0, 1fr) 190px' }}
-              >
-                <Stack gap="2">
-                  <Text color="ink.500" fontSize="sm" fontWeight="760">
-                    {update.date}
-                  </Text>
-                  <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
-                    {update.type}
-                  </Badge>
-                  <Badge alignSelf="start" bg="surface.100" borderRadius="8px" color="ink.600">
-                    {update.audience}
-                  </Badge>
-                  <Badge
-                    alignSelf="start"
-                    bg={update.priority === 'Important' ? 'amberBg' : 'panelGlassBg'}
-                    borderRadius="8px"
-                    color={update.priority === 'Important' ? 'amberText' : 'ink.700'}
-                  >
-                    {update.priority}
-                  </Badge>
-                </Stack>
+                if (update.priority === 'Important') {
+                  timelineBadgeBg = 'amberBg';
+                } else if (update.priority === 'Advisory') {
+                  timelineBadgeBg = 'panelGlassBg';
+                }
 
-                <Stack gap="3" minW="0">
-                  <Stack gap="1">
-                    <Heading as="h3" color="ink.900" fontSize="xl">
-                      {update.title}
-                    </Heading>
-                    <Text color="ink.600" fontSize="sm" lineHeight="1.45">
-                      {update.summary}
-                    </Text>
-                  </Stack>
-                  <Flex gap="2" wrap="wrap">
-                    {update.tags.map((tag) => (
-                      <Badge bg="panelGlassBg" borderRadius="8px" color="ink.600" key={tag}>
-                        {tag}
-                      </Badge>
-                    ))}
-                  </Flex>
-                  <Flex align="center" gap="3" wrap="wrap">
-                    <Text color="ink.500" fontSize="sm">
-                      {vm.getLikedCount(update)} customer reactions
-                    </Text>
-                    <Button
-                      aria-pressed={vm.isLiked(update.id)}
-                      borderRadius="8px"
-                      onClick={() => vm.toggleLike(update.id)}
-                      size="sm"
-                      variant={vm.isLiked(update.id) ? 'solid' : 'outline'}
+                  return (
+                    <Grid
+                      key={update.id}
+                      gap="3"
+                      minW="0"
+                      templateColumns={{ base: '1fr', lg: '56px minmax(0, 1fr)' }}
+                      w="100%"
                     >
-                      Like
-                    </Button>
-                    <Button
-                      aria-pressed={vm.isSaved(update.id)}
-                      borderRadius="8px"
-                      onClick={() => vm.toggleSaved(update.id)}
-                      size="sm"
-                      variant={vm.isSaved(update.id) ? 'solid' : 'outline'}
-                    >
-                      Save
-                    </Button>
-                    <Button asChild borderRadius="8px" size="sm" variant="outline">
-                      <Link state={returnState} to={`/releases/${update.id}`}>
-                        Open update
-                      </Link>
-                    </Button>
-                  </Flex>
-                </Stack>
+                      <ReleaseTimelineNode
+                        badgeColor={isImportant ? 'amberText' : 'ink.700'}
+                        hasConnector={index !== vm.filteredUpdates.length - 1}
+                        number={index + 1}
+                        tone={timelineBadgeBg}
+                      />
 
-                <Stack bg="surface.50" borderRadius="8px" gap="1.5" minW="0" p="3">
-                  <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
-                    Customer impact
-                  </Text>
-                  <Text color="ink.800" fontSize="sm">
-                    {update.impact}
-                  </Text>
-                </Stack>
-              </Grid>
-            ))}
+                      <InteractiveListCard
+                        ariaLabel={`Open update: ${update.title}`}
+                        alignItems="stretch"
+                        bg={vm.isSaved(update.id) ? 'brand.50' : 'white'}
+                        borderColor="surface.200"
+                        borderRadius="8px"
+                        borderWidth="1px"
+                        cursor="pointer"
+                        gap="3"
+                        minW="0"
+                        overflow="hidden"
+                        p="3"
+                        position="relative"
+                        returnState={returnState}
+                        templateColumns={{ base: '1fr', lg: '112px minmax(0, 1fr) 190px' }}
+                        to={`/releases/${update.id}`}
+                      >
+
+                        <Stack gap="2" pointerEvents="none" position="relative" zIndex={2}>
+                          <Text color="ink.500" fontSize="sm" fontWeight="760">
+                            {update.date}
+                          </Text>
+                          <Badge alignSelf="start" bg="brand.50" borderRadius="8px" color="brand.500">
+                            {update.type}
+                          </Badge>
+                          <Badge alignSelf="start" bg="surface.100" borderRadius="8px" color="ink.600">
+                            {update.audience}
+                          </Badge>
+                          <Badge
+                            alignSelf="start"
+                            bg={update.priority === 'Important' ? 'amberBg' : 'panelGlassBg'}
+                            borderRadius="8px"
+                            color={update.priority === 'Important' ? 'amberText' : 'ink.700'}
+                          >
+                            {update.priority}
+                          </Badge>
+                        </Stack>
+
+                        <Stack gap="3" minW="0" pointerEvents="none">
+                          <Stack gap="1">
+                            <Heading as="h3" color="ink.900" fontSize="xl">
+                              {update.title}
+                            </Heading>
+                            <Text color="ink.600" fontSize="sm" lineHeight="1.45">
+                              {update.summary}
+                            </Text>
+                          </Stack>
+                          <Flex gap="2" wrap="wrap">
+                            {update.tags.map((tag) => (
+                              <Badge bg="panelGlassBg" borderRadius="8px" color="ink.600" key={tag}>
+                                {tag}
+                              </Badge>
+                            ))}
+                          </Flex>
+                          <Flex
+                            align="center"
+                            gap="3"
+                            pointerEvents="auto"
+                            position="relative"
+                            wrap="wrap"
+                            zIndex="2"
+                          >
+                            <Text color="ink.500" fontSize="sm">
+                              {vm.getLikedCount(update)} customer reactions
+                            </Text>
+                            <Button
+                              aria-pressed={vm.isLiked(update.id)}
+                              borderRadius="8px"
+                              onClick={() => vm.toggleLike(update.id)}
+                              size="sm"
+                              variant={vm.isLiked(update.id) ? 'solid' : 'outline'}
+                            >
+                              Like
+                            </Button>
+                            <Button
+                              aria-pressed={vm.isSaved(update.id)}
+                              borderRadius="8px"
+                              onClick={() => vm.toggleSaved(update.id)}
+                              size="sm"
+                              variant={vm.isSaved(update.id) ? 'solid' : 'outline'}
+                            >
+                              Save
+                            </Button>
+                          </Flex>
+                        </Stack>
+
+                        <Stack
+                          position="relative"
+                          bg="surface.50"
+                          zIndex={2}
+                          borderRadius="8px"
+                          borderLeftColor="surface.200"
+                          borderLeftWidth="1px"
+                          gap="1.5"
+                          minW="0"
+                          p="3"
+                          pointerEvents="none"
+                        >
+                          <Text color="ink.500" fontSize="xs" fontWeight="760" textTransform="uppercase">
+                            Diff snapshot
+                          </Text>
+                          <Text color="ink.800" fontSize="sm">
+                            {update.impact}
+                          </Text>
+                          </Stack>
+                        </InteractiveListCard>
+                      </Grid>
+                  );
+                })}
+            </Stack>
           </Stack>
 
           <StickyPanel
@@ -227,39 +276,41 @@ export const ReleasesPage = observer(function ReleasesPage() {
                 Latest visible update
               </Text>
               {latest ? (
-                <>
-                  <Stack gap="3">
-                    <Heading as="h2" fontSize="2xl">
-                      {latest.title}
-                    </Heading>
-                    <Text color="darkPanelText" fontSize="sm">
-                      {latest.summary}
-                    </Text>
-                  </Stack>
-                  <Flex gap="2" wrap="wrap">
-                    <Badge bg="brand.50" borderRadius="8px" color="brand.500">
-                      {latest.type}
-                    </Badge>
-                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                      {latest.priority}
-                    </Badge>
-                    <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
-                      {latest.audience}
-                    </Badge>
-                  </Flex>
-                  <Button
-                    asChild
-                    bg="reserveButtonBg"
-                    borderRadius="8px"
-                    color="ink.900"
-                    size="sm"
-                    w="100%"
-                  >
-                    <Link state={returnState} to={`/releases/${latest.id}`}>
-                      Open update
-                    </Link>
-                  </Button>
-                </>
+                <Stack
+                  asChild
+                  color="inherit"
+                  cursor="pointer"
+                  gap="3"
+                  textDecoration="none"
+                  transition="transform 0.18s ease"
+                  _focusVisible={{
+                    boxShadow: '0 0 0 3px rgba(255, 255, 255, 0.28)',
+                    outline: 'none',
+                  }}
+                  _hover={{ transform: 'translateY(-1px)' }}
+                >
+                  <Link state={returnState} to={`/releases/${latest.id}`}>
+                    <Stack gap="3">
+                      <Heading as="h2" fontSize="2xl">
+                        {latest.title}
+                      </Heading>
+                      <Text color="darkPanelText" fontSize="sm">
+                        {latest.summary}
+                      </Text>
+                    </Stack>
+                    <Flex gap="2" wrap="wrap">
+                      <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                        {latest.type}
+                      </Badge>
+                      <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                        {latest.priority}
+                      </Badge>
+                      <Badge bg="rgba(255,255,255,0.12)" borderRadius="8px" color="white">
+                        {latest.audience}
+                      </Badge>
+                    </Flex>
+                  </Link>
+                </Stack>
               ) : (
                 <Stack flex="1" justify="center">
                   <Heading as="h2" fontSize="2xl">
@@ -276,24 +327,35 @@ export const ReleasesPage = observer(function ReleasesPage() {
               <SectionEyebrow>Saved updates</SectionEyebrow>
               {vm.savedUpdates.map((update) => (
                 <Stack
+                  asChild
                   borderColor="surface.200"
                   borderRadius="8px"
                   borderWidth="1px"
+                  color="inherit"
+                  cursor="pointer"
                   gap="1"
                   key={update.id}
                   p="3"
+                  textDecoration="none"
+                  transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
+                  _focusVisible={{
+                    boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
+                    outline: 'none',
+                  }}
+                  _hover={{
+                    borderColor: 'activeBorder',
+                    boxShadow: '0 12px 30px rgba(16, 24, 40, 0.1)',
+                    transform: 'translateY(-1px)',
+                  }}
                 >
-                  <Text color="ink.900" fontSize="sm" fontWeight="760">
-                    {update.title}
-                  </Text>
-                  <Text color="ink.500" fontSize="xs">
-                    {update.type} · {update.priority}
-                  </Text>
-                  <Button alignSelf="start" asChild borderRadius="8px" size="xs" variant="ghost">
-                    <Link state={returnState} to={`/releases/${update.id}`}>
-                      Open
-                    </Link>
-                  </Button>
+                  <Link state={returnState} to={`/releases/${update.id}`}>
+                    <Text color="ink.900" fontSize="sm" fontWeight="760">
+                      {update.title}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {update.type} · {update.priority}
+                    </Text>
+                  </Link>
                 </Stack>
               ))}
               {vm.savedUpdates.length === 0 ? (
@@ -330,6 +392,31 @@ export const ReleasesPage = observer(function ReleasesPage() {
           </StickyPanel>
         </Grid>
       </Container>
-    </Box>
+  </PageSectionSurface>
   );
 });
+
+interface ReleaseTimelineNodeProps {
+  readonly badgeColor: string;
+  readonly hasConnector: boolean;
+  readonly number: number;
+  readonly tone: string;
+}
+
+function ReleaseTimelineNode({
+  badgeColor,
+  hasConnector,
+  number,
+  tone,
+}: Readonly<ReleaseTimelineNodeProps>) {
+  return (
+    <Stack align="center" gap="0" minW="56px" position="relative">
+      <Badge alignSelf="start" bg={tone} borderRadius="999px" color={badgeColor} fontSize="xs" minW="24px" px="0">
+        {number}
+      </Badge>
+      {hasConnector ? (
+        <Box bg="surface.200" borderRadius="999px" h="100%" w="2px" my="1" />
+      ) : null}
+    </Stack>
+  );
+}

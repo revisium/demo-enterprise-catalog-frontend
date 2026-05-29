@@ -31,6 +31,13 @@ const config = defineConfig({
           700: { value: '#1849a9' },
           900: { value: '#101828' },
         },
+        accent: {
+          50: { value: '#fff7ed' },
+          100: { value: '#ffedd5' },
+          400: { value: '#f59e0b' },
+          500: { value: '#d97706' },
+          700: { value: '#9a3412' },
+        },
         ink: {
           500: { value: '#667085' },
           600: { value: '#5b6678' },
@@ -73,7 +80,7 @@ const config = defineConfig({
         },
         pagePremiumBg: {
           value:
-            'linear-gradient(180deg, #f7fbff 0%, {colors.surface.50} 46%, {colors.surface.100} 100%)',
+            'linear-gradient(135deg, #eff1f5 0%, #eff1f5 42%, #d9b77c 68%, {colors.brand.600} 100%)',
         },
         panelGlassBg: {
           value: 'color-mix(in srgb, white 88%, transparent)',

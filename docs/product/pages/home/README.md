@@ -22,8 +22,11 @@ the visual text translator fallback.
 - show the recommended plan, price, stock, and setup window immediately, with
   hardware specs in a separate framed block below the recommendation card;
 - keep a compact selection summary visible for review;
-- show only a short set of selectable matching-plan suggestions, with the full
+- show only a short set of selectable matching-plan suggestions, keeping row
+  order stable while highlighting the current selected plan, with the full
   catalog kept on `/catalog`;
+- on initial load, select the first visible matching-plan suggestion so the
+  highlighted card and recommendation start from the same row;
 - on desktop, keep the selector rail and recommendation content in the same
   document scroll flow;
 - route the selected plan into the quote flow while keeping full catalog access

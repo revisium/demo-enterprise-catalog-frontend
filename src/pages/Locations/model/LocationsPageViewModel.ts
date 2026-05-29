@@ -191,6 +191,16 @@ export class LocationsPageViewModel {
     return this.filteredLocations.length === 0;
   }
 
+  get hasUserFilters() {
+    return (
+      this.minStock > 0 ||
+      this.selectedFamilyIds.length > 0 ||
+      this.selectedReadinessBandId !== 'all' ||
+      this.selectedSupportWindowId !== 'all' ||
+      this.sortId !== 'stock'
+    );
+  }
+
   get summaryMetrics() {
     return [
       { label: 'Regions', value: String(this.filteredLocations.length) },

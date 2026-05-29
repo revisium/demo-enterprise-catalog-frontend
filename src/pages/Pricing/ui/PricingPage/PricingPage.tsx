@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router';
 
+import { pricingIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
 import {
   BackNavButton,
@@ -11,7 +12,9 @@ import {
   FieldHint,
   FilterButton,
   FilterCard,
+  PageSectionSurface,
   PageIntroGrid,
+  ResetButton,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -24,15 +27,16 @@ export const PricingPage = observer(function PricingPage() {
   const returnState = createReturnState(location);
 
   return (
-    <Box bg="pagePremiumBg" flex="1">
+    <PageSectionSurface tone="pricing" flex="1">
       <Container maxW="1240px" px={{ base: '3', md: '5' }} py={{ base: '6', md: '9' }}>
         <BackNavButton fallbackTo="/" showOnlyWithReturnState />
         <PageIntroGrid
           eyebrow="Pricing"
+          image={{ src: pricingIntroImage }}
           metrics={vm.summaryMetrics}
           metricsLabel="Pricing summary"
-          summary="Compare monthly and yearly prices by server, region, and stock."
-          title="Regional pricing"
+          summary="Active rows price one server plan in one region; price books are versioned commercial sources."
+          title="Pricing workspace"
         />
 
         <Grid
@@ -202,19 +206,27 @@ export const PricingPage = observer(function PricingPage() {
             wrap="wrap"
           >
             <Stack gap="1">
-              <SectionEyebrow>Price-book rows</SectionEyebrow>
+              <SectionEyebrow>Active regional price rows</SectionEyebrow>
               <Heading as="h2" color="ink.900" fontSize="2xl">
-                Regional server prices
+                Plan-region prices
               </Heading>
+              <FieldHint>
+                One row is one server plan in one region for the selected billing term.
+              </FieldHint>
+              <Flex align="center" gap="2" wrap="wrap">
+                <Badge bg="brand.50" borderRadius="8px" color="brand.700">
+                  Active book
+                </Badge>
+                <Text color="ink.500" fontSize="sm">
+                  {vm.activePriceBook.title}
+                </Text>
+              </Flex>
             </Stack>
-            <Button
-              borderRadius="8px"
-              onClick={() => vm.resetFilters()}
-              size="sm"
-              variant="outline"
-            >
-              Reset filters
-            </Button>
+            {vm.hasUserFilters ? (
+              <ResetButton onClick={() => vm.resetFilters()}>
+                Reset filters
+              </ResetButton>
+            ) : null}
           </Flex>
 
           <Stack
@@ -234,95 +246,138 @@ export const PricingPage = observer(function PricingPage() {
                 title="No price rows match these filters"
               />
             ) : null}
-            {vm.filteredRows.map((row) => {
-              const selected = vm.isRowSelected(row.id);
-
-              return (
+            {vm.filteredRows.length > 0 ? (
+              <Stack borderColor="surface.200" borderRadius="8px" borderWidth="1px" gap="0" w="100%">
                 <Grid
-                  alignItems="center"
-                  bg={selected ? 'brand.50' : 'white'}
-                  borderColor={selected ? 'activeBorder' : 'surface.200'}
-                  borderRadius="8px"
-                  borderWidth="1px"
+                  bg="surface.50"
+                  borderBottomColor="surface.200"
+                  borderBottomWidth="1px"
                   gap="3"
-                  key={`${row.id}-${vm.billingTermId}`}
                   minW={{ base: '720px', md: '0' }}
-                  p="3"
-                  templateColumns="minmax(0, 1fr) 104px 150px 82px auto"
+                  p="2.5"
+                  templateColumns="28px minmax(0, 1fr) 104px 120px 88px 96px auto"
                   w="100%"
                 >
-                  <Stack gap="0" minW="0">
-                    <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
-                      <RouterLink state={returnState} to={row.detailHref}>
-                        {row.plan.name}
-                      </RouterLink>
-                    </Box>
-                    <Text
-                      color="ink.500"
-                      fontSize="sm"
-                      lineHeight="1.4"
-                      minH="10"
-                      overflowWrap="anywhere"
-                    >
-                      {row.family} · {row.plan.hardware.cpuCores} vCPU · {row.plan.hardware.ramGb}{' '}
-                      GB RAM
-                    </Text>
-                    <Flex gap="1.5" mt="2" wrap="wrap">
-                      {row.plan.addons.slice(0, 3).map((addon) => (
-                        <Badge
-                          bg="panelGlassBg"
-                          borderColor="surface.200"
-                          borderRadius="8px"
-                          borderWidth="1px"
-                          color="ink.600"
-                          key={addon}
-                        >
-                          {addon}
-                        </Badge>
-                      ))}
-                    </Flex>
-                  </Stack>
-                  <Stack gap="0" minW="0">
-                    <Text color="ink.900" fontWeight="760">
-                      ${row.billingTermPrice}/mo
-                    </Text>
-                    <Text color="ink.500" fontSize="xs">
-                      save ${row.yearlySavingsUsd}/yr
-                    </Text>
-                  </Stack>
-                  <Stack gap="0" minW="0">
-                    <Text color="ink.900" fontWeight="700" overflowWrap="anywhere">
-                      {row.region.regionLabel}
-                    </Text>
-                    <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                      {row.region.supportWindow} · setup {row.region.setupHours}h
-                    </Text>
-                  </Stack>
-                  <Stack align="end" gap="1" minW="0">
-                    <Badge
-                      bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
-                      borderRadius="8px"
-                      color={row.region.stock > 0 ? 'successText' : 'amberText'}
-                    >
-                      {row.region.stock} units
-                    </Badge>
-                    <Text color="ink.500" fontSize="xs">
-                      score {row.priceEfficiencyScore}
-                    </Text>
-                  </Stack>
-                  <Button
-                    aria-pressed={selected}
-                    borderRadius="8px"
-                    justifySelf="end"
-                    onClick={() => vm.toggleRow(row.id)}
-                    size="sm"
-                    variant={selected ? 'solid' : 'outline'}
-                  >
-                    {selected ? 'Selected' : 'Select'}
-                  </Button>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    #
+                  </Text>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    Plan
+                  </Text>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    Price
+                  </Text>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    Region
+                  </Text>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    Stock
+                  </Text>
+                  <Text color="ink.500" fontSize="xs" fontWeight="760">
+                    Actions
+                  </Text>
                 </Grid>
-              );
-            })}
+                {vm.filteredRows.map((row, index) => {
+                  const selected = vm.isRowSelected(row.id);
+                  let rowBg: 'brand.50' | 'white' | 'panelGlassBg' = 'panelGlassBg';
+
+                  if (selected) {
+                    rowBg = 'brand.50';
+                  } else if (index % 2 === 0) {
+                    rowBg = 'white';
+                  }
+
+                  return (
+                    <Grid
+                      alignItems="center"
+                      bg={rowBg}
+                      borderBottomColor="surface.200"
+                      borderBottomWidth="1px"
+                      gap="3"
+                      key={`${row.id}-${vm.billingTermId}`}
+                      minW={{ base: '720px', md: '0' }}
+                      p="3"
+                      templateColumns="28px minmax(0, 1fr) 104px 120px 88px 96px auto"
+                      transition="background 0.18s ease, border-color 0.18s ease"
+                      w="100%"
+                    >
+                      <Text color="ink.500" fontSize="sm">
+                        {index + 1}
+                      </Text>
+                      <Stack gap="0" minW="0">
+                        <Box asChild alignSelf="start" color="ink.900" fontWeight="760">
+                          <RouterLink state={returnState} to={row.detailHref}>
+                            {row.plan.name}
+                          </RouterLink>
+                        </Box>
+                        <Text
+                          color="ink.500"
+                          fontSize="sm"
+                          lineHeight="1.4"
+                          minH="10"
+                          overflowWrap="anywhere"
+                        >
+                          {row.family} · {row.plan.hardware.cpuCores} vCPU · {row.plan.hardware.ramGb} GB RAM
+                        </Text>
+                        <Flex gap="1.5" mt="2" wrap="wrap">
+                          {row.plan.addons.slice(0, 2).map((addon) => (
+                            <Badge
+                              bg="panelGlassBg"
+                              borderColor="surface.200"
+                              borderRadius="8px"
+                              borderWidth="1px"
+                              color="ink.600"
+                              key={addon}
+                            >
+                              {addon}
+                            </Badge>
+                          ))}
+                        </Flex>
+                      </Stack>
+                      <Stack gap="0" minW="0">
+                        <Text color="ink.900" fontWeight="760">
+                          ${row.billingTermPrice}
+                        </Text>
+                        <Text color="ink.500" fontSize="xs">
+                          +{row.region.setupHours}h setup
+                        </Text>
+                      </Stack>
+                      <Stack gap="0" minW="0">
+                        <Text color="ink.900" fontWeight="700" overflowWrap="anywhere">
+                          {row.region.regionLabel}
+                        </Text>
+                        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
+                          {row.region.supportWindow}
+                        </Text>
+                      </Stack>
+                      <Stack align="start" gap="1" minW="0">
+                        <Badge
+                          bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                          borderRadius="8px"
+                          color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                        >
+                          {row.region.stock} units
+                        </Badge>
+                        <Text color="ink.500" fontSize="xs">
+                          score {row.priceEfficiencyScore}
+                        </Text>
+                      </Stack>
+                      <Box>
+                        <Button
+                          aria-pressed={selected}
+                          borderRadius="8px"
+                          onClick={() => vm.toggleRow(row.id)}
+                          size="sm"
+                          variant={selected ? 'solid' : 'outline'}
+                        >
+                          {selected ? 'Selected' : 'Select'}
+                        </Button>
+                      </Box>
+                    </Grid>
+                  );
+                })}
+              </Stack>
+            ) : null}
           </Stack>
 
           <StickyPanel
@@ -339,35 +394,68 @@ export const PricingPage = observer(function PricingPage() {
             w="100%"
           >
             <FilterCard>
-              <SectionEyebrow>Price books</SectionEyebrow>
-              <FieldHint>
-                Open one price book to inspect regional rows, computed fields, and contract status.
-              </FieldHint>
+              <SectionEyebrow>Price book versions</SectionEyebrow>
+              <FieldHint>Versioned commercial sources for active and upcoming terms.</FieldHint>
               <Stack gap="2">
                 {vm.priceBooks.map((book) => (
                   <Grid
+                    asChild
                     borderColor="surface.200"
                     borderRadius="8px"
                     borderWidth="1px"
+                    color="inherit"
+                    cursor="pointer"
                     gap="3"
                     key={book.id}
                     minW="0"
                     p="3"
-                    templateColumns="minmax(0, 1fr) auto"
+                    textDecoration="none"
+                    templateColumns="minmax(0, 1fr)"
+                    transition="border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease"
+                    _focusVisible={{
+                      boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
+                      outline: 'none',
+                    }}
+                    _hover={{
+                      borderColor: 'activeBorder',
+                      boxShadow: '0 12px 30px rgba(16, 24, 40, 0.1)',
+                      transform: 'translateY(-1px)',
+                    }}
                   >
-                    <Stack gap="0" minW="0">
-                      <Text color="ink.900" fontSize="sm" fontWeight="760" overflowWrap="anywhere">
-                        {book.title}
-                      </Text>
-                      <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                        {book.status} · effective {book.effectiveFrom}
-                      </Text>
-                    </Stack>
-                    <Button asChild borderRadius="8px" size="xs" variant="outline">
-                      <RouterLink state={returnState} to={book.href}>
-                        Open
-                      </RouterLink>
-                    </Button>
+                    <RouterLink state={returnState} to={book.href}>
+                      <Stack gap="2" minW="0">
+                        <Flex align="start" gap="2" justify="space-between" minW="0">
+                          <Text
+                            color="ink.900"
+                            fontSize="sm"
+                            fontWeight="760"
+                            overflowWrap="anywhere"
+                          >
+                            {book.title}
+                          </Text>
+                          <Badge
+                            bg={book.status === 'Active' ? 'successBg' : 'panelGlassBg'}
+                            borderRadius="8px"
+                            color={book.status === 'Active' ? 'successText' : 'ink.700'}
+                            flexShrink="0"
+                          >
+                            {book.status}
+                          </Badge>
+                        </Flex>
+                        <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
+                          {book.summary}
+                        </Text>
+                        <Flex align="center" color="ink.500" fontSize="xs" gap="2" wrap="wrap">
+                          <Badge bg="brand.50" borderRadius="8px" color="brand.700">
+                            Source book
+                          </Badge>
+                          <Text>Applies from</Text>
+                          <Text color="ink.900" fontWeight="700">
+                            {book.effectiveFrom}
+                          </Text>
+                        </Flex>
+                      </Stack>
+                    </RouterLink>
                   </Grid>
                 ))}
               </Stack>
@@ -442,6 +530,6 @@ export const PricingPage = observer(function PricingPage() {
           </StickyPanel>
         </Grid>
       </Container>
-    </Box>
+    </PageSectionSurface>
   );
 });
