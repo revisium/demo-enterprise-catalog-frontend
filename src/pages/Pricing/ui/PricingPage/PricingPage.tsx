@@ -312,17 +312,23 @@ export const PricingPage = observer(function PricingPage() {
                         </Text>
                       </Stack>
                       <Stack align="start" gap="1" minW="0">
-                        <Badge
-                          bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
-                          borderRadius="8px"
-                          color={row.region.stock > 0 ? 'successText' : 'amberText'}
-                        >
-                          {row.region.stock} units
-                        </Badge>
-                        <Text color="ink.500" fontSize="xs">
-                          score {row.priceEfficiencyScore}
-                        </Text>
-                      </Stack>
+                    <Badge
+                      bg={row.region.stock > 0 ? 'successBg' : 'amberBg'}
+                      borderRadius="8px"
+                      color={row.region.stock > 0 ? 'successText' : 'amberText'}
+                    >
+                      {row.region.stock} units
+                    </Badge>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.valueTier}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.regionsInStock} / {row.plan.availabilityByRegion.length} in-stock regions
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.pricePerCore === null ? '—' : `$${row.pricePerCore.toFixed(2)}/core`}
+                    </Text>
+                  </Stack>
                       <Box>
                         <Button
                           aria-pressed={selected}
@@ -422,72 +428,6 @@ export const PricingPage = observer(function PricingPage() {
               </Stack>
             </FilterCard>
 
-            <FilterCard>
-              <SectionEyebrow>Quote draft</SectionEyebrow>
-              <FieldHint>
-                Select regional rows to prepare the server list that will move into the quote flow.
-              </FieldHint>
-              <Stack gap="2">
-                {vm.quoteSummary.map((row) => (
-                  <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
-                    <Text color="ink.500" fontSize="sm">
-                      {row.label}
-                    </Text>
-                    <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
-                      {row.value}
-                    </Text>
-                  </Grid>
-                ))}
-              </Stack>
-              <Stack gap="2">
-                {vm.selectedRows.length === 0 ? (
-                  <Text color="ink.500" fontSize="sm">
-                    No rows selected yet.
-                  </Text>
-                ) : null}
-                {vm.selectedRows.map((row) => (
-                  <Grid
-                    alignItems="center"
-                    gap="2"
-                    key={row.id}
-                    minW="0"
-                    templateColumns="minmax(0, 1fr) auto"
-                  >
-                    <Stack gap="0" minW="0">
-                      <Text color="ink.900" fontSize="sm" fontWeight="760" overflowWrap="anywhere">
-                        {row.plan.name}
-                      </Text>
-                      <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                        {row.region.regionLabel} · ${row.billingTermPrice}/mo
-                      </Text>
-                    </Stack>
-                    <Button
-                      borderRadius="8px"
-                      onClick={() => vm.removeSelectedRow(row.id)}
-                      size="xs"
-                      variant="ghost"
-                    >
-                      Remove
-                    </Button>
-                  </Grid>
-                ))}
-              </Stack>
-              <Box
-                asChild
-                bg="ctaBg"
-                borderRadius="8px"
-                color="white"
-                fontSize="sm"
-                fontWeight="760"
-                px="4"
-                py="2.5"
-                textAlign="center"
-              >
-                <RouterLink state={returnState} to={vm.quotePath}>
-                  Continue to quote
-                </RouterLink>
-              </Box>
-            </FilterCard>
           </StickyPanel>
         </Grid>
       </Container>

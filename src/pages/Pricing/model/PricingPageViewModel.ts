@@ -1,19 +1,20 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculatePriceEfficiencyScore,
+  calculateCatalogPlanValues,
+  valueTierOrder,
   type CatalogProduct,
   type CatalogRegionAvailability,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import { priceBooks } from 'src/entities/pricing';
 import { PricingPageDataSource } from '../api/PricingPageDataSource';
 
-type AddonMatchMode = 'all' | 'any';
 type BillingTermId = 'monthly' | 'yearly';
 type PricingSortId =
   | 'display-order'
   | 'effective-price'
-  | 'price-efficiency'
+  | 'most-value'
   | 'ram'
   | 'recently-updated'
   | 'setup'
@@ -30,9 +31,12 @@ interface PricingRow {
   readonly detailHref: string;
   readonly family: string;
   readonly id: string;
+  readonly pricePerCore: number | null;
+  readonly pricePerGbRam: number | null;
   readonly plan: CatalogProduct;
-  readonly priceEfficiencyScore: number;
+  readonly regionsInStock: number;
   readonly region: CatalogRegionAvailability;
+  readonly valueTier: CatalogValueTier;
   readonly yearlySavingsUsd: number;
 }
 
@@ -67,7 +71,7 @@ const priceOptions: readonly FilterOption[] = [
 
 const sortOptions: readonly FilterOption[] = [
   { id: 'effective-price', label: 'Lowest effective price' },
-  { id: 'price-efficiency', label: 'Best price efficiency' },
+  { id: 'most-value', label: 'Best value tier' },
   { id: 'yearly-savings', label: 'Largest yearly savings' },
   { id: 'stock', label: 'Most regional stock' },
   { id: 'setup', label: 'Fastest setup' },
@@ -76,10 +80,16 @@ const sortOptions: readonly FilterOption[] = [
   { id: 'recently-updated', label: 'Recently updated' },
 ];
 
+const valueTierLabel: Record<CatalogValueTier, string> = {
+  Economy: 'Economy',
+  Balanced: 'Balanced',
+  Performance: 'Performance',
+};
+
 export class PricingPageViewModel {
   private readonly dataSource = new PricingPageDataSource();
 
-  addonMatchMode: AddonMatchMode = 'any';
+  addonMatchMode: 'all' | 'any' = 'any';
   billingTermId: BillingTermId = 'monthly';
   maxMonthlyPrice = 0;
   maxSetupHours = 0;
@@ -110,6 +120,20 @@ export class PricingPageViewModel {
     return [...this.rows.filter((row) => this.matchesRow(row))].sort((left, right) =>
       this.compareRows(left, right),
     );
+  }
+
+  get selectedRows(): readonly PricingRow[] {
+    return this.rows.filter((row) => this.selectedRowIdSet.has(row.id));
+  }
+
+  get regions(): readonly { readonly id: string; readonly label: string }[] {
+    const seen = new Map<string, string>();
+    for (const row of this.rows) {
+      if (!seen.has(row.region.regionId)) {
+        seen.set(row.region.regionId, row.region.regionLabel);
+      }
+    }
+    return [...seen.entries()].map(([id, label]) => ({ id, label }));
   }
 
   get addOnMatchOptions() {
@@ -191,45 +215,24 @@ export class PricingPageViewModel {
     return `/quote?${params.toString()}`;
   }
 
-  get quoteSummary() {
-    const selectedRows = this.selectedRows;
-    const monthlyTotal = selectedRows.reduce((total, row) => total + row.billingTermPrice, 0);
-    const setupTotal = selectedRows.reduce((total, row) => total + row.plan.pricing.setupUsd, 0);
-    const regions = new Set(selectedRows.map((row) => row.region.regionId)).size;
-
-    return [
-      { label: 'Selected rows', value: String(selectedRows.length) },
-      { label: 'Monthly total', value: `$${monthlyTotal}` },
-      { label: 'Setup total', value: `$${setupTotal}` },
-      { label: 'Regions', value: String(regions) },
-    ];
-  }
-
-  get regions(): readonly FilterOption[] {
-    const byId = new Map(this.rows.map((row) => [row.region.regionId, row.region.regionLabel]));
-
-    return [...byId.entries()]
-      .sort((left, right) => left[1].localeCompare(right[1]))
-      .map(([id, label]) => ({ id, label }));
-  }
-
-  get selectedRows(): readonly PricingRow[] {
-    return this.rows.filter((row) => this.selectedRowIdSet.has(row.id));
-  }
-
-  get sortOptions() {
-    return sortOptions;
-  }
-
   get summaryMetrics() {
     const lowestPrice =
       this.filteredRows.length === 0
         ? 0
         : Math.min(...this.filteredRows.map((row) => row.billingTermPrice));
-    const bestEfficiency =
+    const bestValueTier =
       this.filteredRows.length === 0
-        ? 0
-        : Math.max(...this.filteredRows.map((row) => row.priceEfficiencyScore));
+        ? '-'
+        : this.filteredRows.reduce((best, row) => {
+            const current = valueTierOrder[row.valueTier];
+            const existing = best === null ? 3 : valueTierOrder[best];
+
+            if (current < existing) {
+              return row.valueTier;
+            }
+
+            return best;
+          }, null as CatalogValueTier | null) ?? 'Performance';
 
     return [
       { label: 'Price rows', value: String(this.filteredRows.length) },
@@ -242,8 +245,8 @@ export class PricingPageViewModel {
         value: String(this.filteredRows.reduce((total, row) => total + row.region.stock, 0)),
       },
       {
-        label: 'Best efficiency',
-        value: String(bestEfficiency),
+        label: 'Best value tier',
+        value: bestValueTier in valueTierLabel ? valueTierLabel[bestValueTier as CatalogValueTier] : bestValueTier,
       },
     ];
   }
@@ -278,7 +281,7 @@ export class PricingPageViewModel {
   }
 
   setAddonMatchMode(value: string) {
-    this.addonMatchMode = this.isAddonMatchMode(value) ? value : 'any';
+    this.addonMatchMode = value === 'all' ? value : 'any';
   }
 
   setBillingTerm(termId: BillingTermId) {
@@ -350,14 +353,15 @@ export class PricingPageViewModel {
       return right.yearlySavingsUsd - left.yearlySavingsUsd;
     }
 
-    if (this.sortId === 'price-efficiency') {
-      return right.priceEfficiencyScore - left.priceEfficiencyScore;
+    if (this.sortId === 'most-value') {
+      return valueTierOrder[left.valueTier] - valueTierOrder[right.valueTier];
     }
 
     return left.billingTermPrice - right.billingTermPrice;
   }
-  private isAddonMatchMode(value: string): value is AddonMatchMode {
-    return addonMatchOptions.some((option) => option.id === value);
+
+  get sortOptions() {
+    return sortOptions;
   }
 
   private isSortId(value: string): value is PricingSortId {
@@ -412,6 +416,8 @@ export class PricingPageViewModel {
   }
 
   private toPricingRow(plan: CatalogProduct, region: CatalogRegionAvailability): PricingRow {
+    const computed = calculateCatalogPlanValues(plan);
+
     return {
       billingTermPrice:
         this.billingTermId === 'yearly' ? plan.pricing.yearlyMonthlyUsd : plan.pricing.monthlyUsd,
@@ -419,8 +425,11 @@ export class PricingPageViewModel {
       family: plan.family,
       id: `${plan.id}:${region.regionId}`,
       plan,
-      priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
+      pricePerCore: computed.pricePerCore,
+      pricePerGbRam: computed.pricePerGbRam,
+      regionsInStock: computed.regionsInStock,
       region,
+      valueTier: computed.valueTier,
       yearlySavingsUsd: (plan.pricing.monthlyUsd - plan.pricing.yearlyMonthlyUsd) * 12,
     };
   }

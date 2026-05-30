@@ -1,24 +1,24 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculatePriceEfficiencyScore,
-  getFastestSetupHours,
+  calculateCatalogPlanValues,
+  valueTierOrder,
   type CatalogProduct,
   type CatalogRegionAvailability,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import { ComparePageDataSource } from '../api/ComparePageDataSource';
 
 type BillingTermId = 'monthly' | 'yearly';
 type CompareMetricId =
   | 'cpu'
-  | 'efficiency'
+  | 'match'
   | 'memory'
   | 'network'
   | 'price'
   | 'setup'
   | 'stock'
-  | 'storage'
-  | 'support'
+  | 'value-tier'
   | 'yearly-savings';
 type CompareScenarioId = 'balanced' | 'budget' | 'capacity' | 'fastest-setup';
 
@@ -36,16 +36,18 @@ interface CompareOption {
 interface CompareProductRow {
   readonly bestRegionLabel: string;
   readonly detailHref: string;
-  readonly fitScore: number;
+  readonly matchValue: number;
   readonly id: string;
   readonly label: string;
   readonly monthlyPriceLabel: string;
   readonly setupLabel: string;
   readonly stockLabel: string;
+  readonly topRegions: readonly string[];
+  readonly valueTier: CatalogValueTier;
 }
 
 const scenarioOptions: readonly CompareOption[] = [
-  { id: 'balanced', label: 'Balanced fit' },
+  { id: 'balanced', label: 'Balanced value' },
   { id: 'budget', label: 'Lowest monthly price' },
   { id: 'capacity', label: 'Most available stock' },
   { id: 'fastest-setup', label: 'Fastest setup' },
@@ -78,17 +80,23 @@ export class ComparePageViewModel {
 
   get bestFitRows(): readonly CompareProductRow[] {
     return [...this.comparedProducts]
-      .sort((left, right) => this.calculateFitScore(right) - this.calculateFitScore(left))
-      .map((product) => ({
-        bestRegionLabel: this.getBestRegionLabel(product),
-        detailHref: `/catalog/${product.id}`,
-        fitScore: this.calculateFitScore(product),
-        id: product.id,
-        label: product.name,
-        monthlyPriceLabel: `$${this.getBillingTermPrice(product)}/mo`,
-        setupLabel: `${this.getFastestSetup(product)}h setup`,
-        stockLabel: `${this.getTotalStock(product)} units`,
-      }));
+      .sort((left, right) => this.calculateMatchValue(right) - this.calculateMatchValue(left))
+      .map((product) => {
+        const computed = calculateCatalogPlanValues(product);
+
+        return {
+          bestRegionLabel: this.getBestRegionLabel(product),
+          detailHref: `/catalog/${product.id}`,
+          matchValue: this.calculateMatchValue(product),
+          id: product.id,
+          label: product.name,
+          monthlyPriceLabel: `$${this.getBillingTermPrice(product)}/mo`,
+          setupLabel: `${this.getFastestSetup(product)}h setup`,
+          stockLabel: `${this.getTotalStock(product)} units`,
+          topRegions: computed.topRegions,
+          valueTier: computed.valueTier,
+        };
+      });
   }
 
   get comparedProducts(): readonly CatalogProduct[] {
@@ -119,8 +127,8 @@ export class ComparePageViewModel {
         value: String(this.coveredRegionIds.size),
       },
       {
-        label: 'Best fit score',
-        value: String(this.recommendation ? this.calculateFitScore(this.recommendation) : 0),
+        label: 'Best match',
+        value: String(this.recommendation ? Math.round(this.calculateMatchValue(this.recommendation)) : 0),
       },
     ];
   }
@@ -138,11 +146,9 @@ export class ComparePageViewModel {
         values: this.comparedProducts.map((product) => `$${this.getYearlySavings(product)}/yr`),
       },
       {
-        id: 'efficiency',
-        label: 'Price efficiency',
-        values: this.comparedProducts.map((product) =>
-          String(calculatePriceEfficiencyScore(product)),
-        ),
+        id: 'value-tier',
+        label: 'Value tier',
+        values: this.comparedProducts.map((product) => calculateCatalogPlanValues(product).valueTier),
       },
       {
         id: 'cpu',
@@ -153,11 +159,6 @@ export class ComparePageViewModel {
         id: 'memory',
         label: 'Memory',
         values: this.comparedProducts.map((product) => `${product.hardware.ramGb} GB`),
-      },
-      {
-        id: 'storage',
-        label: 'Storage',
-        values: this.comparedProducts.map((product) => `${product.hardware.storageTb} TB`),
       },
       {
         id: 'network',
@@ -175,9 +176,9 @@ export class ComparePageViewModel {
         values: this.comparedProducts.map((product) => String(this.getTotalStock(product))),
       },
       {
-        id: 'support',
-        label: 'Support tier',
-        values: this.comparedProducts.map((product) => product.supportTier),
+        id: 'match',
+        label: 'Match',
+        values: this.comparedProducts.map((product) => String(Math.round(this.calculateMatchValue(product)))),
       },
     ];
   }
@@ -215,7 +216,7 @@ export class ComparePageViewModel {
 
     return remainingProducts.reduce(
       (best, product) =>
-        this.calculateFitScore(product) > this.calculateFitScore(best) ? product : best,
+        this.calculateMatchValue(product) > this.calculateMatchValue(best) ? product : best,
       firstProduct,
     );
   }
@@ -246,7 +247,7 @@ export class ComparePageViewModel {
   get selectedScenarioLabel() {
     return (
       this.scenarioOptions.find((scenario) => scenario.id === this.selectedScenarioId)?.label ??
-      'Balanced fit'
+      'Balanced value'
     );
   }
 
@@ -302,7 +303,7 @@ export class ComparePageViewModel {
   }
 
   toggleProduct(productId: string) {
-    if (this.selectedProductIds.includes(productId)) {
+    if (this.selectedProductIdSet.has(productId)) {
       this.selectedProductIds = this.selectedProductIds.filter((id) => id !== productId);
       return;
     }
@@ -315,27 +316,25 @@ export class ComparePageViewModel {
     this.selectedProductIds = [...this.selectedProductIds, productId];
   }
 
-  private calculateFitScore(product: CatalogProduct) {
+  private calculateMatchValue(product: CatalogProduct) {
     const stockScore = Math.min(this.getTotalStock(product), 120);
     const setupScore = Math.max(0, 48 - this.getFastestSetup(product)) * 2;
-    const efficiencyScore = calculatePriceEfficiencyScore(product);
+    const valueTierScore = 100 - valueTierOrder[calculateCatalogPlanValues(product).valueTier] * 25;
     const priceScore = Math.max(0, 500 - this.getBillingTermPrice(product)) / 5;
 
     if (this.selectedScenarioId === 'budget') {
-      return Math.round(priceScore * 0.55 + efficiencyScore * 0.35 + stockScore * 0.1);
+      return Math.round(priceScore * 0.55 + valueTierScore * 0.35 + stockScore * 0.1);
     }
 
     if (this.selectedScenarioId === 'capacity') {
-      return Math.round(stockScore * 0.55 + efficiencyScore * 0.25 + setupScore * 0.2);
+      return Math.round(stockScore * 0.55 + valueTierScore * 0.25 + setupScore * 0.2);
     }
 
     if (this.selectedScenarioId === 'fastest-setup') {
-      return Math.round(setupScore * 0.5 + stockScore * 0.3 + efficiencyScore * 0.2);
+      return Math.round(setupScore * 0.5 + stockScore * 0.3 + valueTierScore * 0.2);
     }
 
-    return Math.round(
-      efficiencyScore * 0.35 + stockScore * 0.3 + setupScore * 0.2 + priceScore * 0.15,
-    );
+    return Math.round(valueTierScore * 0.35 + stockScore * 0.3 + setupScore * 0.2 + priceScore * 0.15);
   }
 
   private get coveredRegionIds(): ReadonlySet<string> {
@@ -370,9 +369,9 @@ export class ComparePageViewModel {
   }
 
   private getFastestSetup(product: CatalogProduct) {
-    return getFastestSetupHours(
-      this.getMatchingRegions(product).map((region) => region.setupHours),
-    );
+    return this.getMatchingRegions(product)
+      .map((region) => region.setupHours)
+      .reduce((fastest, current) => Math.min(fastest, current), Number.POSITIVE_INFINITY);
   }
 
   private getMatchingRegions(product: CatalogProduct): readonly CatalogRegionAvailability[] {

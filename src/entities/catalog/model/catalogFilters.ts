@@ -1,15 +1,17 @@
+import type { CatalogValueTier } from './catalogComputed';
+
 export interface CatalogFilterOption {
   readonly id: string;
   readonly label: string;
 }
 
 export interface CatalogRegionSummaryFields {
+  readonly bestValueTier: CatalogValueTier;
   readonly dataCenterCodes: readonly string[];
   readonly enterpriseCoveragePercent: number;
   readonly families: readonly string[];
   readonly familyCoveragePercent: number;
   readonly fastestSetupHours: number;
-  readonly readinessScore: number;
   readonly regionId: string;
   readonly regionLabel: string;
   readonly supportWindows: readonly string[];

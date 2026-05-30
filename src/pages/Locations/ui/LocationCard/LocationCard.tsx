@@ -46,7 +46,7 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
           </Stack>
           <Flex gap="2" wrap="wrap">
             <Badge bg="successBg" borderRadius="8px" color="successText">
-              {location.readinessScore} readiness
+              {location.bestValueTier} value tier
             </Badge>
             <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
               {location.plans.length} plans
@@ -62,15 +62,15 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
             ))}
         </Flex>
 
-        <Stack borderRadius="8px" borderWidth="1px" borderColor="surface.200" gap="0" overflow="hidden">
-          <Grid
-            bg="surface.50"
-            borderBottomColor="surface.200"
-            borderBottomWidth="1px"
-            gap="3"
-            p="2.5"
-            templateColumns="minmax(0, 1fr) 84px 76px 66px"
-          >
+          <Stack borderRadius="8px" borderWidth="1px" borderColor="surface.200" gap="0" overflow="hidden">
+            <Grid
+              bg="surface.50"
+              borderBottomColor="surface.200"
+              borderBottomWidth="1px"
+              gap="3"
+              p="2.5"
+              templateColumns="minmax(0, 1fr) 84px 76px 72px 66px"
+            >
             <Text color="ink.500" fontSize="xs" fontWeight="760">
               Plan
             </Text>
@@ -79,6 +79,9 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
             </Text>
             <Text color="ink.500" fontSize="xs" fontWeight="760">
               $/mo
+            </Text>
+            <Text color="ink.500" fontSize="xs" fontWeight="760">
+              Value tier
             </Text>
             <Text color="ink.500" fontSize="xs" fontWeight="760">
               Stock
@@ -100,7 +103,7 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
                   key={`${location.regionId}-${row.plan.id}`}
                   p="3"
                   textDecoration="none"
-                  templateColumns="minmax(0, 1fr) 84px 76px 66px"
+                  templateColumns="minmax(0, 1fr) 84px 76px 72px 66px"
                   transition="background 0.18s ease, border-color 0.18s ease"
                   _focusVisible={{
                     boxShadow: '0 0 0 3px rgba(49, 130, 206, 0.28)',
@@ -122,6 +125,9 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
                     </Text>
                     <Text color="ink.900" fontSize="sm" fontWeight="760">
                       ${row.effectiveMonthlyPrice}
+                    </Text>
+                    <Text color="ink.900" fontSize="xs" overflowWrap="anywhere">
+                      {row.valueTier}
                     </Text>
                     <Text color="ink.500" fontSize="sm">
                       {row.stock}
@@ -169,7 +175,7 @@ export function LocationCard({ location, returnState, vm }: LocationCardProps) {
           </Text>
           <Stack gap="2" minW="0">
             <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-              Readiness map from top plans and stock coverage
+              Value-tier map from top plans and stock coverage
             </Text>
             {hasMapEntries ? (
               <Grid

@@ -87,10 +87,11 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                 { label: 'Server plans', value: String(regionSummary.planCount) },
                 { label: 'Total stock', value: String(regionSummary.totalStock) },
                 { label: 'Fastest setup', value: `${regionSummary.fastestSetupHours}h` },
+                { label: 'Best value tier', value: String(regionSummary.bestValueTier) },
                 { label: 'Family coverage', value: `${regionSummary.familyCoveragePercent}%` },
               ]}
-              summary="readiness score across stock, setup speed, family coverage, and support."
-              value={regionSummary.readinessScore}
+              summary="Value tier across stock, setup speed, family coverage, and support."
+              value={regionSummary.bestValueTier}
             />
           </Grid>
 
@@ -219,10 +220,15 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                     </Stack>
                     <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
                       <RegionFact
-                        label="Efficiency"
-                        value={String(featuredPlan.priceEfficiencyScore)}
+                        label="Value tier"
+                        value={featuredPlan.valueTier}
                       />
                       <RegionFact label="Setup" value={`${featuredPlan.setupHours}h`} />
+                      <RegionFact label="$/core" value={vm.formatPricePerCore(featuredPlan.pricePerCore)} />
+                      <RegionFact
+                        label="$/GB"
+                        value={vm.formatPricePerGbRam(featuredPlan.pricePerGbRam)}
+                      />
                     </Grid>
                     <Flex gap="2" wrap="wrap">
                       <Button asChild borderRadius="8px" size="sm" variant="outline">
@@ -245,7 +251,7 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
               <FilterCard>
                 <SectionEyebrow>Related regions</SectionEyebrow>
                 <FieldHint>
-                  Alternatives are ranked by shared server families, readiness, and stock.
+                  Alternatives are ranked by shared server families, value tier, and stock.
                 </FieldHint>
                 <Stack gap="2">
                   {vm.relatedRegions.map((region) => (
