@@ -10,9 +10,10 @@ The Customer console workspace shows `Session: Secure cookie` and
 - Remove the `Session` and `Device` rows from `sessionRows`; keep `Role`.
 - `session` stays used elsewhere (org id, current user), so no further wiring
   changes.
-- While here, relabel `Reference checks` badges (`Active`/`Allowed`/`Published`)
-  into plain-language customer wording (e.g. "Language available",
-  "Currency allowed for your org") — optional but recommended.
+- Relabel the `Reference checks` badges to plain-language copy (required, exact):
+  `Active` -> `Available`, `Allowed` -> `Allowed for your org`,
+  `Published` -> `Published`. Apply across language/currency/region/plan/docs
+  rows.
 
 ## Files
 
@@ -23,4 +24,5 @@ The Customer console workspace shows `Session: Secure cookie` and
 ## Acceptance
 
 - No `Session` / `Device` fields in the console.
+- Reference-check badges show the exact relabeled copy above.
 - `npm run verify` green.

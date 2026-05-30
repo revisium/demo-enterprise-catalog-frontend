@@ -25,9 +25,12 @@ Remove every "Query summary" surface (verified clean in a trial pass):
 - Rely on the existing results line (`Matches · Stock · Active filters`, etc.).
 - Remove now-dead VM getters: `queryRows` (each VM), Pricing
   `firstSummaryColumn` / `secondSummaryColumn`.
+- Remove the now-unused `QuerySummary` component/export from
+  `src/shared/ui/QueryControls/QueryControls.tsx` and `src/shared/ui/index.ts`.
 
 ## Acceptance
 
-- No `QuerySummary` / "Query summary" remains in `src/pages`.
+- A repo-wide scan returns nothing: `grep -rn "QuerySummary\|Query summary" src/`
+  (the component/export is removed, not just its usages).
 - No empty cards/gaps left behind.
 - `npm run verify` green.

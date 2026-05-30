@@ -12,6 +12,16 @@ Give it a distinct record lens so it earns its route.
 - Keep package/next-actions, but lead with what is account-specific.
 - Breadcrumb `Home > Console > Saved plans > {plan}` (per `04`).
 
+## Contract & states (normative)
+
+- `relatedQuotes: { id, status, updatedAt, reference }[]`, sorted by `updatedAt`
+  desc.
+- `changeHistory: { id, timestamp, actor, summary }[]`, sorted by `timestamp`
+  desc.
+- UI states: loading (skeleton), empty ("No related quotes yet" / "No changes
+  yet"), error (retry). Mock fixtures live in the portal DataSource.
+- Responsive: two columns on `lg`, stacked on `base`.
+
 ## Files
 
 - `src/pages/PortalSavedPlanDetail/*` (page + VM)

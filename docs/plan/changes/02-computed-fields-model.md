@@ -31,6 +31,18 @@ Revisium derived/computed values.
   (`$3.0/core`), `topRegions` as chips.
 - Optional: glossary tooltip from `glossary_terms` for `valueTier`.
 
+## Determinism (normative)
+
+- `pricePerCore = monthlyUsd / cpuCores`; `pricePerGbRam = monthlyUsd / ramGb`.
+  Divide-by-zero (0 cores/GB) -> `null`, rendered as `—`. Round to 2 decimals,
+  half-up. Units: `$/core`, `$/GB`.
+- `regionsInStock` = count of `availability[]` entries with `stock > 0`.
+- `instantSetup = setupHours <= 1` (inclusive).
+- `availableEverywhere` = every active region has `stock > 0`.
+- `valueTier` from `pricePerCore`: `<= 8` Economy, `> 8 && <= 20` Balanced,
+  `> 20` Performance (boundary goes to the lower tier).
+- `topRegions` = regions sorted by `stock` desc, then region id asc; take top 3.
+
 ## Files
 
 - `src/entities/catalog/model/catalogComputed.ts`, `catalogTypes.ts`
@@ -41,4 +53,6 @@ Revisium derived/computed values.
 
 - No `efficiency`/`score`/`readiness`/`fit` strings remain in `src/`.
 - New fields render with correct types (badge/tag/number+unit/chips).
+- Deterministic cases hold: 0 cores/GB -> `—`; `valueTier` boundary at 8 and 20;
+  `topRegions` tie-break by region id; rounding to 2 decimals.
 - `npm run verify` green.

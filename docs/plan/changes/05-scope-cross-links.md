@@ -10,10 +10,12 @@ Depends on `01-catalog-url-filter-state` (URL params) and `03-quote-cart`.
 
 ## Change
 
-- `View regions` -> `/locations/{region}` for this plan (or
-  `/catalog?region=...` if region detail is not the target).
-- `Compare plans` -> `/compare?plans={planId}` (preselect this plan).
-- `Pricing` -> `/pricing?family={family}` (scoped to the plan family).
+- `View regions` -> `/locations/:regionId` (path param `regionId`, slug,
+  e.g. `frankfurt`) for this plan's primary region.
+- `Compare plans` -> `/compare?plans=<planId>` (`plans` = comma-separated
+  planIds; preselect this plan).
+- `Pricing` -> `/pricing?family=<family>` (`family` = single family id, allowed
+  values per `01`).
 - Replace the hero `Request quote` with `Add to quote` (cart) per `03`.
 - Apply the same scoping to other cross-links that currently drop context.
 

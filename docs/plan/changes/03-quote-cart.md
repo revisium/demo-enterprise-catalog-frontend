@@ -18,8 +18,8 @@ Consolidate into one classic cart.
 ## Change
 
 - Cart store as a feature/entity (e.g. `src/features/quoteCart/*`) holding line
-  items `{ planId, regionId, termId, addonIds[] }`; MobX, persisted in memory
-  (later: backend runtime mutation).
+  items `{ planId, regionId, termId, addonIds[] }`; MobX, **in-memory only for
+  the mock phase (cleared on reload)** (later: backend runtime mutation).
 - Header (`AppLayout`) renders the badge from cart count.
 - Replace bespoke builders: remove Pricing `Quote draft` accumulator (D5),
   Compare quote-fit "Request quote" becomes `Add to quote` + cart, Home
@@ -39,4 +39,5 @@ Consolidate into one classic cart.
 - Adding from catalog/detail/pricing/compare increments the header badge.
 - `/quote` lists all added lines; `Request quote` is the only submit verb.
 - Pricing `Quote draft` block is gone; no duplicate quote builders remain.
+- Reload clears the cart (in-memory only) and the badge resets to `0`.
 - `npm run verify` green.

@@ -17,7 +17,10 @@ data so it is a distinct lens.
 ## Files
 
 - `src/pages/LocationDetail/*` (page + VM + DataSource)
-- `src/entities/catalog` or a region/availability entity for history mock data
+- `src/entities/pricing` owns stock history (availability is `helio-price`):
+  `StockHistoryPoint { date: string; stock: number }` +
+  `getRegionStockHistory(regionId): StockHistoryPoint[]` (mock from
+  `availability_history_recent`).
 
 ## Acceptance
 

@@ -7,9 +7,9 @@ do not "play". A real catalog is non-uniform.
 
 ## Change
 
-- Grow `server_plans` mock to ~25-40 plans across 5 families with varied
-  hardware, price, stock, and region coverage so filters meaningfully narrow
-  results and some combinations return few/zero.
+- Grow `server_plans` mock to **>= 30 plans**: at least 5 per family across the
+  5 families; each of the 4 regions covered by >= 8 plans; >= 3 plans
+  out-of-stock. Spread price/RAM so sorts reorder visibly.
 - Grow price items accordingly so the matrix (`12`) and diff (`11`) are
   substantive.
 - Keep tables typed and contract-shaped (DataSource-owned), per `REVIEW.md`.
@@ -22,4 +22,6 @@ do not "play". A real catalog is non-uniform.
 ## Acceptance
 
 - Toggling catalog filters visibly changes result counts (incl. empty states).
+- At least 2 documented filter combinations return 0 results and at least 1
+  returns exactly 1 result (named in the spec as fixtures).
 - `npm run verify` green.

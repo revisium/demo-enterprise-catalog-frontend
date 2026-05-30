@@ -10,8 +10,9 @@ Depends on `01-catalog-url-filter-state`.
 ## Change
 
 - Convert Need / Data center / Contract from in-place filters to **guided chips
-  that deep-link** into `/catalog?need=...&region=...&term=...` (and reflect a
-  matching plan count if cheap).
+  that deep-link** into `/catalog?need=...&region=...&term=...`. Show a matching
+  plan count only if it is already present in the Home snapshot; otherwise render
+  the chip without a count (no live query, no in-place filtering).
 - Remove the in-place filtering logic and the `CompactQuerySummary` block.
 - Keep the hero (featured/recommended plan) and "Choose another server"; the
   primary action is `Browse catalog` / a single `Add to quote` per `03`.

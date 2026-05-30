@@ -7,8 +7,11 @@ which reads as filler. The pivot lens should look like a matrix, not a list.
 
 ## Change
 
-- Render the price rows as a grid: plan rows x region (or term) columns, with the
-  effective price in each cell. Repetition becomes an axis = data, not padding.
+- Render the price rows as a grid: rows = plans, **default columns = region**,
+  with the effective price in each cell. Repetition becomes an axis = data.
+- A single `Columns: Region | Term` toggle switches the column axis; default is
+  `region` on load, toggling does not reorder rows, and the choice is not
+  persisted across navigations.
 - Keep the computed columns from `02` (`$/core`, `valueTier`) as row metadata.
 - `Add to quote` (`03`) acts per cell/row.
 

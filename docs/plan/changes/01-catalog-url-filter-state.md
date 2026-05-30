@@ -17,6 +17,23 @@ URL state also makes filtered lists shareable and SSR-correct.
 - Define a small shared serializer (e.g. `src/shared/routing/filterParams.ts`)
   so Catalog, Pricing, and later Home/Compare share one param vocabulary.
 
+## URL param contract (normative)
+
+| Param | Type | Allowed values | Encoding | Default | Empty/missing |
+| --- | --- | --- | --- | --- | --- |
+| `family` | enum[] | cloud, dedicated, database, storage, accelerated | comma-separated | — | no family filter |
+| `region` | enum[] | fra, ams, nyc, sin | comma-separated | — | all regions |
+| `cap` | enum[] | backup, ipv4, monitoring, support, private-vlan, lifecycle-rules | comma-separated | — | no capability filter |
+| `match` | enum | all, any | single | all | all |
+| `ram` | number | min GB (>= 0) | single | 0 | 0 |
+| `price` | number | max USD/mo (>= 0; 0 = no cap) | single | 0 | no cap |
+| `stock` | bool | `1` | presence | off | off |
+| `sort` | enum | order, updated, price, ram, stock | single | order | order |
+
+Rules: URL wins on load; the ViewModel owns runtime state and writes back via
+`replace`. Unknown params are dropped. Invalid enum values fall back to the
+listed default. Parse failures fall back to default (ignored, never thrown).
+
 ## Files
 
 - `src/pages/Catalog/model/CatalogPageViewModel.ts`
