@@ -52,7 +52,13 @@ export function PlanRow({ returnState, row, vm }: PlanRowProps) {
           ${row.effectiveMonthlyPrice}/mo
         </Text>
         <Text color="ink.500" fontSize="xs">
-          score {row.priceEfficiencyScore}
+          {row.valueTier}
+        </Text>
+        <Text color="ink.500" fontSize="xs">
+          {vm.formatPricePerCore(row.pricePerCore)}
+        </Text>
+        <Text color="ink.500" fontSize="xs">
+          {vm.formatPricePerGbRam(row.pricePerGbRam)}
         </Text>
       </Stack>
       <Stack align="start" gap="1" minW="0">

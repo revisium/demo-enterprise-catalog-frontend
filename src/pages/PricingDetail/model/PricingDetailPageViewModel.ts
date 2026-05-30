@@ -1,9 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculatePriceEfficiencyScore,
+  calculateCatalogPlanValues,
+  valueTierOrder,
   type CatalogProduct,
   type CatalogRegionAvailability,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import type { PriceBook } from 'src/entities/pricing';
 import { PricingDetailPageDataSource } from '../api/PricingDetailPageDataSource';
@@ -11,7 +13,7 @@ import { PricingDetailPageDataSource } from '../api/PricingDetailPageDataSource'
 type BillingTermId = 'monthly' | 'yearly';
 type PriceBookSortId =
   | 'effective-monthly'
-  | 'price-efficiency'
+  | 'most-value'
   | 'recently-updated'
   | 'source-revision'
   | 'stock'
@@ -28,26 +30,28 @@ interface PriceBookRow {
   readonly id: string;
   readonly locationHref: string;
   readonly plan: CatalogProduct;
-  readonly priceEfficiencyScore: number;
+  readonly pricePerCore: number | null;
+  readonly pricePerGbRam: number | null;
   readonly quoteHref: string;
   readonly region: CatalogRegionAvailability;
   readonly rowHref: string;
   readonly sourceRevision: number;
+  readonly topRegions: readonly string[];
   readonly updatedAtDisplay: string;
+  readonly valueTier: CatalogValueTier;
   readonly yearlySavingsUsd: number;
 }
 
-const efficiencyOptions: readonly FilterOption[] = [
-  { id: '0', label: 'Any score' },
-  { id: '100', label: '100+' },
-  { id: '150', label: '150+' },
-  { id: '200', label: '200+' },
-  { id: '250', label: '250+' },
+const valueTierOptions: readonly FilterOption[] = [
+  { id: 'all', label: 'Any tier' },
+  { id: '0', label: 'Economy only' },
+  { id: '1', label: 'Economy or Balanced' },
+  { id: '2', label: 'Any value' },
 ];
 
 const sortOptions: readonly FilterOption[] = [
   { id: 'effective-monthly', label: 'Lowest effective price' },
-  { id: 'price-efficiency', label: 'Best efficiency score' },
+  { id: 'most-value', label: 'Best value tier' },
   { id: 'yearly-savings', label: 'Largest yearly savings' },
   { id: 'stock', label: 'Most stock' },
   { id: 'source-revision', label: 'Latest catalog revision' },
@@ -62,7 +66,7 @@ export class PricingDetailPageViewModel {
   selectedRegionIds: readonly string[] = [];
   selectedTermId: BillingTermId = 'monthly';
   sortId: PriceBookSortId = 'effective-monthly';
-  minEfficiency = 0;
+  selectedValueTier = 'all';
   stockOnly = true;
 
   constructor(priceBookId: string | undefined) {
@@ -87,8 +91,8 @@ export class PricingDetailPageViewModel {
     return book;
   }
 
-  get efficiencyOptions() {
-    return efficiencyOptions;
+  get valueTierOptions() {
+    return valueTierOptions;
   }
 
   get familyOptions(): readonly FilterOption[] {
@@ -109,7 +113,7 @@ export class PricingDetailPageViewModel {
 
   get hasUserFilters() {
     return (
-      this.minEfficiency > 0 ||
+      this.selectedValueTier !== 'all' ||
       this.selectedFamilyIds.length > 0 ||
       this.selectedRegionIds.length > 0 ||
       this.selectedTermId !== 'monthly' ||
@@ -123,10 +127,17 @@ export class PricingDetailPageViewModel {
       (lowest, row) => Math.min(lowest, row.effectiveMonthlyUsd),
       Number.POSITIVE_INFINITY,
     );
-    const bestEfficiency = this.filteredRows.reduce(
-      (highest, row) => Math.max(highest, row.priceEfficiencyScore),
-      0,
-    );
+    const bestValueTier =
+      this.filteredRows.reduce((best, row) => {
+        const current = valueTierOrder[row.valueTier];
+        const existing = best === null ? 3 : valueTierOrder[best];
+
+        if (current < existing) {
+          return row.valueTier;
+        }
+
+        return best;
+      }, null as CatalogValueTier | null) ?? 'Performance';
 
     return [
       { label: 'Rows', value: String(this.filteredRows.length) },
@@ -134,7 +145,7 @@ export class PricingDetailPageViewModel {
         label: 'Lowest',
         value: lowestPrice === Number.POSITIVE_INFINITY ? '$0' : `$${lowestPrice}`,
       },
-      { label: 'Best score', value: String(bestEfficiency) },
+      { label: 'Best value tier', value: bestValueTier },
       { label: 'Status', value: this.book.status },
     ];
   }
@@ -167,13 +178,12 @@ export class PricingDetailPageViewModel {
     this.selectedRegionIds = [];
     this.selectedTermId = 'monthly';
     this.sortId = 'effective-monthly';
-    this.minEfficiency = 0;
+    this.selectedValueTier = 'all';
     this.stockOnly = true;
   }
 
-  setMinEfficiency(value: string) {
-    const parsed = Number(value);
-    this.minEfficiency = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+  setMinValueTier(value: string) {
+    this.selectedValueTier = value;
   }
 
   setPriceBookId(priceBookId: string | undefined) {
@@ -201,8 +211,8 @@ export class PricingDetailPageViewModel {
   }
 
   private compareRows(left: PriceBookRow, right: PriceBookRow) {
-    if (this.sortId === 'price-efficiency') {
-      return right.priceEfficiencyScore - left.priceEfficiencyScore;
+    if (this.sortId === 'most-value') {
+      return valueTierOrder[left.valueTier] - valueTierOrder[right.valueTier];
     }
 
     if (this.sortId === 'yearly-savings') {
@@ -240,16 +250,20 @@ export class PricingDetailPageViewModel {
       this.selectedFamilyIds.length === 0 || this.selectedFamilyIds.includes(row.family);
     const matchesRegion =
       this.selectedRegionIds.length === 0 || this.selectedRegionIds.includes(row.region.regionId);
-    const matchesEfficiency = row.priceEfficiencyScore >= this.minEfficiency;
     const matchesStock = !this.stockOnly || row.region.stock > 0;
+    const matchesTier =
+      this.selectedValueTier === 'all'
+        ? true
+        : valueTierOrder[row.valueTier] <= Number(this.selectedValueTier);
 
-    return matchesFamily && matchesRegion && matchesEfficiency && matchesStock;
+    return matchesFamily && matchesRegion && matchesStock && matchesTier;
   }
 
   private toPriceBookRow(plan: CatalogProduct, region: CatalogRegionAvailability): PriceBookRow {
     const baseMonthly =
       this.selectedTermId === 'yearly' ? plan.pricing.yearlyMonthlyUsd : plan.pricing.monthlyUsd;
     const effectiveMonthlyUsd = Math.round(baseMonthly * this.book.termMultiplier);
+    const computed = calculateCatalogPlanValues(plan);
 
     return {
       effectiveMonthlyUsd,
@@ -257,12 +271,15 @@ export class PricingDetailPageViewModel {
       id: `${this.book.id}:${plan.id}:${region.regionId}`,
       locationHref: `/locations/${region.regionId}`,
       plan,
-      priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
+      pricePerCore: computed.pricePerCore,
+      pricePerGbRam: computed.pricePerGbRam,
       quoteHref: `/quote?plan=${plan.id}&region=${region.regionId}&term=${this.selectedTermId}`,
       region,
       rowHref: `/catalog/${plan.id}`,
       sourceRevision: plan.system.revision,
+      topRegions: computed.topRegions,
       updatedAtDisplay: plan.system.updatedAt.slice(0, 10),
+      valueTier: computed.valueTier,
       yearlySavingsUsd: (plan.pricing.monthlyUsd - plan.pricing.yearlyMonthlyUsd) * 12,
     };
   }

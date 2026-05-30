@@ -314,7 +314,14 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                   </Text>
                   <Stack align={{ base: 'start', md: 'end' }} gap="2">
                     <Badge bg="successBg" borderRadius="8px" color="successText">
-                      {region.readinessScore} readiness
+                      {region.valueTier}
+                    </Badge>
+                    <Badge
+                      bg={region.availableEverywhere ? 'successBg' : 'panelSubtleBg'}
+                      borderRadius="8px"
+                      color={region.availableEverywhere ? 'successText' : 'ink.700'}
+                    >
+                      {region.availableEverywhere ? 'Available everywhere' : 'Limited setup'}
                     </Badge>
                     <Button asChild borderRadius="8px" size="xs" variant="outline">
                       <Link state={returnState} to={region.quoteHref}>
@@ -395,9 +402,29 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                       <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
                         ${row.plan.pricing.monthlyUsd}/mo
                       </Badge>
-                      <Badge bg="successBg" borderRadius="8px" color="successText">
-                        {row.priceEfficiencyScore} efficiency
+                      <Badge bg="brand.50" borderRadius="8px" color="brand.500">
+                        {row.valueTier}
                       </Badge>
+                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
+                        {vm.formatPricePerCore(row.pricePerCore)}
+                      </Badge>
+                      <Badge bg="panelSubtleBg" borderRadius="8px" color="ink.700">
+                        {vm.formatPricePerGbRam(row.pricePerGbRam)}
+                      </Badge>
+                      {row.topRegions.length === 0 ? null : (
+                        <Flex gap="1.5" mt="1" wrap="wrap">
+                          {row.topRegions.map((regionId) => (
+                            <Badge
+                              bg="panelSubtleBg"
+                              borderRadius="8px"
+                              color="ink.700"
+                              key={regionId}
+                            >
+                              {regionId}
+                            </Badge>
+                          ))}
+                        </Flex>
+                      )}
                     </Flex>
                   </Stack>
                   <Stack align="stretch" gap="2" position="relative" zIndex="2">
@@ -779,7 +806,7 @@ interface ProductDetailOption {
 
 function getAlternativeSortOptions(t: ProductDetailTranslate): readonly ProductDetailOption[] {
   return [
-    { id: 'price-efficiency', label: t('productDetail.controls.sort.bestPriceEfficiency') },
+    { id: 'value-tier', label: t('productDetail.controls.sort.bestReadiness') },
     { id: 'monthly-price', label: t('productDetail.controls.sort.lowestMonthlyPrice') },
     { id: 'stock', label: t('productDetail.controls.sort.mostStock') },
     { id: 'recently-updated', label: t('productDetail.controls.sort.recentlyUpdated') },

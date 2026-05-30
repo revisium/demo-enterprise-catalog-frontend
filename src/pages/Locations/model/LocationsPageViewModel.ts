@@ -1,25 +1,26 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculateCatalogReadinessScore,
-  calculatePriceEfficiencyScore,
+  calculateCatalogPlanValues,
   createStockFilterOptions,
+  valueTierOrder,
   normalizeSupportWindowId,
   supportWindowFilterOptions,
   type CatalogFilterOption,
   type CatalogProduct,
   type CatalogRegionSummaryFields,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import { LocationsPageDataSource } from '../api/LocationsPageDataSource';
 
 type LocationSortId =
   | 'fastest-setup'
   | 'most-plans'
-  | 'readiness-score'
+  | 'most-value'
   | 'recently-updated'
   | 'region-name'
   | 'stock';
-type ReadinessBandId = 'all' | 'high' | 'medium';
+type ValueTierFilterId = 'all' | 'economy' | 'balanced' | 'performance';
 type SupportWindowId = '24-7' | 'all' | 'business-hours';
 
 interface LocationPlanRow {
@@ -27,40 +28,49 @@ interface LocationPlanRow {
   readonly effectiveMonthlyPrice: number;
   readonly planHref: string;
   readonly plan: CatalogProduct;
-  readonly priceEfficiencyScore: number;
   readonly setupHours: number;
   readonly stock: number;
   readonly supportWindow: string;
+  readonly valueTier: CatalogValueTier;
 }
 
 interface LocationRow extends CatalogRegionSummaryFields {
+  readonly bestValueTier: CatalogValueTier;
   readonly latestUpdatedAt: string;
   readonly plans: readonly LocationPlanRow[];
 }
 
 const sortOptions: readonly CatalogFilterOption[] = [
   { id: 'stock', label: 'Most stock' },
-  { id: 'readiness-score', label: 'Best readiness score' },
+  { id: 'most-value', label: 'Best value tier' },
   { id: 'fastest-setup', label: 'Fastest setup' },
   { id: 'most-plans', label: 'Most server plans' },
   { id: 'recently-updated', label: 'Recently updated' },
   { id: 'region-name', label: 'Region name' },
 ];
 
-const readinessOptions: readonly CatalogFilterOption[] = [
-  { id: 'all', label: 'Any readiness' },
-  { id: 'medium', label: '70+ score' },
-  { id: 'high', label: '85+ score' },
+const valueTierOptions: readonly CatalogFilterOption[] = [
+  { id: 'all', label: 'Any tier' },
+  { id: 'economy', label: 'Economy and up' },
+  { id: 'balanced', label: 'Balanced and up' },
+  { id: 'performance', label: 'Performance only' },
 ];
 
 const stockOptions = createStockFilterOptions([5, 20, 50]);
 const supportOptions = supportWindowFilterOptions;
 
+const valueTierOrderById: Record<ValueTierFilterId, number | null> = {
+  all: null,
+  economy: 0,
+  balanced: 1,
+  performance: 2,
+};
+
 export class LocationsPageViewModel {
   private readonly dataSource = new LocationsPageDataSource();
 
   minStock = 0;
-  selectedReadinessBandId: ReadinessBandId = 'all';
+  selectedValueTierId: ValueTierFilterId = 'all';
   selectedFamilyIds: readonly string[] = [];
   selectedSupportWindowId: SupportWindowId = 'all';
   sortId: LocationSortId = 'stock';
@@ -79,6 +89,7 @@ export class LocationsPageViewModel {
 
     this.products.forEach((plan) => {
       plan.availabilityByRegion.forEach((availability) => {
+        const computed = calculateCatalogPlanValues(plan);
         regionLabels.set(availability.regionId, availability.regionLabel);
 
         const rows = byRegion.get(availability.regionId) ?? [];
@@ -87,10 +98,10 @@ export class LocationsPageViewModel {
           effectiveMonthlyPrice: plan.pricing.monthlyUsd,
           planHref: `/catalog/${plan.id}`,
           plan,
-          priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
           setupHours: availability.setupHours,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
+          valueTier: computed.valueTier,
         });
         byRegion.set(availability.regionId, rows);
       });
@@ -110,26 +121,23 @@ export class LocationsPageViewModel {
       const familyCoveragePercent =
         familyCount > 0 ? Math.round((families.length / familyCount) * 100) : 0;
       const enterpriseRows = plans.filter((row) => row.plan.supportTier === 'Enterprise').length;
-      const enterpriseCoveragePercent =
-        plans.length > 0 ? Math.round((enterpriseRows / plans.length) * 100) : 0;
-      const readinessScore = calculateCatalogReadinessScore({
-        enterpriseCoveragePercent,
-        familyCoveragePercent,
-        fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
-        totalStock,
-      });
+      const enterpriseCoveragePercent = plans.length > 0 ? Math.round((enterpriseRows / plans.length) * 100) : 0;
+      const bestValueTier = plans.reduce<CatalogValueTier>(
+        (best, row) => (valueTierOrder[row.valueTier] < valueTierOrder[best] ? row.valueTier : best),
+        'Performance',
+      );
 
       return {
+        bestValueTier,
         dataCenterCodes: [...new Set(plans.map((row) => row.dataCenterCode))].sort((left, right) =>
           left.localeCompare(right),
         ),
         enterpriseCoveragePercent,
-        fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
         families,
         familyCoveragePercent,
+        fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
         latestUpdatedAt: new Date(Math.max(...updatedTimes)).toISOString(),
         plans,
-        readinessScore,
         regionId,
         regionLabel: regionLabels.get(regionId) ?? regionId,
         supportWindows: [...new Set(plans.map((row) => row.supportWindow))].sort((left, right) =>
@@ -148,8 +156,8 @@ export class LocationsPageViewModel {
 
   get featuredLocation(): LocationRow | undefined {
     return [...this.filteredLocations].sort((left, right) => {
-      if (right.readinessScore !== left.readinessScore) {
-        return right.readinessScore - left.readinessScore;
+      if (right.bestValueTier !== left.bestValueTier) {
+        return valueTierOrder[left.bestValueTier] - valueTierOrder[right.bestValueTier];
       }
 
       if (right.totalStock !== left.totalStock) {
@@ -179,8 +187,8 @@ export class LocationsPageViewModel {
     return stockOptions;
   }
 
-  get readinessOptions() {
-    return readinessOptions;
+  get valueTierOptions() {
+    return valueTierOptions;
   }
 
   get supportOptions() {
@@ -195,13 +203,27 @@ export class LocationsPageViewModel {
     return (
       this.minStock > 0 ||
       this.selectedFamilyIds.length > 0 ||
-      this.selectedReadinessBandId !== 'all' ||
+      this.selectedValueTierId !== 'all' ||
       this.selectedSupportWindowId !== 'all' ||
       this.sortId !== 'stock'
     );
   }
 
   get summaryMetrics() {
+    const bestValueTier =
+      this.filteredLocations.length === 0
+        ? 'Performance'
+        : this.filteredLocations.reduce<CatalogValueTier>((best, location) => {
+            const order = valueTierOrder[location.bestValueTier];
+            const bestOrder = valueTierOrder[best];
+
+            if (order < bestOrder) {
+              return location.bestValueTier;
+            }
+
+            return best;
+          }, 'Performance');
+
     return [
       { label: 'Regions', value: String(this.filteredLocations.length) },
       {
@@ -215,16 +237,12 @@ export class LocationsPageViewModel {
         ),
       },
       {
-        label: 'Best readiness',
-        value: String(
-          this.filteredLocations.reduce(
-            (best, location) => Math.max(best, location.readinessScore),
-            0,
-          ),
-        ),
+        label: 'Best value tier',
+        value: bestValueTier,
       },
     ];
   }
+
   formatUpdatedDate(value: string) {
     return new Intl.DateTimeFormat('en', {
       day: 'numeric',
@@ -252,7 +270,7 @@ export class LocationsPageViewModel {
 
   resetFilters() {
     this.minStock = 0;
-    this.selectedReadinessBandId = 'all';
+    this.selectedValueTierId = 'all';
     this.selectedFamilyIds = [];
     this.selectedSupportWindowId = 'all';
     this.sortId = 'stock';
@@ -262,8 +280,8 @@ export class LocationsPageViewModel {
     this.sortId = this.isSortId(sortId) ? sortId : 'stock';
   }
 
-  setReadinessBand(value: string) {
-    this.selectedReadinessBandId = this.isReadinessBandId(value) ? value : 'all';
+  setValueTier(value: string) {
+    this.selectedValueTierId = this.isValueTierFilterId(value) ? value : 'all';
   }
 
   setSupportWindow(value: string) {
@@ -279,8 +297,10 @@ export class LocationsPageViewModel {
       return left.fastestSetupHours - right.fastestSetupHours;
     }
 
-    if (this.sortId === 'readiness-score') {
-      return right.readinessScore - left.readinessScore;
+    if (this.sortId === 'most-value') {
+      if (right.bestValueTier !== left.bestValueTier) {
+        return valueTierOrder[left.bestValueTier] - valueTierOrder[right.bestValueTier];
+      }
     }
 
     if (this.sortId === 'most-plans') {
@@ -302,8 +322,8 @@ export class LocationsPageViewModel {
     return sortOptions.some((option) => option.id === value);
   }
 
-  private isReadinessBandId(value: string): value is ReadinessBandId {
-    return readinessOptions.some((option) => option.id === value);
+  private isValueTierFilterId(value: string): value is ValueTierFilterId {
+    return valueTierOptions.some((option) => option.id === value);
   }
 
   private isSupportWindowId(value: string): value is SupportWindowId {
@@ -315,29 +335,18 @@ export class LocationsPageViewModel {
       this.selectedFamilyIds.length === 0 ||
       location.plans.some((row) => this.selectedFamilyIds.includes(row.plan.family));
     const matchesStock = this.minStock === 0 || location.totalStock >= this.minStock;
-    const matchesReadiness =
-      this.selectedReadinessBandId === 'all' ||
-      location.readinessScore >= this.getReadinessThreshold();
+    const minTier = valueTierOrderById[this.selectedValueTierId];
+    const matchesValueTier =
+      this.selectedValueTierId === 'all' ? true : minTier !== null && valueTierOrder[location.bestValueTier] >= minTier;
     const matchesSupport =
       this.selectedSupportWindowId === 'all' ||
       location.supportWindows.some(
         (window) => normalizeSupportWindowId(window) === this.selectedSupportWindowId,
       );
 
-    return matchesFamily && matchesStock && matchesReadiness && matchesSupport;
+    return matchesFamily && matchesStock && matchesValueTier && matchesSupport;
   }
 
-  private getReadinessThreshold() {
-    if (this.selectedReadinessBandId === 'high') {
-      return 85;
-    }
-
-    if (this.selectedReadinessBandId === 'medium') {
-      return 70;
-    }
-
-    return 0;
-  }
   private parseNonNegativeNumber(value: string) {
     const parsed = Number(value);
 

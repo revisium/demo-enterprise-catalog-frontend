@@ -1,23 +1,23 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculateCatalogReadinessScore,
-  calculatePriceEfficiencyScore,
   createStockFilterOptions,
-  getFastestSetupHours,
+  calculateCatalogPlanValues,
   normalizeSupportWindowId,
   supportWindowFilterOptions,
+  valueTierOrder,
   type CatalogFilterOption,
   type CatalogProduct,
   type CatalogRegionSummaryFields,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import { LocationDetailPageDataSource } from '../api/LocationDetailPageDataSource';
 
 type LocationPlanSortId =
   | 'display-order'
   | 'fastest-setup'
+  | 'most-value'
   | 'monthly-price'
-  | 'price-efficiency'
   | 'recently-updated'
   | 'stock';
 type SupportWindowId = '24-7' | 'all' | 'business-hours';
@@ -28,11 +28,14 @@ interface LocationPlanRow {
   readonly effectiveMonthlyPrice: number;
   readonly plan: CatalogProduct;
   readonly planHref: string;
-  readonly priceEfficiencyScore: number;
+  readonly pricePerCore: number | null;
+  readonly pricePerGbRam: number | null;
   readonly quoteHref: string;
   readonly setupHours: number;
+  readonly topRegions: readonly string[];
   readonly stock: number;
   readonly supportWindow: string;
+  readonly valueTier: CatalogValueTier;
 }
 
 interface RegionSummaryRow extends CatalogRegionSummaryFields {
@@ -41,7 +44,7 @@ interface RegionSummaryRow extends CatalogRegionSummaryFields {
 }
 
 const sortOptions: readonly CatalogFilterOption[] = [
-  { id: 'price-efficiency', label: 'Best price efficiency' },
+  { id: 'most-value', label: 'Best value tier' },
   { id: 'stock', label: 'Most stock' },
   { id: 'fastest-setup', label: 'Fastest setup' },
   { id: 'monthly-price', label: 'Lowest monthly price' },
@@ -58,7 +61,7 @@ export class LocationDetailPageViewModel {
   minStock = 0;
   selectedFamilyIds: readonly string[] = [];
   selectedSupportWindowId: SupportWindowId = 'all';
-  sortId: LocationPlanSortId = 'price-efficiency';
+  sortId: LocationPlanSortId = 'most-value';
   routeRegionId: string | undefined;
 
   constructor(routeRegionId: string | undefined) {
@@ -95,7 +98,7 @@ export class LocationDetailPageViewModel {
         fastestSetupHours: 0,
         href: '/locations',
         planCount: 0,
-        readinessScore: 0,
+        bestValueTier: 'Performance',
         regionId: this.regionId,
         regionLabel: 'Unknown region',
         supportWindows: [],
@@ -118,8 +121,8 @@ export class LocationDetailPageViewModel {
 
   get featuredPlanRow(): LocationPlanRow | undefined {
     return [...this.filteredPlanRows].sort((left, right) => {
-      if (right.priceEfficiencyScore !== left.priceEfficiencyScore) {
-        return right.priceEfficiencyScore - left.priceEfficiencyScore;
+      if (right.valueTier !== left.valueTier) {
+        return valueTierOrder[left.valueTier] - valueTierOrder[right.valueTier];
       }
 
       if (right.stock !== left.stock) {
@@ -145,8 +148,8 @@ export class LocationDetailPageViewModel {
           return right.matchingFamilyCount - left.matchingFamilyCount;
         }
 
-        if (right.readinessScore !== left.readinessScore) {
-          return right.readinessScore - left.readinessScore;
+        if (right.bestValueTier !== left.bestValueTier) {
+          return valueTierOrder[left.bestValueTier] - valueTierOrder[right.bestValueTier];
         }
 
         return right.totalStock - left.totalStock;
@@ -179,7 +182,7 @@ export class LocationDetailPageViewModel {
       this.minStock > 0 ||
       this.selectedFamilyIds.length > 0 ||
       this.selectedSupportWindowId !== 'all' ||
-      this.sortId !== 'price-efficiency'
+      this.sortId !== 'most-value'
     );
   }
 
@@ -187,7 +190,7 @@ export class LocationDetailPageViewModel {
     return [
       { label: 'Plans', value: String(this.regionSummary.planCount) },
       { label: 'Total stock', value: String(this.regionSummary.totalStock) },
-      { label: 'Readiness', value: String(this.regionSummary.readinessScore) },
+      { label: 'Best value tier', value: String(this.regionSummary.bestValueTier) },
       { label: 'Fastest setup', value: `${this.regionSummary.fastestSetupHours}h` },
     ];
   }
@@ -209,7 +212,7 @@ export class LocationDetailPageViewModel {
     this.minStock = 0;
     this.selectedFamilyIds = [];
     this.selectedSupportWindowId = 'all';
-    this.sortId = 'price-efficiency';
+    this.sortId = 'most-value';
   }
 
   setMinStock(value: string) {
@@ -226,7 +229,7 @@ export class LocationDetailPageViewModel {
   }
 
   setSort(sortId: string) {
-    this.sortId = this.isSortId(sortId) ? sortId : 'price-efficiency';
+    this.sortId = this.isSortId(sortId) ? sortId : 'most-value';
   }
 
   setSupportWindow(value: string) {
@@ -262,11 +265,14 @@ export class LocationDetailPageViewModel {
           effectiveMonthlyPrice: plan.pricing.monthlyUsd,
           plan,
           planHref: `/catalog/${plan.id}`,
-          priceEfficiencyScore: calculatePriceEfficiencyScore(plan),
+          pricePerCore: calculateCatalogPlanValues(plan).pricePerCore,
+          pricePerGbRam: calculateCatalogPlanValues(plan).pricePerGbRam,
           quoteHref: `/quote?plan=${plan.id}&region=${availability.regionId}`,
           setupHours: availability.setupHours,
+          topRegions: calculateCatalogPlanValues(plan).topRegions,
           stock: availability.stock,
           supportWindow: availability.supportWindow,
+          valueTier: calculateCatalogPlanValues(plan).valueTier,
         })),
     );
   }
@@ -283,23 +289,25 @@ export class LocationDetailPageViewModel {
     const enterpriseRows = rows.filter((row) => row.plan.supportTier === 'Enterprise').length;
     const enterpriseCoveragePercent =
       rows.length > 0 ? Math.round((enterpriseRows / rows.length) * 100) : 0;
-    const fastestSetupHours = getFastestSetupHours(rows.map((row) => row.setupHours));
+    const fastestSetupHours = rows.reduce(
+      (fastest, row) => Math.min(fastest, row.setupHours),
+      Number.POSITIVE_INFINITY,
+    );
     const totalStock = rows.reduce((total, row) => total + row.stock, 0);
+    const bestValueTier = rows.reduce<CatalogValueTier>(
+      (best, row) => (valueTierOrder[row.valueTier] < valueTierOrder[best] ? row.valueTier : best),
+      'Performance',
+    );
 
     return {
       dataCenterCodes: this.getUniqueSorted(rows.map((row) => row.dataCenterCode)),
       enterpriseCoveragePercent,
       families,
       familyCoveragePercent,
-      fastestSetupHours,
+      fastestSetupHours: Number.isFinite(fastestSetupHours) ? fastestSetupHours : 0,
       href: `/locations/${regionId}`,
       planCount: rows.length,
-      readinessScore: calculateCatalogReadinessScore({
-        enterpriseCoveragePercent,
-        familyCoveragePercent,
-        fastestSetupHours,
-        totalStock,
-      }),
+      bestValueTier,
       regionId,
       regionLabel: regionLabel ?? regionId,
       supportWindows: this.getUniqueSorted(rows.map((row) => row.supportWindow)),
@@ -328,7 +336,11 @@ export class LocationDetailPageViewModel {
       return left.plan.system.displayOrder - right.plan.system.displayOrder;
     }
 
-    return right.priceEfficiencyScore - left.priceEfficiencyScore;
+    if (this.sortId === 'most-value') {
+      return valueTierOrder[left.valueTier] - valueTierOrder[right.valueTier];
+    }
+
+    return right.plan.pricing.monthlyUsd - left.plan.pricing.monthlyUsd;
   }
 
   private getUniqueSorted(values: readonly string[]) {
@@ -365,5 +377,13 @@ export class LocationDetailPageViewModel {
     }
 
     return [...values, value];
+  }
+
+  formatPricePerCore(value: number | null) {
+    return value === null ? '—' : `$${value.toFixed(2)}/core`;
+  }
+
+  formatPricePerGbRam(value: number | null) {
+    return value === null ? '—' : `$${value.toFixed(2)}/GB`;
   }
 }

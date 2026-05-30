@@ -53,7 +53,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
             <FilterCard gridColumn={{ xl: 'span 2' }}>
               <SectionEyebrow>Price row controls</SectionEyebrow>
               <FieldHint>
-                Filter by family, region, stock, and efficiency score; then sort the active rows.
+                Filter by family, region, stock, and value tier; then sort the active rows.
               </FieldHint>
               <Flex gap="2" wrap="wrap">
                 <FilterButton
@@ -97,10 +97,10 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 w="100%"
               >
                 <SelectField
-                  label="Minimum score"
-                  onChange={(value) => vm.setMinEfficiency(value)}
-                  options={vm.efficiencyOptions}
-                  value={String(vm.minEfficiency)}
+                  label="Minimum value tier"
+                  onChange={(value) => vm.setMinValueTier(value)}
+                  options={vm.valueTierOptions}
+                  value={String(vm.selectedValueTier)}
                 />
                 <SelectField
                   label="Sort rows"
@@ -166,7 +166,7 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 <EmptyState
                   actionLabel="Reset filters"
                   onAction={() => vm.resetFilters()}
-                  summary="No price rows match the selected family, region, stock, and score filters."
+                  summary="No price rows match the selected family, region, stock, and value-tier filters."
                   title="No rows match this query"
                 />
               ) : null}
@@ -233,7 +233,10 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                       {row.region.stock} units
                     </Badge>
                     <Text color="ink.500" fontSize="xs">
-                      score {row.priceEfficiencyScore}
+                      {row.valueTier}
+                    </Text>
+                    <Text color="ink.500" fontSize="xs">
+                      {row.pricePerCore === null ? '—' : `$${row.pricePerCore.toFixed(2)}/core`}
                     </Text>
                   </Stack>
                   <Flex gap="2" justify="end" minW="0" wrap="wrap">

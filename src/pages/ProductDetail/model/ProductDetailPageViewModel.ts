@@ -1,16 +1,16 @@
 import { makeAutoObservable } from 'mobx';
 
 import {
-  calculateCatalogReadinessScore,
-  calculatePriceEfficiencyScore,
-  getFastestSetupHours,
+  calculateCatalogPlanValues,
+  valueTierOrder,
   type CatalogProduct,
   type CatalogRegionAvailability,
+  type CatalogValueTier,
 } from 'src/entities/catalog';
 import { ProductDetailPageDataSource } from '../api/ProductDetailPageDataSource';
 
-type RegionSortId = 'fastest-setup' | 'readiness' | 'region-name' | 'stock';
-type AlternativeSortId = 'monthly-price' | 'price-efficiency' | 'recently-updated' | 'stock';
+type RegionSortId = 'fastest-setup' | 'region-name' | 'stock' | 'value-tier';
+type AlternativeSortId = 'monthly-price' | 'recently-updated' | 'stock' | 'value-tier';
 export type ProductResourceVisual =
   | 'api'
   | 'backup'
@@ -28,9 +28,11 @@ interface FilterOption {
 }
 
 interface ProductRegionRow extends CatalogRegionAvailability {
+  readonly availableEverywhere: boolean;
   readonly locationHref: string;
   readonly quoteHref: string;
-  readonly readinessScore: number;
+  readonly regionsInStock: number;
+  readonly valueTier: CatalogValueTier;
 }
 
 interface AlternativeProductRow {
@@ -38,10 +40,12 @@ interface AlternativeProductRow {
   readonly displayUpdatedDate: string;
   readonly overlapRegionCount: number;
   readonly plan: CatalogProduct;
-  readonly priceDeltaLabel: string;
-  readonly priceEfficiencyScore: number;
+  readonly pricePerCore: number | null;
+  readonly pricePerGbRam: number | null;
   readonly quoteHref: string;
   readonly totalStock: number;
+  readonly topRegions: readonly string[];
+  readonly valueTier: CatalogValueTier;
 }
 
 interface AlternativeCandidate {
@@ -75,14 +79,14 @@ const addonLabels = new Map([
 ]);
 
 const regionSortOptions: readonly FilterOption[] = [
-  { id: 'readiness', label: 'Best readiness' },
+  { id: 'value-tier', label: 'Best value tier' },
   { id: 'stock', label: 'Most stock' },
   { id: 'fastest-setup', label: 'Fastest setup' },
   { id: 'region-name', label: 'Region name' },
 ];
 
 const alternativeSortOptions: readonly FilterOption[] = [
-  { id: 'price-efficiency', label: 'Best price efficiency' },
+  { id: 'value-tier', label: 'Best value tier' },
   { id: 'monthly-price', label: 'Lowest monthly price' },
   { id: 'stock', label: 'Most stock' },
   { id: 'recently-updated', label: 'Recently updated' },
@@ -96,9 +100,9 @@ export class ProductDetailPageViewModel {
 
   private readonly dataSource = new ProductDetailPageDataSource();
 
-  alternativeSortId: AlternativeSortId = 'price-efficiency';
+  alternativeSortId: AlternativeSortId = 'value-tier';
   inStockRegionsOnly = true;
-  regionSortId: RegionSortId = 'readiness';
+  regionSortId: RegionSortId = 'value-tier';
   productId: string | undefined;
 
   constructor(productId: string | undefined) {
@@ -123,15 +127,23 @@ export class ProductDetailPageViewModel {
   }
 
   get fastestSetupHours() {
-    return getFastestSetupHours(
-      this.product.availabilityByRegion.map((region) => region.setupHours),
-    );
+    const setupHours = this.product.availabilityByRegion.map((region) => region.setupHours);
+
+    if (setupHours.length === 0) {
+      return 0;
+    }
+
+    return Math.min(...setupHours);
   }
 
   get summaryMetrics() {
+    const computed = calculateCatalogPlanValues(this.product);
+
     return [
       { label: 'Total stock', value: String(this.totalStock) },
       { label: 'Fastest setup', value: `${this.fastestSetupHours}h` },
+      { label: 'Regions in stock', value: String(computed.regionsInStock) },
+      { label: 'Value tier', value: computed.valueTier },
     ];
   }
 
@@ -189,18 +201,15 @@ export class ProductDetailPageViewModel {
   }
 
   get regionRows(): readonly ProductRegionRow[] {
-    const enterpriseCoveragePercent = this.product.supportTier === 'Enterprise' ? 100 : 0;
+    const computed = calculateCatalogPlanValues(this.product);
 
     return this.product.availabilityByRegion.map((region) => ({
       ...region,
+      availableEverywhere: computed.availableEverywhere,
       locationHref: `/locations/${region.regionId}`,
       quoteHref: this.createQuotePath(this.product.id, region.regionId),
-      readinessScore: calculateCatalogReadinessScore({
-        enterpriseCoveragePercent,
-        familyCoveragePercent: 100,
-        fastestSetupHours: region.setupHours,
-        totalStock: region.stock,
-      }),
+      regionsInStock: computed.regionsInStock,
+      valueTier: computed.valueTier,
     }));
   }
 
@@ -267,7 +276,7 @@ export class ProductDetailPageViewModel {
   }
 
   setAlternativeSort(sortId: string) {
-    this.alternativeSortId = this.isAlternativeSortId(sortId) ? sortId : 'price-efficiency';
+    this.alternativeSortId = this.isAlternativeSortId(sortId) ? sortId : 'value-tier';
   }
 
   setInStockRegionsOnly(value: boolean) {
@@ -275,7 +284,7 @@ export class ProductDetailPageViewModel {
   }
 
   setRegionSort(sortId: string) {
-    this.regionSortId = this.isRegionSortId(sortId) ? sortId : 'readiness';
+    this.regionSortId = this.isRegionSortId(sortId) ? sortId : 'value-tier';
   }
 
   private compareAlternativeCandidates(left: AlternativeCandidate, right: AlternativeCandidate) {
@@ -291,7 +300,10 @@ export class ProductDetailPageViewModel {
       return Date.parse(right.plan.system.updatedAt) - Date.parse(left.plan.system.updatedAt);
     }
 
-    return calculatePriceEfficiencyScore(right.plan) - calculatePriceEfficiencyScore(left.plan);
+    const leftValues = calculateCatalogPlanValues(left.plan);
+    const rightValues = calculateCatalogPlanValues(right.plan);
+
+    return valueTierOrder[leftValues.valueTier] - valueTierOrder[rightValues.valueTier];
   }
 
   private compareRegionRows(left: ProductRegionRow, right: ProductRegionRow) {
@@ -307,7 +319,15 @@ export class ProductDetailPageViewModel {
       return left.regionLabel.localeCompare(right.regionLabel);
     }
 
-    return right.readinessScore - left.readinessScore;
+    return valueTierOrder[left.valueTier] - valueTierOrder[right.valueTier];
+  }
+
+  formatPricePerCore(value: number | null) {
+    return value === null ? '—' : `$${value.toFixed(2)}/core`;
+  }
+
+  formatPricePerGbRam(value: number | null) {
+    return value === null ? '—' : `$${value.toFixed(2)}/GB`;
   }
 
   private getAddOnHref(addonId: string) {
@@ -438,33 +458,28 @@ export class ProductDetailPageViewModel {
     return uniqueRows;
   }
 
-  private formatPriceDelta(value: number) {
-    if (value === 0) {
-      return 'same price';
-    }
-
-    return `${value > 0 ? '+' : '-'}$${Math.abs(value)}/mo`;
-  }
 
   private getTotalStock(product: CatalogProduct) {
     return product.availabilityByRegion.reduce((total, region) => total + region.stock, 0);
   }
 
   private toAlternativeRow(candidate: AlternativeCandidate): AlternativeProductRow {
-    const priceDelta = candidate.plan.pricing.monthlyUsd - this.product.pricing.monthlyUsd;
+    const computed = calculateCatalogPlanValues(candidate.plan);
 
     return {
       detailHref: `/catalog/${candidate.plan.id}`,
       displayUpdatedDate: this.formatDate(candidate.plan.system.updatedAt),
       overlapRegionCount: candidate.overlapRegionCount,
       plan: candidate.plan,
-      priceDeltaLabel: this.formatPriceDelta(priceDelta),
-      priceEfficiencyScore: calculatePriceEfficiencyScore(candidate.plan),
+      pricePerCore: computed.pricePerCore,
+      pricePerGbRam: computed.pricePerGbRam,
       quoteHref: this.createQuotePath(
         candidate.plan.id,
         candidate.plan.availabilityByRegion[0]?.regionId ?? '',
       ),
       totalStock: this.getTotalStock(candidate.plan),
+      topRegions: computed.topRegions,
+      valueTier: computed.valueTier,
     };
   }
 

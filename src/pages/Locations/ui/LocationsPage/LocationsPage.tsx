@@ -80,10 +80,10 @@ export const LocationsPage = observer(function LocationsPage() {
                 />
                 <SelectField
                   compact
-                  label="Readiness"
-                  onChange={(value) => vm.setReadinessBand(value)}
-                  options={vm.readinessOptions}
-                  value={vm.selectedReadinessBandId}
+                  label="Value tier"
+                  onChange={(value) => vm.setValueTier(value)}
+                  options={vm.valueTierOptions}
+                  value={vm.selectedValueTierId}
                 />
                 <SelectField
                   compact
@@ -219,8 +219,8 @@ export const LocationsPage = observer(function LocationsPage() {
                       </Stack>
                       <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
                         <DarkFact
-                          label="Readiness"
-                          value={String(featuredLocation.readinessScore)}
+                          label="Best value tier"
+                          value={String(featuredLocation.bestValueTier)}
                         />
                         <DarkFact
                           label="Family coverage"
@@ -274,8 +274,8 @@ export const LocationsPage = observer(function LocationsPage() {
                             {region.regionLabel}
                           </Text>
                           <Text color="ink.500" fontSize="xs" overflowWrap="anywhere">
-                            {region.totalStock} units · {region.readinessScore} readiness
-                          </Text>
+                          {region.totalStock} units · {region.bestValueTier} value tier
+                        </Text>
                         </Stack>
                       </Link>
                     </Grid>

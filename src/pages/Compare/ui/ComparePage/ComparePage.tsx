@@ -133,7 +133,7 @@ export const ComparePage = observer(function ComparePage() {
           </FilterCard>
 
           <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white">
-            <SectionEyebrow>Quote fit</SectionEyebrow>
+            <SectionEyebrow>Quote match</SectionEyebrow>
             <FieldHint>
               Best available option in {vm.selectedRegionLabel}. The card changes as filters change.
             </FieldHint>
@@ -148,7 +148,10 @@ export const ComparePage = observer(function ComparePage() {
                 <Grid gap="2" templateColumns="repeat(2, minmax(0, 1fr))">
                   <CompareFact label="Family" value={recommendation.family} />
                   <CompareFact label="Support" value={recommendation.supportTier} />
-                  <CompareFact label="Score" value={String(vm.bestFitRows[0]?.fitScore ?? 0)} />
+                  <CompareFact
+                    label="Match"
+                    value={String(vm.bestFitRows[0]?.matchValue ?? 0)}
+                  />
                   <CompareFact label="Region" value={vm.bestFitRows[0]?.bestRegionLabel ?? '-'} />
                 </Grid>
               ) : null}
@@ -290,7 +293,7 @@ export const ComparePage = observer(function ComparePage() {
                   Plan
                 </Text>
                 <Text color="ink.500" fontSize="xs" fontWeight="760">
-                  Score
+                  Match
                 </Text>
                 <Text color="ink.500" fontSize="xs" fontWeight="760">
                   Stock
@@ -323,7 +326,7 @@ export const ComparePage = observer(function ComparePage() {
                     </Text>
                   </Stack>
                   <Text color="ink.900" fontSize="sm" fontWeight="760">
-                    {row.fitScore}
+                    {row.matchValue}
                   </Text>
                   <Text color="ink.700" fontSize="sm" fontWeight="650">
                     {row.stockLabel}
@@ -349,7 +352,7 @@ export const ComparePage = observer(function ComparePage() {
           >
             <FilterCard>
               <SectionEyebrow>Quote action</SectionEyebrow>
-              <FieldHint>Carry the best fit and selected term into a quote request.</FieldHint>
+              <FieldHint>Carry the best match and selected term into a quote request.</FieldHint>
               <Button asChild bg="ctaBg" borderRadius="8px" color="white">
                 <RouterLink state={returnState} to={vm.quotePath}>
                   Request quote
