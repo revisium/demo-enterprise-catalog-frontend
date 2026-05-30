@@ -200,10 +200,11 @@ export class CatalogPageViewModel {
     this.minRamGb = p.ram;
     this.maxMonthlyPrice = p.price;
     this.stockOnly = p.stock;
+    this.requireDocuments = p.docs;
     this.sortId = (CATALOG_SORT_URL_TO_VM[p.sort] as CatalogSortId) ?? 'display-order';
   }
 
-  toUrlSearch(): string {
+  get urlSearch(): string {
     return buildCatalogSearch({
       family: this.selectedFamilyIds,
       region: this.selectedRegionIds,
@@ -212,6 +213,7 @@ export class CatalogPageViewModel {
       ram: this.minRamGb,
       price: this.maxMonthlyPrice,
       stock: this.stockOnly,
+      docs: this.requireDocuments,
       sort: CATALOG_SORT_VM_TO_URL[this.sortId] ?? 'order',
     });
   }

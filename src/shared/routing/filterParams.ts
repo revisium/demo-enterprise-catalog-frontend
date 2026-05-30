@@ -1,5 +1,5 @@
 const VALID_MATCH = new Set(['all', 'any']);
-const VALID_SORT = new Set(['order', 'updated', 'price', 'ram', 'stock']);
+const VALID_SORT = new Set(['order', 'updated', 'price', 'yearly', 'ram', 'stock']);
 
 function parseStringList(raw: string | null): readonly string[] {
   if (!raw) return [];
@@ -32,6 +32,7 @@ export interface CatalogFilterParams {
   readonly ram: number;
   readonly price: number;
   readonly stock: boolean;
+  readonly docs: boolean;
   readonly sort: string;
 }
 
@@ -45,6 +46,7 @@ export function parseCatalogParams(search: string): CatalogFilterParams {
     ram: parsePositiveInt(p.get('ram'), 0),
     price: parsePositiveInt(p.get('price'), 0),
     stock: p.get('stock') === '1',
+    docs: p.get('docs') === '1',
     sort: parseEnum(p.get('sort'), VALID_SORT, 'order'),
   };
 }
@@ -53,6 +55,7 @@ export const CATALOG_SORT_URL_TO_VM: Record<string, string> = {
   order: 'display-order',
   updated: 'recently-updated',
   price: 'monthly-price',
+  yearly: 'yearly-price',
   ram: 'ram',
   stock: 'stock',
 };
@@ -70,6 +73,7 @@ export function buildCatalogSearch(params: CatalogFilterParams): string {
   if (params.ram > 0) p.set('ram', String(params.ram));
   if (params.price > 0) p.set('price', String(params.price));
   if (params.stock) p.set('stock', '1');
+  if (params.docs) p.set('docs', '1');
   if (params.sort !== 'order') p.set('sort', params.sort);
   const s = p.toString();
   return s ? `?${s}` : '';

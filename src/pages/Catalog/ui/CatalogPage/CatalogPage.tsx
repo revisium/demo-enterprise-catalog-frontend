@@ -30,10 +30,11 @@ export const CatalogPage = observer(function CatalogPage() {
   });
   const returnState = createReturnState(location);
 
+  // VM → URL: push filter changes to the address bar (replace, no history spam)
   useEffect(() => {
     let first = true;
     const dispose = autorun(() => {
-      const next = vm.toUrlSearch();
+      const next = vm.urlSearch;
       if (first) {
         first = false;
         return;
@@ -42,6 +43,15 @@ export const CatalogPage = observer(function CatalogPage() {
     });
     return dispose;
   }, [navigate, vm]);
+
+  // URL → VM: re-hydrate on back/forward or manual address-bar edits
+  useEffect(() => {
+    const current = vm.urlSearch;
+    const incoming = location.search || '';
+    if (incoming !== current) {
+      vm.applyUrlParams(incoming);
+    }
+  }, [location.search, vm]);
 
   return (
     <PageSectionSurface tone="servers" flex="1">
