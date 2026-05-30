@@ -255,7 +255,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               </Stack>
 
               <Stack gap={sectionGap}>
-                <DetailRowsCard keyPrefix="spec" rows={[...vm.technicalRows, ...vm.packageRows]} title="Specifications" />
+                <DetailRowsCard keyPrefix="spec" rows={vm.specificationRows} title={t('productDetail.specifications.title')} />
               </Stack>
             </Grid>
           </Stack>

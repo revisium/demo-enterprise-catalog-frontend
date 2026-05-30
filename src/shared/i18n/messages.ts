@@ -592,6 +592,14 @@ const messageEntries = {
     'Гайд по хранилищу',
     'Guia de almacenamiento',
   ],
+  'productDetail.specifications.title': [
+    'Specifications',
+    'المواصفات',
+    '规格参数',
+    'Specifications',
+    'Спецификации',
+    'Especificaciones',
+  ],
   'productDetail.resources.eyebrow': [
     'Plan resources',
     'موارد الخطة',

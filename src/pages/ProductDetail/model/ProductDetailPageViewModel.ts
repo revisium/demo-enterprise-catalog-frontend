@@ -175,6 +175,10 @@ export class ProductDetailPageViewModel {
     ];
   }
 
+  get specificationRows() {
+    return [...this.technicalRows, ...this.packageRows];
+  }
+
   get technicalRows() {
     return [
       { label: 'Platform', value: this.product.specs.enclosure },
