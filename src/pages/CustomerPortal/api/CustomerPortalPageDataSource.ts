@@ -9,7 +9,7 @@ import {
   type PortalUser,
 } from 'src/entities/portal';
 
-export type ReferenceStatus = 'Active' | 'Allowed' | 'Available' | 'Published';
+export type ReferenceStatus = 'Active' | 'Allowed' | 'Allowed for your org' | 'Available' | 'Published';
 
 export interface ReferenceCheckRow {
   readonly id: string;
@@ -86,10 +86,10 @@ export class CustomerPortalPageDataSource {
         'language',
         'Language',
         'Preference',
-        'Active',
+        'Available',
         this.getLanguageLabel(user.preferences.languageId),
       ],
-      ['currency', 'Currency', 'Preference', 'Allowed', user.preferences.currencyId.toUpperCase()],
+      ['currency', 'Currency', 'Preference', 'Allowed for your org', user.preferences.currencyId.toUpperCase()],
       [
         'region',
         'Preferred region',
@@ -97,7 +97,7 @@ export class CustomerPortalPageDataSource {
         'Available',
         this.getRegionLabel(user.preferences.preferredRegionId),
       ],
-      ['saved-plan', 'Saved plan', 'Catalog', 'Active', primarySavedPlanName ?? 'No saved plan'],
+      ['saved-plan', 'Saved plan', 'Catalog', 'Available', primarySavedPlanName ?? 'No saved plan'],
       ['saved-guide', 'Saved guide', 'Docs', 'Published', 'Choose a production server plan'],
     ];
 

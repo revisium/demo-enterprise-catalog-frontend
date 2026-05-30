@@ -46,8 +46,6 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
   const returnState = createReturnState(location);
   const { locale, t } = useI18n();
   const alternativeSortOptions = getAlternativeSortOptions(t);
-  const regionSortOptions = getRegionSortOptions(t);
-  const queryRows = getQueryRows(vm, t, regionSortOptions, alternativeSortOptions);
   const sectionGap = { base: '4', md: '5' } as const;
 
   return (
@@ -150,14 +148,6 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
                         : t('productDetail.controls.allRegions')
                     }
                   >
-                    <SelectField
-                      compact
-                      label={t('productDetail.controls.sort')}
-                      labelGap="2"
-                      onChange={(value) => vm.setRegionSort(value)}
-                      options={regionSortOptions}
-                      value={vm.regionSortId}
-                    />
                     <FilterButton
                       onClick={() => vm.setInStockRegionsOnly(!vm.inStockRegionsOnly)}
                       selected={vm.inStockRegionsOnly}
@@ -265,43 +255,7 @@ export const ProductDetailPage = observer(function ProductDetailPage() {
               </Stack>
 
               <Stack gap={sectionGap}>
-                <DetailRowsCard
-                  keyPrefix="query"
-                  rows={queryRows}
-                  skipTranslation
-                  title={t('productDetail.query.title')}
-                />
-
-                <DetailRowsCard keyPrefix="spec" rows={vm.technicalRows} title="Technical specs" />
-
-                <Stack
-                  bg="white"
-                  borderColor="surface.200"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  gap="2"
-                  p="3"
-                >
-                  <Heading as="h2" {...sectionHeadingProps}>
-                    Plan package
-                  </Heading>
-                  <Stack gap="1">
-                    {vm.packageRows.map((row) => (
-                      <Grid
-                        gap="3"
-                        key={row.label}
-                        templateColumns={{ base: '1fr', md: '180px minmax(0, 1fr)' }}
-                      >
-                        <Text color="ink.500" fontSize="sm">
-                          {row.label}
-                        </Text>
-                        <Text color="ink.900" fontSize="sm" fontWeight="700" textAlign="left">
-                          {row.value}
-                        </Text>
-                      </Grid>
-                    ))}
-                  </Stack>
-                </Stack>
+                <DetailRowsCard keyPrefix="spec" rows={vm.specificationRows} title={t('productDetail.specifications.title')} />
               </Stack>
             </Grid>
           </Stack>
@@ -823,15 +777,6 @@ interface ProductDetailOption {
   readonly label: string;
 }
 
-function getRegionSortOptions(t: ProductDetailTranslate): readonly ProductDetailOption[] {
-  return [
-    { id: 'readiness', label: t('productDetail.controls.sort.bestReadiness') },
-    { id: 'stock', label: t('productDetail.controls.sort.mostStock') },
-    { id: 'fastest-setup', label: t('productDetail.controls.sort.fastestSetup') },
-    { id: 'region-name', label: t('productDetail.controls.sort.regionName') },
-  ];
-}
-
 function getAlternativeSortOptions(t: ProductDetailTranslate): readonly ProductDetailOption[] {
   return [
     { id: 'price-efficiency', label: t('productDetail.controls.sort.bestPriceEfficiency') },
@@ -843,34 +788,6 @@ function getAlternativeSortOptions(t: ProductDetailTranslate): readonly ProductD
 
 function getOptionLabel(options: readonly ProductDetailOption[], id: string) {
   return options.find((option) => option.id === id)?.label ?? id;
-}
-
-function getQueryRows(
-  vm: ProductDetailPageViewModel,
-  t: ProductDetailTranslate,
-  regionSortOptions: readonly ProductDetailOption[],
-  alternativeSortOptions: readonly ProductDetailOption[],
-) {
-  return [
-    {
-      label: t('productDetail.query.availabilityView'),
-      value: vm.inStockRegionsOnly
-        ? t('productDetail.query.availableOnly')
-        : t('productDetail.controls.allRegions'),
-    },
-    {
-      label: t('productDetail.query.regionalAvailabilitySort'),
-      value: getOptionLabel(regionSortOptions, vm.regionSortId),
-    },
-    {
-      label: t('productDetail.query.alternativePlansSort'),
-      value: getOptionLabel(alternativeSortOptions, vm.alternativeSortId),
-    },
-    {
-      label: t('productDetail.query.updated'),
-      value: vm.formatDate(vm.product.system.updatedAt),
-    },
-  ];
 }
 
 const resourceLinkLabelByLocale: Record<

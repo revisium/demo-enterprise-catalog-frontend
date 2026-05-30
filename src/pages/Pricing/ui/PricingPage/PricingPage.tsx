@@ -148,45 +148,6 @@ export const PricingPage = observer(function PricingPage() {
               />
             </Grid>
           </FilterCard>
-          <Box
-            display="flex"
-            h={{ base: 'auto', lg: '100%' }}
-            alignSelf="stretch"
-            gridColumn={{ base: 'auto', lg: '2', xl: '1 / span 3' }}
-          >
-            <FilterCard h="100%" w="100%">
-              <SectionEyebrow>Query summary</SectionEyebrow>
-              <Grid
-                gap={{ base: '2', xl: '8' }}
-                templateColumns={{ base: '1fr', xl: 'repeat(2, 1fr)' }}
-              >
-                <Stack gap="2">
-                  {vm.firstSummaryColumn.map((row) => (
-                    <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
-                      <Text color="ink.500" fontSize="sm">
-                        {row.label}
-                      </Text>
-                      <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
-                        {row.value}
-                      </Text>
-                    </Grid>
-                  ))}
-                </Stack>
-                <Stack gap="2">
-                  {vm.secondSummaryColumn.map((row) => (
-                    <Grid key={row.label} templateColumns="minmax(0, 1fr) auto" gap="3">
-                      <Text color="ink.500" fontSize="sm">
-                        {row.label}
-                      </Text>
-                      <Text color="ink.900" fontSize="sm" fontWeight="760" textAlign="right">
-                        {row.value}
-                      </Text>
-                    </Grid>
-                  ))}
-                </Stack>
-              </Grid>
-            </FilterCard>
-          </Box>
         </Grid>
 
         <Grid

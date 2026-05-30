@@ -69,16 +69,6 @@ export class ReleasesPageViewModel {
   get priorityOptions(): readonly FilterOption[] {
     return this.toOptions(['All', 'Important', 'Advisory', 'Routine']);
   }
-
-  get queryRows() {
-    return [
-      { label: 'Type', value: this.selectedType },
-      { label: 'Audience', value: this.selectedAudience },
-      { label: 'Priority', value: this.selectedPriority },
-      { label: 'Sort', value: this.getOptionLabel(sortOptions, this.sortId) },
-    ];
-  }
-
   get savedUpdates() {
     return this.updates.filter((update) => this.savedUpdateIds.includes(update.id));
   }
@@ -205,11 +195,6 @@ export class ReleasesPageViewModel {
       this.likedUpdateIds.length
     );
   }
-
-  private getOptionLabel(options: readonly FilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
   private getSharedTagCount(left: ReleaseUpdate, right: ReleaseUpdate) {
     const rightTags = new Set(right.tags);
 

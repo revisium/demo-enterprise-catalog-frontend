@@ -123,14 +123,6 @@ export class CustomerPortalPageViewModel {
   get sessionRows() {
     return [
       { label: 'Role', value: this.currentUser.role },
-      {
-        label: 'Session',
-        value: this.session.cookieMode === 'httpOnly' ? 'Secure cookie' : 'Demo',
-      },
-      {
-        label: 'Device',
-        value: this.session.fingerprintStatus === 'recognized' ? 'Recognized' : 'Created',
-      },
     ];
   }
 

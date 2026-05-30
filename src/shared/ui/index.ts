@@ -24,7 +24,6 @@ export {
   PageIntroGrid,
   PageIntroVisual,
   ResetButton,
-  QuerySummary,
   SectionEyebrow,
   SelectField,
   StickyPanel,

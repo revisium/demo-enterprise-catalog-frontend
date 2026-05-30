@@ -15,7 +15,6 @@ import {
   MetricGrid,
   PageSectionSurface,
   PageIntroGrid,
-  QuerySummary,
   ResetButton,
   SectionEyebrow,
   SelectField,
@@ -110,7 +109,6 @@ export const LocationsPage = observer(function LocationsPage() {
                 columns={{ base: 2, sm: 4, xl: 2 }}
                 metrics={vm.summaryMetrics}
               />
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Grid>
 

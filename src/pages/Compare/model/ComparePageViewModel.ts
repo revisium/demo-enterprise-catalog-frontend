@@ -188,23 +188,6 @@ export class ComparePageViewModel {
       label: product.name,
     }));
   }
-
-  get queryRows() {
-    return [
-      { label: 'Region', value: this.selectedRegionLabel },
-      { label: 'Availability', value: this.stockOnly ? 'in stock only' : 'all selected plans' },
-      { label: 'Scenario', value: this.selectedScenarioLabel },
-      {
-        label: 'Support',
-        value: this.selectedSupportTier === 'all' ? 'any tier' : this.selectedSupportTier,
-      },
-      {
-        label: 'Add-ons',
-        value: this.requiredAddonIds.length === 0 ? 'any add-on' : this.requiredAddonIds.join(', '),
-      },
-    ];
-  }
-
   get quotePath() {
     const params = new URLSearchParams();
 

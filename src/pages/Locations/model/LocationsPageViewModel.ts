@@ -225,28 +225,6 @@ export class LocationsPageViewModel {
       },
     ];
   }
-
-  get queryRows() {
-    return [
-      {
-        label: 'Regions shown',
-        value: `${this.filteredLocations.length} / ${this.locations.length}`,
-      },
-      {
-        label: 'Stock threshold',
-        value: this.minStock === 0 ? 'Any stock' : `${this.minStock}+ units`,
-      },
-      {
-        label: 'Support window',
-        value: this.getOptionLabel(supportOptions, this.selectedSupportWindowId),
-      },
-      {
-        label: 'Sort',
-        value: this.getOptionLabel(sortOptions, this.sortId),
-      },
-    ];
-  }
-
   formatUpdatedDate(value: string) {
     return new Intl.DateTimeFormat('en', {
       day: 'numeric',
@@ -360,11 +338,6 @@ export class LocationsPageViewModel {
 
     return 0;
   }
-
-  private getOptionLabel(options: readonly CatalogFilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
   private parseNonNegativeNumber(value: string) {
     const parsed = Number(value);
 

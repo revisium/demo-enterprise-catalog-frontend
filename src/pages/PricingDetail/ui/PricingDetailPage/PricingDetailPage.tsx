@@ -13,7 +13,6 @@ import {
   FilterButton,
   FilterCard,
   PageIntroGrid,
-  QuerySummary,
   ResetButton,
   SectionEyebrow,
   SelectField,
@@ -120,7 +119,6 @@ export const PricingDetailPage = observer(function PricingDetailPage() {
                 <BookFact label="Effective" value={vm.book.effectiveFrom} />
                 <BookFact label="Updated" value={vm.book.updatedAt} />
               </Grid>
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Grid>
 

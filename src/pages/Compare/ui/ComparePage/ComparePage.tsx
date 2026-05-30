@@ -14,7 +14,6 @@ import {
   FilterCard,
   PageSectionSurface,
   PageIntroGrid,
-  QuerySummary,
   SectionEyebrow,
   SelectField,
   StickyPanel,
@@ -131,7 +130,6 @@ export const ComparePage = observer(function ComparePage() {
               options={vm.addonOptions}
               selectedIds={vm.requiredAddonIds}
             />
-            <QuerySummary rows={vm.queryRows} />
           </FilterCard>
 
           <FilterCard bg="panelDarkBg" borderColor="darkPanelBorder" color="white">

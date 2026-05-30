@@ -13,7 +13,6 @@ import {
   InteractiveListCard,
   PageSectionSurface,
   PageIntroGrid,
-  QuerySummary,
   ResetButton,
   SectionEyebrow,
   SelectField,
@@ -86,7 +85,6 @@ export const ReleasesPage = observer(function ReleasesPage() {
                   value={vm.sortId}
                 />
               </Grid>
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
 
             <Flex align="end" gap="3" justify="space-between" wrap="wrap">

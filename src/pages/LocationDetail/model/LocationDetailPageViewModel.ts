@@ -191,32 +191,6 @@ export class LocationDetailPageViewModel {
       { label: 'Fastest setup', value: `${this.regionSummary.fastestSetupHours}h` },
     ];
   }
-
-  get queryRows() {
-    return [
-      {
-        label: 'Region',
-        value: this.regionSummary.regionLabel,
-      },
-      {
-        label: 'Plans shown',
-        value: `${this.filteredPlanRows.length} / ${this.regionPlanRows.length}`,
-      },
-      {
-        label: 'Stock threshold',
-        value: this.minStock === 0 ? 'Any stock' : `${this.minStock}+ units`,
-      },
-      {
-        label: 'Support window',
-        value: this.getOptionLabel(supportOptions, this.selectedSupportWindowId),
-      },
-      {
-        label: 'Sort',
-        value: this.getOptionLabel(sortOptions, this.sortId),
-      },
-    ];
-  }
-
   formatSupportWindow(value: string) {
     const normalized = normalizeSupportWindowId(value);
 
@@ -360,11 +334,6 @@ export class LocationDetailPageViewModel {
   private getUniqueSorted(values: readonly string[]) {
     return [...new Set(values)].sort((left, right) => left.localeCompare(right));
   }
-
-  private getOptionLabel(options: readonly CatalogFilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
   private isSortId(value: string): value is LocationPlanSortId {
     return sortOptions.some((option) => option.id === value);
   }
