@@ -1,6 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 
 import type { CatalogProduct } from 'src/entities/catalog';
+import {
+  buildCatalogSearch,
+  CATALOG_SORT_URL_TO_VM,
+  CATALOG_SORT_VM_TO_URL,
+  parseCatalogParams,
+} from 'src/shared/routing';
 import { CatalogPageDataSource } from '../api/CatalogPageDataSource';
 
 type CatalogFilterMode = 'all' | 'any';
@@ -183,6 +189,31 @@ export class CatalogPageViewModel {
     this.requireDocuments = false;
     this.sortId = 'display-order';
     this.stockOnly = false;
+  }
+
+  applyUrlParams(search: string) {
+    const p = parseCatalogParams(search);
+    this.selectedFamilyIds = p.family;
+    this.selectedRegionIds = p.region;
+    this.selectedAddonIds = p.cap;
+    this.filterMode = p.match;
+    this.minRamGb = p.ram;
+    this.maxMonthlyPrice = p.price;
+    this.stockOnly = p.stock;
+    this.sortId = (CATALOG_SORT_URL_TO_VM[p.sort] as CatalogSortId) ?? 'display-order';
+  }
+
+  toUrlSearch(): string {
+    return buildCatalogSearch({
+      family: this.selectedFamilyIds,
+      region: this.selectedRegionIds,
+      cap: this.selectedAddonIds,
+      match: this.filterMode,
+      ram: this.minRamGb,
+      price: this.maxMonthlyPrice,
+      stock: this.stockOnly,
+      sort: CATALOG_SORT_VM_TO_URL[this.sortId] ?? 'order',
+    });
   }
 
   setMaxMonthlyPrice(value: string) {

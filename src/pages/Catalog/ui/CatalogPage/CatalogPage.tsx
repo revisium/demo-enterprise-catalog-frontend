@@ -1,7 +1,8 @@
 import { Badge, Container, Flex, Grid, Heading, Stack, Text } from '@chakra-ui/react';
+import { autorun } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
 
 import { serversIntroImage } from 'src/shared/assets';
 import { createReturnState } from 'src/shared/routing';
@@ -20,9 +21,27 @@ import {
 import { CatalogPageViewModel } from '../../model/CatalogPageViewModel';
 
 export const CatalogPage = observer(function CatalogPage() {
-  const [vm] = useState(() => new CatalogPageViewModel());
   const location = useLocation();
+  const navigate = useNavigate();
+  const [vm] = useState(() => {
+    const instance = new CatalogPageViewModel();
+    instance.applyUrlParams(location.search);
+    return instance;
+  });
   const returnState = createReturnState(location);
+
+  useEffect(() => {
+    let first = true;
+    const dispose = autorun(() => {
+      const next = vm.toUrlSearch();
+      if (first) {
+        first = false;
+        return;
+      }
+      void navigate({ search: next.slice(1) }, { replace: true });
+    });
+    return dispose;
+  }, [navigate, vm]);
 
   return (
     <PageSectionSurface tone="servers" flex="1">
