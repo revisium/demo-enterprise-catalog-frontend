@@ -14,7 +14,6 @@ import {
   ResetButton,
   PageSectionSurface,
   PageIntroVisual,
-  QuerySummary,
   SectionEyebrow,
   SelectField,
 } from 'src/shared/ui';
@@ -147,7 +146,6 @@ export const CatalogPage = observer(function CatalogPage() {
                 </FilterButton>
               </Flex>
 
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Stack>
 

@@ -78,16 +78,6 @@ export class ResourcesPageViewModel {
       .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
       .map(([label, count]) => ({ count, label }));
   }
-
-  get queryRows() {
-    return [
-      { label: 'Category', value: this.selectedCategory },
-      { label: 'Role', value: this.selectedRole },
-      { label: 'Topic', value: this.selectedTag },
-      { label: 'Sort', value: this.getOptionLabel(sortOptions, this.sortId) },
-    ];
-  }
-
   get roleOptions(): readonly FilterOption[] {
     return this.toOptions(['All', ...new Set(this.articles.map((article) => article.role))]);
   }
@@ -209,11 +199,6 @@ export class ResourcesPageViewModel {
 
     return savedDelta || this.getHelpfulCount(right) - this.getHelpfulCount(left);
   }
-
-  private getOptionLabel(options: readonly FilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
   private getSharedTagCount(left: ResourceArticle, right: ResourceArticle) {
     const rightTags = new Set(right.tags);
 

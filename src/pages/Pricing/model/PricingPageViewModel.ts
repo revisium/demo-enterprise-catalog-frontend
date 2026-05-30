@@ -177,48 +177,6 @@ export class PricingPageViewModel {
       href: `/pricing/${book.id}`,
     }));
   }
-
-  get queryRows() {
-    return [
-      {
-        label: 'Families',
-        value: this.getSelectedOptionLabels(this.families, this.selectedFamilyIds, 'any family'),
-      },
-      {
-        label: 'Regions',
-        value: this.getSelectedOptionLabels(this.regions, this.selectedRegionIds, 'any region'),
-      },
-      {
-        label: 'Add-ons',
-        value: this.addonsQueryLabel,
-      },
-      {
-        label: 'Support',
-        value: this.getSelectedOptionLabels(
-          this.supportWindows,
-          this.selectedSupportWindows,
-          'any window',
-        ),
-      },
-      {
-        label: 'Hardware and setup',
-        value: this.hardwareSetupLabel,
-      },
-      {
-        label: 'Sort',
-        value: this.getOptionLabel(sortOptions, this.sortId),
-      },
-    ];
-  }
-
-  get firstSummaryColumn() {
-    return this.queryRows.slice(0, 3);
-  }
-
-  get secondSummaryColumn() {
-    return this.queryRows.slice(3, 6);
-  }
-
   get quotePath() {
     const params = new URLSearchParams();
     const [selectedRow] = this.selectedRows;
@@ -398,41 +356,6 @@ export class PricingPageViewModel {
 
     return left.billingTermPrice - right.billingTermPrice;
   }
-
-  private getOptionLabel(options: readonly FilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
-  private get addonsQueryLabel() {
-    if (this.selectedAddonIds.length === 0) {
-      return 'any add-on';
-    }
-
-    const matchLabel = this.addonMatchMode === 'all' ? 'all of' : 'any of';
-    const selectedLabels = this.getSelectedOptionLabels(this.addons, this.selectedAddonIds, '');
-
-    return `${matchLabel}: ${selectedLabels}`;
-  }
-
-  private get hardwareSetupLabel() {
-    const memoryLabel = this.minRamGb === 0 ? 'any memory' : `${this.minRamGb} GB+`;
-    const setupLabel = this.maxSetupHours === 0 ? 'any setup time' : `up to ${this.maxSetupHours}h`;
-
-    return `${memoryLabel} · ${setupLabel}`;
-  }
-
-  private getSelectedOptionLabels(
-    options: readonly FilterOption[],
-    selectedIds: readonly string[],
-    emptyLabel: string,
-  ) {
-    if (selectedIds.length === 0) {
-      return emptyLabel;
-    }
-
-    return selectedIds.map((id) => this.getOptionLabel(options, id)).join(', ');
-  }
-
   private isAddonMatchMode(value: string): value is AddonMatchMode {
     return addonMatchOptions.some((option) => option.id === value);
   }

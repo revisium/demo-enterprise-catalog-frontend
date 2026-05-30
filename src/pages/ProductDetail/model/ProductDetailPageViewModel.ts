@@ -130,21 +130,14 @@ export class ProductDetailPageViewModel {
 
   get summaryMetrics() {
     return [
-      { label: 'Monthly', value: `$${this.product.pricing.monthlyUsd}` },
       { label: 'Total stock', value: String(this.totalStock) },
       { label: 'Fastest setup', value: `${this.fastestSetupHours}h` },
-      { label: 'Price efficiency', value: String(this.priceEfficiencyScore) },
     ];
   }
 
   get totalStock() {
     return this.product.availabilityByRegion.reduce((total, region) => total + region.stock, 0);
   }
-
-  get priceEfficiencyScore() {
-    return calculatePriceEfficiencyScore(this.product);
-  }
-
   get commercialTermLabel() {
     return `$${this.product.pricing.yearlyMonthlyUsd}/mo on yearly term · $${this.product.pricing.setupUsd} setup fee.`;
   }

@@ -13,7 +13,6 @@ import {
   FieldHint,
   FilterCard,
   PageSectionSurface,
-  QuerySummary,
   ResetButton,
   SectionEyebrow,
   SelectField,
@@ -132,11 +131,6 @@ export const LocationDetailPage = observer(function LocationDetailPage() {
                   value={vm.sortId}
                 />
               </Grid>
-            </FilterCard>
-
-            <FilterCard>
-              <SectionEyebrow>Active view</SectionEyebrow>
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
           </Grid>
 

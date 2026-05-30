@@ -138,29 +138,6 @@ export class PricingDetailPageViewModel {
       { label: 'Status', value: this.book.status },
     ];
   }
-
-  get queryRows() {
-    return [
-      {
-        label: 'Families',
-        value: this.getSelectedOptionLabels(this.familyOptions, this.selectedFamilyIds, 'any'),
-      },
-      {
-        label: 'Regions',
-        value: this.getSelectedOptionLabels(this.regionOptions, this.selectedRegionIds, 'any'),
-      },
-      {
-        label: 'Term',
-        value: this.selectedTermId === 'yearly' ? 'yearly monthly rate' : 'monthly rate',
-      },
-      {
-        label: 'Efficiency score',
-        value: this.minEfficiency === 0 ? 'any score' : `${this.minEfficiency}+`,
-      },
-      { label: 'Sort', value: this.getOptionLabel(sortOptions, this.sortId) },
-    ];
-  }
-
   get regionOptions(): readonly FilterOption[] {
     const byId = new Map(this.rows.map((row) => [row.region.regionId, row.region.regionLabel]));
 
@@ -246,23 +223,6 @@ export class PricingDetailPageViewModel {
 
     return left.effectiveMonthlyUsd - right.effectiveMonthlyUsd;
   }
-
-  private getOptionLabel(options: readonly FilterOption[], id: string) {
-    return options.find((option) => option.id === id)?.label ?? id;
-  }
-
-  private getSelectedOptionLabels(
-    options: readonly FilterOption[],
-    selectedIds: readonly string[],
-    emptyLabel: string,
-  ) {
-    if (selectedIds.length === 0) {
-      return emptyLabel;
-    }
-
-    return selectedIds.map((id) => this.getOptionLabel(options, id)).join(', ');
-  }
-
   private isSortId(value: string): value is PriceBookSortId {
     return sortOptions.some((option) => option.id === value);
   }

@@ -13,7 +13,6 @@ import {
   FilterCard,
   PageSectionSurface,
   PageIntroGrid,
-  QuerySummary,
   ResetButton,
   SectionEyebrow,
   SelectField,
@@ -86,7 +85,6 @@ export const ResourcesPage = observer(function ResourcesPage() {
                   value={vm.sortId}
                 />
               </Grid>
-              <QuerySummary rows={vm.queryRows} />
             </FilterCard>
 
             <Flex align="end" justify="space-between" gap="3" wrap="wrap">

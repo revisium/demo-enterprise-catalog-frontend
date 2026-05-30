@@ -167,32 +167,6 @@ export class CatalogPageViewModel {
       this.activeFilterCount > 0 || this.filterMode !== 'all' || this.sortId !== 'display-order'
     );
   }
-
-  get queryRows() {
-    const groupModeLabel = this.filterMode === 'any' ? 'any selected group' : 'all selected groups';
-    const sortLabel =
-      sortOptions.find((option) => option.id === this.sortId)?.label ?? 'Catalog order';
-
-    return [
-      {
-        label: 'Group logic',
-        value: groupModeLabel,
-      },
-      {
-        label: 'Availability view',
-        value: this.stockOnly ? 'In stock' : 'Any stock',
-      },
-      {
-        label: 'Documents',
-        value: this.requireDocuments ? 'Docs' : 'All',
-      },
-      {
-        label: 'Sort',
-        value: sortLabel,
-      },
-    ];
-  }
-
   setFilterMode(mode: CatalogFilterMode) {
     this.filterMode = mode;
   }
