@@ -22,6 +22,8 @@ do not "play". A real catalog is non-uniform.
 ## Acceptance
 
 - Toggling catalog filters visibly changes result counts (incl. empty states).
-- At least 2 documented filter combinations return 0 results and at least 1
-  returns exactly 1 result (named in the spec as fixtures).
+- These exact filter combinations must hold after the mock is written:
+  - `family=accelerated & stock=1` → 0 results (no accelerated servers in stock).
+  - `family=storage & region=nyc & stock=1` → 0 results (no NYC storage in stock).
+  - `family=database & region=fra & ram=256` → exactly 1 result.
 - `npm run verify` green.

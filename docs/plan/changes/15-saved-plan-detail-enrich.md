@@ -14,13 +14,17 @@ Give it a distinct record lens so it earns its route.
 
 ## Contract & states (normative)
 
-- `relatedQuotes: { id, status, updatedAt, reference }[]`, sorted by `updatedAt`
-  desc.
-- `changeHistory: { id, timestamp, actor, summary }[]`, sorted by `timestamp`
-  desc.
+- `relatedQuotes: { id: string; status: 'DRAFT'|'SENT'|'ACCEPTED'|'REJECTED'; updatedAt: string (ISO 8601); reference: string }[]`
+  sorted by `updatedAt` desc.
+- `changeHistory: { id: string; timestamp: string (ISO 8601); actor: { id: string; name: string }; summary: string }[]`
+  sorted by `timestamp` desc.
 - UI states: loading (skeleton), empty ("No related quotes yet" / "No changes
-  yet"), error (retry). Mock fixtures live in the portal DataSource.
-- Responsive: two columns on `lg`, stacked on `base`.
+  yet"), error with retry. Retry re-fetches both lists; partial-data (one list
+  fails) renders the available list with a non-blocking error banner for the
+  failed one. No automatic retries — one manual retry on click.
+- Responsive: two columns on `lg` and above, stacked on `base`.
+- Mock fixtures in `CustomerPortalPageDataSource.getRelatedQuotes(planId)` and
+  `CustomerPortalPageDataSource.getPlanChangeHistory(planId)`.
 
 ## Files
 

@@ -30,7 +30,7 @@ Remove every "Query summary" surface (verified clean in a trial pass):
 
 ## Acceptance
 
-- A repo-wide scan returns nothing: `grep -rn "QuerySummary\|Query summary" src/`
+- A `src/`-wide scan returns nothing: `grep -rn "QuerySummary\|Query summary" src/`
   (the component/export is removed, not just its usages).
 - No empty cards/gaps left behind.
 - `npm run verify` green.
